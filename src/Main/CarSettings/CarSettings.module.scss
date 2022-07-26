@@ -4,7 +4,7 @@
     display: flex;
     flex-direction: column;
     gap: 10px;
-    margin: 15px;
+    margin: 10px;
     align-items: stretch;
     justify-content: center;
 
@@ -16,7 +16,7 @@
 
       &TextInput {
         border: none;
-        padding: 8px 0 8px 12px;
+        padding: 4px 0 4px 12px;
         border-radius: 4px;
         width: 100%;
         font-size: 16px;
@@ -49,8 +49,8 @@
     border-radius: 7px;
     font-size: 17px;
     transition: 0.3s ease-out;
-    min-width: 125px;
-    height: 35px;
+    min-width: 115px;
+    height: 30px;
 
     &:hover {
       background-color: #81e211;
