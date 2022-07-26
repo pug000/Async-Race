@@ -4,8 +4,8 @@
     "es2021": true
   },
   "extends": [
-    // "airbnb",
-    // "airbnb-typescript",
+    "airbnb",
+    "airbnb-typescript",
     "eslint:recommended",
     "plugin:react/recommended",
     "plugin:@typescript-eslint/recommended"
@@ -17,10 +17,11 @@
     },
     "ecmaVersion": "latest",
     "sourceType": "module",
-    "project": "tsconfig.json"
+    "project": "./**/tsconfig.json"
   },
   "plugins": [
     "react",
+    "import",
     "@typescript-eslint"
   ],
   "rules": {

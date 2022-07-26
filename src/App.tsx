@@ -1,14 +1,16 @@
-import React, { FC } from 'react';
+import React from 'react';
 import Header from './Header/Header';
+import Main from './Main/Main';
 
 import './styles/reset.scss';
 
-const App: FC = () => {
+function App() {
   return (
     <>
       <Header />
+      <Main />
     </>
-  )
-};
+  );
+}
 
 export default App;
