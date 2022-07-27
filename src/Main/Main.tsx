@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import getCars from '../api';
+import { getCars, removeCar } from '../api';
 import { CarData, Methods, Resource } from '../ts/interfaces';
 import CarSettings from './CarSettings/CarSettings';
 import Garage from './Garage/Garage';
@@ -25,12 +25,21 @@ function Main() {
     setCarLoading(false);
   }, [baseUrl]);
 
+  const removeCarFromGarage = (id: number) => setCars(cars.filter((item) => item.id !== id));
+
   return (
     <main className="main">
       <CarSettings />
       <Garage
         cars={cars}
         isCarLoading={isCarLoading}
+        removeOnClick={(id: number) => removeCar(
+          baseUrl,
+          resource.garage,
+          method.delete,
+          id,
+          removeCarFromGarage,
+        )}
       />
     </main>
   );

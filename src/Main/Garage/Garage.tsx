@@ -1,17 +1,19 @@
 import React from 'react';
 import { CarData } from '../../ts/interfaces';
-import Car from '../../assets/icons/Car.svg';
+import CarSvg from '../../assets/icons/Car.svg';
 import styles from './Garage.module.scss';
 
 interface GarageProps {
   cars: CarData[],
   isCarLoading: boolean,
+  removeOnClick: (id: number) => void;
 }
 
 function Garage(
   {
     cars,
     isCarLoading,
+    removeOnClick,
   }: GarageProps,
 ) {
   if (isCarLoading) {
@@ -24,19 +26,19 @@ function Garage(
 
   return (
     <div className={styles.garage}>
-      <h2 className={styles.garageTitle}>Garage</h2>
+      <h2 className={styles.garageTitle}>{`Garage(${cars.length})`}</h2>
       <div className={styles.garagePagination}>
         <h3 className={styles.garagePaginationTitle}>Page</h3>
-        {cars.map((item) => (
-          <div className={styles.carItem} key={item.id}>
-            <h4 className={styles.carItemTitle}>{item.name}</h4>
+        {cars.map(({ id, name, color }) => (
+          <div className={styles.carItem} key={id}>
+            <h4 className={styles.carItemTitle}>{name}</h4>
             <div className={styles.carItemTop}>
               <button className={styles.carItemTopBtn} type="button">Select</button>
-              <button className={styles.carItemTopBtn} type="button">Remove</button>
+              <button className={styles.carItemTopBtn} type="button" onClick={() => removeOnClick(id)}>Remove</button>
               <button className={styles.carItemTopBtn} type="button">Start</button>
               <button className={styles.carItemTopBtn} type="button">Stop</button>
             </div>
-            <Car className={styles.carItemImg} fill={item.color} />
+            <CarSvg className={styles.carItemImg} fill={color} />
             <div className={styles.carItemTrack} />
           </div>
         ))}
