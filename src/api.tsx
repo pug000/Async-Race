@@ -1,3 +1,5 @@
+import { OmitCarData } from './ts/types';
+
 export const getCars = async (
   url: string,
   resource: string,
@@ -17,13 +19,30 @@ export const removeCar = async (
   resource: string,
   method: string,
   id: number,
-  removeCarFromGarage: (id: number) => void,
 ) => {
   try {
     const res = await fetch(`${url}/${resource}/${id}`, { method });
     const data = await res.json();
-    removeCarFromGarage(id);
     return data;
+  } catch (err) {
+    throw new Error(`${err}`);
+  }
+};
+
+export const createCar = async (
+  url: string,
+  resource: string,
+  method: string,
+  item: OmitCarData<'id'>,
+) => {
+  try {
+    const res = await fetch(`${url}/${resource}`, {
+      method,
+      body: JSON.stringify(item),
+      headers: { 'Content-Type': 'application/json' },
+    });
+    const newItem = await res.json();
+    return newItem;
   } catch (err) {
     throw new Error(`${err}`);
   }
