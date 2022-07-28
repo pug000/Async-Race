@@ -1,3 +1,12 @@
+.main {
+  max-width: 1440px;
+  margin: 0 auto;
+  padding: 0 50px 0 50px;
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+}
+
 .settings {
   display: flex;
   &Top {
@@ -7,30 +16,6 @@
     margin: 10px;
     align-items: stretch;
     justify-content: center;
-
-    &Wrapper {
-      display: flex;
-      gap: 6px;
-      justify-content: center;
-      align-items: center;
-
-      &TextInput {
-        border: none;
-        padding: 4px 0 4px 12px;
-        border-radius: 4px;
-        width: 100%;
-        font-size: 16px;
-
-        &:focus {
-          outline: none;
-        }
-      }
-
-      &ColorInput {
-        height: 30px;
-        min-width: 50px;
-      }
-    }
   }
 
   &Bottom {

@@ -3,3 +3,9 @@ export interface CarData {
   color: string,
   id: number,
 }
+
+export interface CarButton {
+  id: number,
+  text: string,
+  isDisabled?: boolean,
+}

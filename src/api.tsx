@@ -1,4 +1,4 @@
-import { OmitCarData } from './ts/types';
+import { CarData } from './ts/interfaces';
 
 export const getCars = async (
   url: string,
@@ -33,7 +33,7 @@ export const createCar = async (
   url: string,
   resource: string,
   method: string,
-  item: OmitCarData<'id'>,
+  item: CarData,
 ) => {
   try {
     const res = await fetch(`${url}/${resource}`, {

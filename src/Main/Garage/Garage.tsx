@@ -5,18 +5,18 @@ import styles from './Garage.module.scss';
 
 interface GarageProps {
   cars: CarData[],
-  isCarLoading: boolean,
-  removeOnClick: (id: number) => void;
+  isGarageLoading: boolean,
+  removeOnClick: (item: CarData) => void;
 }
 
 function Garage(
   {
     cars,
-    isCarLoading,
+    isGarageLoading,
     removeOnClick,
   }: GarageProps,
 ) {
-  if (isCarLoading) {
+  if (isGarageLoading) {
     return (
       <div className={styles.garageLoading}>
         <h2 className={styles.garageLoadingTitle}>Loading in progress...</h2>
@@ -29,16 +29,27 @@ function Garage(
       <h2 className={styles.garageTitle}>{`Garage(${cars.length})`}</h2>
       <div className={styles.garagePagination}>
         <h3 className={styles.garagePaginationTitle}>Page</h3>
-        {cars.map(({ id, name, color }) => (
-          <div className={styles.carItem} key={id}>
-            <h4 className={styles.carItemTitle}>{name}</h4>
+        {cars.map((item) => (
+          <div className={styles.carItem} key={item.id}>
+            <h4 className={styles.carItemTitle}>{item.name}</h4>
             <div className={styles.carItemTop}>
-              <button className={styles.carItemTopBtn} type="button">Select</button>
-              <button className={styles.carItemTopBtn} type="button" onClick={() => removeOnClick(id)}>Remove</button>
+              <button
+                className={styles.carItemTopBtn}
+                type="button"
+              >
+                Select
+              </button>
+              <button
+                className={styles.carItemTopBtn}
+                type="button"
+                onClick={() => removeOnClick(item)}
+              >
+                Remove
+              </button>
               <button className={styles.carItemTopBtn} type="button">Start</button>
               <button className={styles.carItemTopBtn} type="button">Stop</button>
             </div>
-            <CarSvg className={styles.carItemImg} fill={color} />
+            <CarSvg className={styles.carItemImg} fill={item.color} />
             <div className={styles.carItemTrack} />
           </div>
         ))}
