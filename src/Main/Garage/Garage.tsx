@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { CarButton, CarData } from '../../ts/interfaces';
+import { Button, CarData } from '../../ts/interfaces';
 import CarSvg from '../../assets/icons/Car.svg';
 import styles from './Garage.module.scss';
 import BtnId from '../../ts/enum';
@@ -27,14 +27,14 @@ function Garage(
     );
   }
 
-  const [btns] = useState<CarButton[]>([
+  const [btns] = useState<Button[]>([
     { id: 1, text: 'Select' },
     { id: 2, text: 'Remove' },
     { id: 3, text: 'Start' },
     { id: 4, text: 'Stop' },
   ]);
 
-  const handleEvent = (currentBtn: CarButton, currentCar: CarData) => {
+  const handleEvent = (currentBtn: Button, currentCar: CarData) => {
     switch (currentBtn.id) {
       case BtnId.first:
         return selectOnClick(currentCar);

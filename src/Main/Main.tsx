@@ -9,6 +9,7 @@ import {
 import { CarData } from '../ts/interfaces';
 import Garage from './Garage/Garage';
 import CarSetting from './CarSetting/CarSetting';
+import CarSettingBtns from './CarSetting/CarSettingBtns';
 
 function Main() {
   const defaultCar: CarData = {
@@ -24,8 +25,14 @@ function Main() {
   const [isGarageLoading, setGarageLoading] = useState<boolean>(false);
   const [baseUrl] = useState<string>('http://127.0.0.1:3000');
 
-  const addNewCar = (item: CarData) => createOrUpdateCar(baseUrl, 'garage', 'POST', item)
-    .then((car) => setCars([...cars, car]));
+  const addNewCar = (item: CarData) => {
+    createOrUpdateCar(baseUrl, 'garage', 'POST', item).then((data) => setCars([...cars, data]));
+  };
+
+  const addRandomCars = (item: Omit<CarData, 'id'>) => {
+    createOrUpdateCar(baseUrl, 'garage', 'POST', item);
+    getCars(baseUrl, 'garage', 'GET').then((data) => setCars(data));
+  };
 
   const removeCar = (item: CarData) => getOrRemoveCar(baseUrl, 'garage', 'DELETE', item.id)
     .then(() => setCars(cars.filter((el) => el.id !== item.id)));
@@ -75,11 +82,7 @@ function Main() {
               setSelectedCar(null);
             }}
           />
-          <div className={styles.settingsBottom}>
-            <button className={styles.settingsBtn} type="button">Race</button>
-            <button className={styles.settingsBtn} type="button">Reset</button>
-            <button className={styles.settingsBtn} type="button">Generate Car</button>
-          </div>
+          <CarSettingBtns generateOnClick={(item: Omit<CarData, 'id'>) => addRandomCars(item)} />
         </div>
       </div>
       <Garage

@@ -4,7 +4,7 @@ export interface CarData {
   id: number,
 }
 
-export interface CarButton {
+export interface Button {
   id: number,
   text: string,
 }

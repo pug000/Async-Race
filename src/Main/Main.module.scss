@@ -17,28 +17,4 @@
     align-items: stretch;
     justify-content: center;
   }
-
-  &Bottom {
-    display: flex;
-    justify-content: space-between;
-    gap: 10px;
-  }
-
-  &Btn {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    border: none;
-    cursor: pointer;
-    padding: 0px 10px;
-    border-radius: 7px;
-    font-size: 17px;
-    transition: 0.3s ease-out;
-    min-width: 115px;
-    height: 30px;
-
-    &:hover {
-      background-color: #81e211;
-    }
-  }
 }

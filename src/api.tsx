@@ -7,7 +7,7 @@ export const getCars = async (
 ) => {
   try {
     const res = await fetch(`${url}/${resource}`, { method });
-    const data = await res.json();
+    const data: CarData[] = await res.json();
     return data;
   } catch (err) {
     throw new Error(`${err}`);
@@ -22,7 +22,7 @@ export const getOrRemoveCar = async (
 ) => {
   try {
     const res = await fetch(`${url}/${resource}/${id}`, { method });
-    const data = await res.json();
+    const data: CarData = await res.json();
     return data;
   } catch (err) {
     throw new Error(`${err}`);
@@ -33,7 +33,7 @@ export const createOrUpdateCar = async (
   url: string,
   resource: string,
   method: string,
-  item: CarData,
+  item: CarData | Omit<CarData, 'id'>,
   id = '',
 ) => {
   try {
@@ -42,7 +42,7 @@ export const createOrUpdateCar = async (
       body: JSON.stringify(item),
       headers: { 'Content-Type': 'application/json' },
     });
-    const data = await res.json();
+    const data: CarData = await res.json();
     return data;
   } catch (err) {
     throw new Error(`${err}`);
