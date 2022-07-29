@@ -8,3 +8,8 @@ export interface Button {
   id: number,
   text: string,
 }
+
+export interface ResponseObject {
+  data: CarData[],
+  count: number | null,
+}

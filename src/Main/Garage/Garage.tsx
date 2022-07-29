@@ -1,12 +1,16 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Button, CarData } from '../../ts/interfaces';
 import CarSvg from '../../assets/icons/Car.svg';
 import styles from './Garage.module.scss';
 import BtnId from '../../ts/enum';
+import { getTotalCount } from '../../logic';
 
 interface GarageProps {
   cars: CarData[],
+  currentPage: number,
+  totalCars: number,
   isGarageLoading: boolean,
+  changePage: (page: number) => void;
   selectOnClick: (item: CarData) => void;
   removeOnClick: (item: CarData) => void;
 }
@@ -14,7 +18,10 @@ interface GarageProps {
 function Garage(
   {
     cars,
+    currentPage,
+    totalCars,
     isGarageLoading,
+    changePage,
     selectOnClick,
     removeOnClick,
   }: GarageProps,
@@ -26,6 +33,16 @@ function Garage(
       </div>
     );
   }
+
+  const [totalPages, setTotalPages] = useState(0);
+
+  useEffect(() => {
+    setTotalPages(getTotalCount(totalCars));
+  }, [totalCars]);
+
+  const onPrevious = () => changePage(currentPage - 1);
+
+  const onNext = () => changePage(currentPage + 1);
 
   const [btns] = useState<Button[]>([
     { id: 1, text: 'Select' },
@@ -47,9 +64,9 @@ function Garage(
 
   return (
     <div className={styles.garage}>
-      <h2 className={styles.garageTitle}>{`Garage(${cars.length})`}</h2>
+      <h2 className={styles.garageTitle}>{`Garage(${totalCars})`}</h2>
       <div className={styles.garagePagination}>
-        <h3 className={styles.garagePaginationTitle}>Page</h3>
+        <h3 className={styles.garagePaginationTitle}>{`Page #${currentPage}`}</h3>
         {cars.map((item) => (
           <div className={styles.carItem} key={item.id}>
             <h4 className={styles.carItemTitle}>{item.name}</h4>
@@ -70,8 +87,22 @@ function Garage(
           </div>
         ))}
         <div className={styles.garagePaginationWrapper}>
-          <button className={styles.garagePaginationWrapperBtn} type="button">Prev</button>
-          <button className={styles.garagePaginationWrapperBtn} type="button">Next</button>
+          <button
+            className={styles.garagePaginationWrapperBtn}
+            type="button"
+            disabled={currentPage === 1}
+            onClick={onPrevious}
+          >
+            Prev
+          </button>
+          <button
+            className={styles.garagePaginationWrapperBtn}
+            type="button"
+            disabled={currentPage === totalPages}
+            onClick={onNext}
+          >
+            Next
+          </button>
         </div>
       </div>
     </div>

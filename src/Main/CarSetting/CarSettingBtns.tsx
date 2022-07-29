@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
-import generateRandomCars from '../../logic';
+import { generateRandomCars } from '../../logic';
 import BtnId from '../../ts/enum';
-import { Button, CarData } from '../../ts/interfaces';
+import { Button } from '../../ts/interfaces';
+import { OmitCarDataId } from '../../ts/types';
 import styles from './CarSetting.module.scss';
 
 interface CarSettingsProps {
-  generateOnClick: (item: Omit<CarData, 'id'>) => void;
+  generateOnClick: (item: OmitCarDataId) => void;
 }
 
 function CarSettingBtns(
@@ -20,7 +21,7 @@ function CarSettingBtns(
   ]);
 
   const random = async () => {
-    const cars: (Omit<CarData, 'id'>)[] = generateRandomCars();
+    const cars: OmitCarDataId[] = generateRandomCars();
     Promise.all(cars.map((car) => generateOnClick(car)));
   };
 

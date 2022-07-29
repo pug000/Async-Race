@@ -3,13 +3,14 @@ import styles from './Main.module.scss';
 
 import {
   createOrUpdateCar,
-  getCars,
+  getAllCars,
   getOrRemoveCar,
 } from '../api';
 import { CarData } from '../ts/interfaces';
 import Garage from './Garage/Garage';
 import CarSetting from './CarSetting/CarSetting';
 import CarSettingBtns from './CarSetting/CarSettingBtns';
+import { OmitCarDataId } from '../ts/types';
 
 function Main() {
   const defaultCar: CarData = {
@@ -23,32 +24,38 @@ function Main() {
   const [selectedCar, setSelectedCar] = useState<CarData | null>(null);
   const [isDisabled, setDisabled] = useState<boolean>(true);
   const [isGarageLoading, setGarageLoading] = useState<boolean>(false);
-  const [baseUrl] = useState<string>('http://127.0.0.1:3000');
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalCars, setTotalCars] = useState(0);
 
-  const addNewCar = (item: CarData) => {
-    createOrUpdateCar(baseUrl, 'garage', 'POST', item).then((data) => setCars([...cars, data]));
+  const getCars = async (resource: string, pages: number) => {
+    setGarageLoading(true);
+    const res = await getAllCars(resource, pages);
+    setCars(res.data);
+    if (res.count) {
+      setTotalCars(res.count);
+    }
+    setGarageLoading(false);
   };
 
-  const addRandomCars = (item: Omit<CarData, 'id'>) => {
-    createOrUpdateCar(baseUrl, 'garage', 'POST', item);
-    getCars(baseUrl, 'garage', 'GET').then((data) => setCars(data));
+  const addNewCar = async (item: CarData | OmitCarDataId) => {
+    await createOrUpdateCar('garage', 'POST', item);
+    await getCars('garage', currentPage);
   };
 
-  const removeCar = (item: CarData) => getOrRemoveCar(baseUrl, 'garage', 'DELETE', item.id)
-    .then(() => setCars(cars.filter((el) => el.id !== item.id)));
+  const removeCar = async (item: CarData) => {
+    await getOrRemoveCar('garage', 'DELETE', item.id);
+    await getCars('garage', currentPage);
+  };
 
-  const selectCar = (item: CarData) => getOrRemoveCar(baseUrl, 'garage', 'GET', item.id)
+  const selectCar = (item: CarData) => getOrRemoveCar('garage', 'GET', item.id)
     .then((car) => setSelectedCar(car));
 
-  const updateSelectedCar = (item: CarData) => createOrUpdateCar(baseUrl, 'garage', 'PUT', item, String(item.id))
+  const updateSelectedCar = (item: CarData) => createOrUpdateCar('garage', 'PUT', item, String(item.id))
     .then((car) => setCars(cars.map((el) => (el.id === car.id ? car : el))));
 
   useEffect(() => {
-    setGarageLoading(true);
-    getCars(baseUrl, 'garage', 'GET')
-      .then((data) => setCars(data));
-    setGarageLoading(false);
-  }, [baseUrl]);
+    getCars('garage', currentPage);
+  }, [currentPage]);
 
   useEffect(() => (selectedCar ? setDisabled(false) : setDisabled(true)), [selectedCar]);
 
@@ -82,12 +89,15 @@ function Main() {
               setSelectedCar(null);
             }}
           />
-          <CarSettingBtns generateOnClick={(item: Omit<CarData, 'id'>) => addRandomCars(item)} />
+          <CarSettingBtns generateOnClick={(item: OmitCarDataId) => addNewCar(item)} />
         </div>
       </div>
       <Garage
         cars={cars}
+        currentPage={currentPage}
+        totalCars={totalCars}
         isGarageLoading={isGarageLoading}
+        changePage={(page: number) => setCurrentPage(page)}
         selectOnClick={(item: CarData) => selectCar(item)}
         removeOnClick={(item: CarData) => (selectedCar && selectedCar.id === item.id
           ? setSelectedCar(null)
