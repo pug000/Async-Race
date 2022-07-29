@@ -6,6 +6,7 @@ import styles from './Garage.module.scss';
 interface GarageProps {
   cars: CarData[],
   isGarageLoading: boolean,
+  selectOnClick: (item: CarData) => void;
   removeOnClick: (item: CarData) => void;
 }
 
@@ -13,6 +14,7 @@ function Garage(
   {
     cars,
     isGarageLoading,
+    selectOnClick,
     removeOnClick,
   }: GarageProps,
 ) {
@@ -36,6 +38,7 @@ function Garage(
               <button
                 className={styles.carItemTopBtn}
                 type="button"
+                onClick={() => selectOnClick(item)}
               >
                 Select
               </button>
