@@ -48,22 +48,3 @@ export const createOrUpdateCar = async (
     throw new Error(`${err}`);
   }
 };
-
-// export const createCar = async (
-//   url: string,
-//   resource: string,
-//   method: string,
-//   item: CarData,
-// ) => {
-//   try {
-//     const res = await fetch(`${url}/${resource}`, {
-//       method,
-//       body: JSON.stringify(item),
-//       headers: { 'Content-Type': 'application/json' },
-//     });
-//     const data = await res.json();
-//     return data;
-//   } catch (err) {
-//     throw new Error(`${err}`);
-//   }
-// };

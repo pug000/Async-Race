@@ -1,7 +1,8 @@
-import React from 'react';
-import { CarData } from '../../ts/interfaces';
+import React, { useState } from 'react';
+import { CarButton, CarData } from '../../ts/interfaces';
 import CarSvg from '../../assets/icons/Car.svg';
 import styles from './Garage.module.scss';
+import BtnId from '../../ts/enum';
 
 interface GarageProps {
   cars: CarData[],
@@ -26,6 +27,24 @@ function Garage(
     );
   }
 
+  const [btns] = useState<CarButton[]>([
+    { id: 1, text: 'Select' },
+    { id: 2, text: 'Remove' },
+    { id: 3, text: 'Start' },
+    { id: 4, text: 'Stop' },
+  ]);
+
+  const handleEvent = (currentBtn: CarButton, currentCar: CarData) => {
+    switch (currentBtn.id) {
+      case BtnId.first:
+        return selectOnClick(currentCar);
+      case BtnId.second:
+        return removeOnClick(currentCar);
+      default:
+        return currentCar;
+    }
+  };
+
   return (
     <div className={styles.garage}>
       <h2 className={styles.garageTitle}>{`Garage(${cars.length})`}</h2>
@@ -35,22 +54,16 @@ function Garage(
           <div className={styles.carItem} key={item.id}>
             <h4 className={styles.carItemTitle}>{item.name}</h4>
             <div className={styles.carItemTop}>
-              <button
-                className={styles.carItemTopBtn}
-                type="button"
-                onClick={() => selectOnClick(item)}
-              >
-                Select
-              </button>
-              <button
-                className={styles.carItemTopBtn}
-                type="button"
-                onClick={() => removeOnClick(item)}
-              >
-                Remove
-              </button>
-              <button className={styles.carItemTopBtn} type="button">Start</button>
-              <button className={styles.carItemTopBtn} type="button">Stop</button>
+              {btns.map((btn) => (
+                <button
+                  className={styles.carItemTopBtn}
+                  key={btn.id}
+                  type="button"
+                  onClick={() => handleEvent(btn, item)}
+                >
+                  {btn.text}
+                </button>
+              ))}
             </div>
             <CarSvg className={styles.carItemImg} fill={item.color} />
             <div className={styles.carItemTrack} />

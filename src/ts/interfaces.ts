@@ -7,5 +7,4 @@ export interface CarData {
 export interface CarButton {
   id: number,
   text: string,
-  isDisabled?: boolean,
 }
