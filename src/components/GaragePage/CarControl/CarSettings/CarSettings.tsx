@@ -1,6 +1,6 @@
 import React from 'react';
-import { CarData } from '../../../../ts/interfaces';
-import { EventHandler } from '../../../../ts/types';
+import { CarData } from '@/ts/interfaces';
+import { EventHandler } from '@/ts/types';
 import styles from './CarSettings.module.scss';
 
 interface CarSettingsProps {

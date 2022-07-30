@@ -1,13 +1,14 @@
 import React, { useState } from 'react';
-import { generateRandomCars } from '../../../utils';
-import BtnId from '../../../ts/enum';
-import { Button, CarData } from '../../../ts/interfaces';
+import { generateRandomCars } from '@/utils';
+import BtnId from '@/ts/enum';
+import { Button, CarData } from '@/ts/interfaces';
 import {
   OmitCarDataId,
   AsyncFn,
-} from '../../../ts/types';
+} from '@/ts/types';
+import CarSettings from '@/CarSettings';
+
 import styles from './CarControl.module.scss';
-import CarSettings from './CarSettings/CarSettings';
 
 interface CarControlProps {
   addNewCar: AsyncFn<CarData | OmitCarDataId, string, void>;

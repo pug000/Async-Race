@@ -1,4 +1,4 @@
-import { CarData } from './interfaces';
+import { CarData } from '@/ts/interfaces';
 
 export type SetState<T> = React.Dispatch<React.SetStateAction<T>>;
 

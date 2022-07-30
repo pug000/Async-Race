@@ -15,6 +15,42 @@
     "strict": true,
     "jsx": "react-jsx",
     "isolatedModules": true,
+    "baseUrl": "src",
+    "paths": {
+      "@/*": [
+        "*"
+      ],
+      "@/Header": [
+        "components/Header/Header"
+      ],
+      "@/Main": [
+        "components/Main"
+      ],
+      "@/assets": [
+        "assets"
+      ],
+      "@/utils": [
+        "utils"
+      ],
+      "@/api": [
+        "api"
+      ],
+      "@/ts": [
+        "ts/"
+      ],
+      "@/GaragePage": [
+        "components/GaragePage/GaragePage"
+      ],
+      "@/CarControl": [
+        "components/GaragePage/CarControl/CarControl"
+      ],
+      "@/CarSettings": [
+        "components/GaragePage/CarControl/CarSettings/CarSettings"
+      ],
+      "@/Pagination": [
+        "components/GaragePage/Pagination/Pagination"
+      ],
+    }
   },
   "files": [
     "src/index.tsx"

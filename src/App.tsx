@@ -1,6 +1,6 @@
 import React from 'react';
-import Header from './components/Header/Header';
-import Main from './components/Main';
+import Main from '@/Main';
+import Header from '@/Header';
 
 import './styles/reset.scss';
 

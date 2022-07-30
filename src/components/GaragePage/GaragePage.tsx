@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from 'react';
-import { CarData } from '../../ts/interfaces';
+import { CarData } from '@/ts/interfaces';
 import {
   OmitCarDataId,
   AsyncFn,
-} from '../../ts/types';
-import Pagination from './Pagination/Pagination';
-import CarControl from './CarControl/CarControl';
+} from '@/ts/types';
+import Pagination from '@/Pagination';
+import CarControl from '@/CarControl';
 
 interface GaragePageProps {
   cars: CarData[];

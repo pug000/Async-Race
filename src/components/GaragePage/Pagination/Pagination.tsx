@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from 'react';
-import { Button, CarData } from '../../../ts/interfaces';
-import CarSvg from '../../../assets/icons/Car.svg';
+import { Button, CarData } from '@/ts/interfaces';
+import CarSvg from '@/assets/icons/Car.svg';
+import BtnId from '@/ts/enum';
+import { getTotalCount } from '@/utils';
+
 import styles from './Pagination.module.scss';
-import BtnId from '../../../ts/enum';
-import { getTotalCount } from '../../../utils';
 
 interface PaginationProps {
   cars: CarData[],

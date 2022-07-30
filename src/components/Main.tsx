@@ -3,10 +3,10 @@ import {
   createOrUpdateCar,
   getAllCars,
   getOrRemoveCar,
-} from '../api';
-import { CarData } from '../ts/interfaces';
-import { OmitCarDataId, SetState } from '../ts/types';
-import GaragePage from './GaragePage/GaragePage';
+} from '@/api';
+import { CarData } from '@/ts/interfaces';
+import { OmitCarDataId, SetState } from '@/ts/types';
+import GaragePage from '@/GaragePage';
 
 function Main() {
   const [cars, setCars] = useState<CarData[]>([]);

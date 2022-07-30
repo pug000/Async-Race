@@ -1,5 +1,5 @@
-import { CarData, ResponseObject } from './ts/interfaces';
-import { OmitCarDataId } from './ts/types';
+import { CarData, ResponseObject } from '@/ts/interfaces';
+import { OmitCarDataId } from '@/ts/types';
 
 export const getAllCars = async (
   resource: string,
