@@ -1,7 +1,7 @@
 import React from 'react';
-import { CarData } from '../../ts/interfaces';
-import { EventHandler } from '../../ts/types';
-import styles from './CarSetting.module.scss';
+import { CarData } from '../../../../ts/interfaces';
+import { EventHandler } from '../../../../ts/types';
+import styles from './CarSettings.module.scss';
 
 interface CarSettingsProps {
   text: string;
@@ -12,7 +12,7 @@ interface CarSettingsProps {
   onSubmit: (item: CarData) => void;
 }
 
-function CarSetting(
+function CarSettings(
   {
     text,
     itemCar,
@@ -51,4 +51,4 @@ function CarSetting(
   );
 }
 
-export default CarSetting;
+export default CarSettings;

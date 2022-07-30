@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from 'react';
-import { Button, CarData } from '../../ts/interfaces';
-import CarSvg from '../../assets/icons/Car.svg';
-import styles from './Garage.module.scss';
-import BtnId from '../../ts/enum';
-import { getTotalCount } from '../../logic';
+import { Button, CarData } from '../../../ts/interfaces';
+import CarSvg from '../../../assets/icons/Car.svg';
+import styles from './Pagination.module.scss';
+import BtnId from '../../../ts/enum';
+import { getTotalCount } from '../../../utils';
 
-interface GarageProps {
+interface PaginationProps {
   cars: CarData[],
   currentPage: number,
   totalCars: number,
@@ -15,7 +15,7 @@ interface GarageProps {
   removeOnClick: (item: CarData) => void;
 }
 
-function Garage(
+function Pagination(
   {
     cars,
     currentPage,
@@ -24,7 +24,7 @@ function Garage(
     changePage,
     selectOnClick,
     removeOnClick,
-  }: GarageProps,
+  }: PaginationProps,
 ) {
   if (isGarageLoading) {
     return (
@@ -109,4 +109,4 @@ function Garage(
   );
 }
 
-export default Garage;
+export default Pagination;

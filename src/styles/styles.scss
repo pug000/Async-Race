@@ -7,3 +7,18 @@ body {
   color: #fff;
   padding-bottom: 30px;
 }
+
+.main {
+  max-width: 1440px;
+  margin: 0 auto;
+  padding: 0 50px 0 50px;
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+}
+
+.garage {
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+}
