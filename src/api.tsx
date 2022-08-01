@@ -1,5 +1,5 @@
-import { CarData, ResponseObject } from '@/ts/interfaces';
-import { OmitCarDataId } from '@/ts/types';
+import { CarData, Engine, ResponseObject } from '@/ts/interfaces';
+import { OmitCarData } from '@/ts/types';
 
 export const getAllCars = async (
   resource: string,
@@ -37,7 +37,7 @@ export const getOrRemoveCar = async (
 export const createOrUpdateCar = async (
   resource: string,
   method: string,
-  item: CarData | OmitCarDataId,
+  item: CarData | OmitCarData,
   id = '',
 ) => {
   try {
@@ -51,4 +51,33 @@ export const createOrUpdateCar = async (
   } catch (err) {
     throw new Error(`${err}`);
   }
+};
+
+export const startOrStopEngine = async (
+  resource: string,
+  status: string,
+  id: number,
+  method: string,
+) => {
+  try {
+    const res = await fetch(`http://127.0.0.1:3000/${resource}?id=${id}&status=${status}`, {
+      method,
+    });
+    const data: Engine = await res.json();
+    return data;
+  } catch (err) {
+    throw new Error(`${err}`);
+  }
+};
+
+export const getStatusDrive = async (
+  resource: string,
+  id: number,
+  status: string,
+  method: string,
+) => {
+  const res = await fetch(`http://127.0.0.1:3000/${resource}?id=${id}&status=${status}`, {
+    method,
+  }).catch();
+  return res.status !== 200 ? { success: false } : { ...(await res.json()) };
 };

@@ -13,3 +13,8 @@ export interface ResponseObject {
   data: CarData[],
   count: number | null,
 }
+
+export interface Engine {
+  velocity: number,
+  distance: number,
+}

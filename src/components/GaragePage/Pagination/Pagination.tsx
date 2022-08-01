@@ -1,9 +1,11 @@
-import React, { useEffect, useState } from 'react';
-import { Button, CarData } from '@/ts/interfaces';
+import React, {
+  useEffect,
+  useRef,
+  useState,
+} from 'react';
+import { CarData } from '@/ts/interfaces';
 import CarSvg from '@/assets/icons/Car.svg';
-import BtnId from '@/ts/enum';
 import { getTotalCount } from '@/utils';
-
 import styles from './Pagination.module.scss';
 
 interface PaginationProps {
@@ -14,6 +16,7 @@ interface PaginationProps {
   changePage: (page: number) => void;
   selectOnClick: (item: CarData) => void;
   removeOnClick: (item: CarData) => void;
+  startOnClick: (id: number, driving: (progress: number, id: number) => void) => void;
 }
 
 function Pagination(
@@ -25,6 +28,7 @@ function Pagination(
     changePage,
     selectOnClick,
     removeOnClick,
+    startOnClick,
   }: PaginationProps,
 ) {
   if (isGarageLoading) {
@@ -35,7 +39,9 @@ function Pagination(
     );
   }
 
+  const carRef = useRef<(HTMLDivElement | null)[]>([]);
   const [totalPages, setTotalPages] = useState(0);
+  const [isStarted, setStarted] = useState<number[]>([]);
 
   useEffect(() => {
     setTotalPages(getTotalCount(totalCars));
@@ -45,22 +51,29 @@ function Pagination(
 
   const onNext = () => changePage(currentPage + 1);
 
-  const [btns] = useState<Button[]>([
-    { id: 1, text: 'Select' },
-    { id: 2, text: 'Remove' },
-    { id: 3, text: 'Start' },
-    { id: 4, text: 'Stop' },
-  ]);
+  const driving = (progress: number, id: number) => {
+    const currElem = carRef.current[id];
 
-  const handleEvent = (currentBtn: Button, currentCar: CarData) => {
-    switch (currentBtn.id) {
-      case BtnId.first:
-        return selectOnClick(currentCar);
-      case BtnId.second:
-        return removeOnClick(currentCar);
-      default:
-        return currentCar;
+    if (currElem) {
+      currElem.style.left = `${progress * 100}%`;
     }
+  };
+
+  const resetOnClick = (car: CarData) => {
+    const currElem = carRef.current[car.id];
+    if (currElem) {
+      currElem.style.left = '0%';
+    }
+  };
+
+  const addStarted = (carId: number) => {
+    startOnClick(carId, driving);
+    setStarted((prev) => [...prev, carId]);
+  };
+
+  const removeStarted = (car: CarData) => {
+    resetOnClick(car);
+    setStarted((prev) => prev.filter((el) => el !== car.id));
   };
 
   return (
@@ -72,19 +85,45 @@ function Pagination(
           <div className={styles.carItem} key={item.id}>
             <h4 className={styles.carItemTitle}>{item.name}</h4>
             <div className={styles.carItemTop}>
-              {btns.map((btn) => (
-                <button
-                  className={styles.carItemTopBtn}
-                  key={btn.id}
-                  type="button"
-                  onClick={() => handleEvent(btn, item)}
-                >
-                  {btn.text}
-                </button>
-              ))}
+              <button
+                className={styles.carItemTopBtn}
+                type="button"
+                onClick={() => selectOnClick(item)}
+              >
+                Select
+              </button>
+              <button
+                className={styles.carItemTopBtn}
+                type="button"
+                onClick={() => removeOnClick(item)}
+              >
+                Remove
+              </button>
+              <button
+                className={styles.carItemTopBtn}
+                type="button"
+                disabled={isStarted.includes(item.id)}
+                onClick={() => addStarted(item.id)}
+              >
+                Start
+              </button>
+              <button
+                className={styles.carItemTopBtn}
+                type="button"
+                disabled={!isStarted.includes(item.id)}
+                onClick={() => removeStarted(item)}
+              >
+                Stop
+              </button>
             </div>
-            <CarSvg className={styles.carItemImg} fill={item.color} />
-            <div className={styles.carItemTrack} />
+            <div className={styles.carItemWrapper}>
+              <div className={styles.carItemTrack}>
+                <div className={styles.carItemImg} ref={(el) => { carRef.current[item.id] = el; }}>
+                  <CarSvg fill={item.color} />
+                </div>
+              </div>
+              <div className={styles.carItemFinish} />
+            </div>
           </div>
         ))}
         <div className={styles.garagePaginationWrapper}>

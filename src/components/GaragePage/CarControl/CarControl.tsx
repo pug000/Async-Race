@@ -3,7 +3,7 @@ import { generateRandomCars } from '@/utils';
 import BtnId from '@/ts/enum';
 import { Button, CarData } from '@/ts/interfaces';
 import {
-  OmitCarDataId,
+  OmitCarData,
   AsyncFn,
 } from '@/ts/types';
 import CarSettings from '@/CarSettings';
@@ -11,7 +11,7 @@ import CarSettings from '@/CarSettings';
 import styles from './CarControl.module.scss';
 
 interface CarControlProps {
-  addNewCar: AsyncFn<CarData | OmitCarDataId, string, void>;
+  addNewCar: AsyncFn<CarData | OmitCarData, string, void>;
   updateSelectedCar: AsyncFn<CarData, string, void>;
   selectedCar: CarData | null;
   currentPage: number;
@@ -36,11 +36,11 @@ function CarControl(
   };
 
   const [newCar, setNewCar] = useState<CarData>(defaultCar);
-  const [btns] = useState([
+  const btns: Button[] = [
     { id: 1, text: 'Race' },
     { id: 2, text: 'Reset' },
     { id: 3, text: 'Generate Cars' },
-  ]);
+  ];
 
   const updateOnSubmit = (item: CarData) => {
     updateSelectedCar(item, 'garage', 'PUT', item.id);
@@ -53,7 +53,7 @@ function CarControl(
   };
 
   const getRandomCars = async () => {
-    const cars: OmitCarDataId[] = generateRandomCars();
+    const cars: OmitCarData[] = generateRandomCars();
     Promise.all(cars.map((car) => addNewCar(car, 'garage', 'POST', currentPage)));
   };
 

@@ -1,18 +1,22 @@
-import React, { useState } from 'react';
+import React, {
+  useState,
+} from 'react';
 import {
   createOrUpdateCar,
   getAllCars,
   getOrRemoveCar,
+  startOrStopEngine,
 } from '@/api';
 import { CarData } from '@/ts/interfaces';
-import { OmitCarDataId, SetState } from '@/ts/types';
+import { OmitCarData, SetState } from '@/ts/types';
 import GaragePage from '@/GaragePage';
+import { getDuration, useAnimationFrame } from '@/utils';
 
 function Main() {
   const [cars, setCars] = useState<CarData[]>([]);
-
   const [isGarageLoading, setGarageLoading] = useState<boolean>(false);
   const [totalCars, setTotalCars] = useState(0);
+  const [animation, setAnimation] = useState<Record<number, number> | null>({});
 
   const getCars = async (resource: string, pages: number) => {
     setGarageLoading(true);
@@ -25,7 +29,7 @@ function Main() {
   };
 
   const addNewCar = async (
-    item: CarData | OmitCarDataId,
+    item: CarData | OmitCarData,
     resource: string,
     method: string,
     currentPage: number,
@@ -67,6 +71,23 @@ function Main() {
     await getCars(resource, currentPage);
   };
 
+  const startEngine = async (
+    resource: string,
+    id: number,
+    driving: (progress: number, id: number) => void,
+    status = 'started',
+    method = 'PATCH',
+  ) => {
+    const { velocity, distance } = await startOrStopEngine(
+      resource,
+      status,
+      id,
+      method,
+    );
+    const duration = getDuration(velocity, distance);
+    useAnimationFrame(resource, method, id, duration, driving, setAnimation);
+  };
+
   return (
     <main className="main">
       <GaragePage
@@ -76,6 +97,7 @@ function Main() {
         removeCar={removeCar}
         selectCar={selectCar}
         updateSelectedCar={updateSelectedCar}
+        startEngine={startEngine}
         totalCars={totalCars}
         isGarageLoading={isGarageLoading}
       />

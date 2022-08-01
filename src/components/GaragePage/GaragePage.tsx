@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { CarData } from '@/ts/interfaces';
 import {
-  OmitCarDataId,
+  OmitCarData,
   AsyncFn,
 } from '@/ts/types';
 import Pagination from '@/Pagination';
@@ -10,10 +10,15 @@ import CarControl from '@/CarControl';
 interface GaragePageProps {
   cars: CarData[];
   getCars: (resource: string, page: number) => Promise<void>;
-  addNewCar: AsyncFn<CarData | OmitCarDataId, string, void>;
+  addNewCar: AsyncFn<CarData | OmitCarData, string, void>;
   removeCar: AsyncFn<CarData, string, void>;
   selectCar: AsyncFn<CarData | null, string, void>;
   updateSelectedCar: AsyncFn<CarData, string, void>;
+  startEngine: (
+    resource: string,
+    id: number,
+    driving: (progress: number, id: number) => void,
+  ) => void;
   totalCars: number;
   isGarageLoading: boolean;
 }
@@ -26,6 +31,7 @@ function GaragePage(
     removeCar,
     selectCar,
     updateSelectedCar,
+    startEngine,
     totalCars,
     isGarageLoading,
   }: GaragePageProps,
@@ -43,6 +49,10 @@ function GaragePage(
   const changePage = (page: number) => setCurrentPage(page);
 
   const selectOnClick = (item: CarData) => selectCar(item, 'garage', 'GET', item.id, setSelectedCar);
+
+  const startOnClick = (id: number, driving: (progress: number, id: number) => void) => {
+    startEngine('engine', id, driving);
+  };
 
   const removeOnClick = (item: CarData) => (selectedCar && selectedCar.id === item.id
     ? setSelectedCar(null)
@@ -66,6 +76,7 @@ function GaragePage(
         changePage={changePage}
         selectOnClick={selectOnClick}
         removeOnClick={removeOnClick}
+        startOnClick={startOnClick}
       />
     </div>
   );
