@@ -8,9 +8,9 @@ import CarSvg from '@/assets/icons/Car.svg';
 import { getTotalCount } from '@/utils';
 import BtnId from '@/ts/enum';
 import FinishFlag from '@/assets/icons/FinishFlag.svg';
-import styles from './Pagination.module.scss';
+import styles from './Garage.module.scss';
 
-interface PaginationProps {
+interface GarageProps {
   cars: CarData[],
   currentPage: number,
   totalCars: number,
@@ -22,7 +22,7 @@ interface PaginationProps {
   resetOnClick: (id: number, reset: (id: number) => void) => void;
 }
 
-function Pagination(
+function Garage(
   {
     cars,
     currentPage,
@@ -33,7 +33,7 @@ function Pagination(
     removeOnClick,
     startOnClick,
     resetOnClick,
-  }: PaginationProps,
+  }: GarageProps,
 ) {
   if (isGarageLoading) {
     return (
@@ -97,8 +97,8 @@ function Pagination(
   return (
     <div className={styles.garage}>
       <h2 className={styles.garageTitle}>{`Garage(${totalCars})`}</h2>
-      <div className={styles.garagePagination}>
-        <h3 className={styles.garagePaginationTitle}>{`Page #${currentPage}`}</h3>
+      <div className={styles.garageContainer}>
+        <h3 className={styles.garageContainerTitle}>{`Page #${currentPage}`}</h3>
         {cars.map((item) => (
           <div className={styles.carItem} key={item.id}>
             <div className={styles.carItemTop}>
@@ -147,9 +147,9 @@ function Pagination(
             </div>
           </div>
         ))}
-        <div className={styles.garagePaginationWrapper}>
+        <div className={styles.garagePagination}>
           <button
-            className={styles.garagePaginationWrapperBtn}
+            className={styles.garagePaginationBtn}
             type="button"
             disabled={currentPage === 1}
             onClick={onPrevious}
@@ -157,7 +157,7 @@ function Pagination(
             Prev
           </button>
           <button
-            className={styles.garagePaginationWrapperBtn}
+            className={styles.garagePaginationBtn}
             type="button"
             disabled={currentPage === totalPages}
             onClick={onNext}
@@ -170,4 +170,4 @@ function Pagination(
   );
 }
 
-export default Pagination;
+export default Garage;

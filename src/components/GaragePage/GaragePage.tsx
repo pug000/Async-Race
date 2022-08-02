@@ -4,7 +4,7 @@ import {
   OmitCarData,
   AsyncFn,
 } from '@/ts/types';
-import Pagination from '@/Pagination';
+import Garage from '@/Garage';
 import CarControl from '@/CarControl';
 
 interface GaragePageProps {
@@ -76,7 +76,7 @@ function GaragePage(
         currentPage={currentPage}
         isDisabled={isDisabled}
       />
-      <Pagination
+      <Garage
         cars={cars}
         currentPage={currentPage}
         totalCars={totalCars}

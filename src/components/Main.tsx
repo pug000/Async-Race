@@ -9,7 +9,7 @@ import {
 } from '@/api';
 import { CarData } from '@/ts/interfaces';
 import { OmitCarData, SetState } from '@/ts/types';
-import GaragePage from '@/GaragePage';
+import GaragePage from '@/components/GaragePage/GaragePage';
 import { getDuration, useAnimationFrame } from '@/utils';
 import WinnersPage from '@/WinnersPage';
 

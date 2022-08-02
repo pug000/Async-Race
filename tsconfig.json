@@ -47,8 +47,8 @@
       "@/CarSettings": [
         "components/GaragePage/CarControl/CarSettings/CarSettings"
       ],
-      "@/Pagination": [
-        "components/GaragePage/Pagination/Pagination"
+      "@/Garage": [
+        "components/GaragePage/Garage/Garage"
       ],
       "@/WinnersPage": [
         "components/WinnersPage/WinnersPage"
