@@ -1,13 +1,15 @@
 import { CarData, Engine, ResponseObject } from '@/ts/interfaces';
 import { OmitCarData } from '@/ts/types';
 
+const baseUrl = 'http://127.0.0.1:3000';
+
 export const getAllCars = async (
   resource: string,
   page: number,
   limit = 7,
 ) => {
   try {
-    const res = await fetch(`http://127.0.0.1:3000/${resource}?_page=${page}&_limit=${limit}`, {
+    const res = await fetch(`${baseUrl}/${resource}?_page=${page}&_limit=${limit}`, {
       method: 'GET',
     });
     const resObj: ResponseObject = {
@@ -26,7 +28,7 @@ export const getOrRemoveCar = async (
   id: number,
 ) => {
   try {
-    const res = await fetch(`http://127.0.0.1:3000/${resource}/${id}`, { method });
+    const res = await fetch(`${baseUrl}/${resource}/${id}`, { method });
     const data: CarData = await res.json();
     return data;
   } catch (err) {
@@ -41,7 +43,7 @@ export const createOrUpdateCar = async (
   id = '',
 ) => {
   try {
-    const res = await fetch(`http://127.0.0.1:3000/${resource}/${id}`, {
+    const res = await fetch(`${baseUrl}/${resource}/${id}`, {
       method,
       body: JSON.stringify(item),
       headers: { 'Content-Type': 'application/json' },
@@ -60,7 +62,7 @@ export const startOrStopEngine = async (
   method: string,
 ) => {
   try {
-    const res = await fetch(`http://127.0.0.1:3000/${resource}?id=${id}&status=${status}`, {
+    const res = await fetch(`${baseUrl}/${resource}?id=${id}&status=${status}`, {
       method,
     });
     const data: Engine = await res.json();
@@ -76,7 +78,7 @@ export const getStatusDrive = async (
   status: string,
   method: string,
 ) => {
-  const res = await fetch(`http://127.0.0.1:3000/${resource}?id=${id}&status=${status}`, {
+  const res = await fetch(`${baseUrl}/${resource}?id=${id}&status=${status}`, {
     method,
   }).catch();
   return res.status !== 200 ? { success: false } : { ...(await res.json()) };

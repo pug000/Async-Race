@@ -88,6 +88,20 @@ function Main() {
     useAnimationFrame(resource, method, id, duration, driving, setAnimation);
   };
 
+  const stopEngine = async (
+    resource: string,
+    id: number,
+    reset: (id: number) => void,
+    status = 'stopped',
+    method = 'PATCH',
+  ) => {
+    await startOrStopEngine(resource, status, id, method);
+    reset(id);
+    if (animation) {
+      cancelAnimationFrame(animation[id]);
+    }
+  };
+
   return (
     <main className="main">
       <GaragePage
@@ -98,6 +112,7 @@ function Main() {
         selectCar={selectCar}
         updateSelectedCar={updateSelectedCar}
         startEngine={startEngine}
+        stopEngine={stopEngine}
         totalCars={totalCars}
         isGarageLoading={isGarageLoading}
       />

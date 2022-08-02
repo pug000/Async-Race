@@ -19,6 +19,7 @@ interface GaragePageProps {
     id: number,
     driving: (progress: number, id: number) => void,
   ) => void;
+  stopEngine: (resource: string, id: number, reset: (id: number) => void) => void;
   totalCars: number;
   isGarageLoading: boolean;
 }
@@ -32,6 +33,7 @@ function GaragePage(
     selectCar,
     updateSelectedCar,
     startEngine,
+    stopEngine,
     totalCars,
     isGarageLoading,
   }: GaragePageProps,
@@ -52,6 +54,10 @@ function GaragePage(
 
   const startOnClick = (id: number, driving: (progress: number, id: number) => void) => {
     startEngine('engine', id, driving);
+  };
+
+  const resetOnClick = async (id: number, reset: (id: number) => void) => {
+    await stopEngine('engine', id, reset);
   };
 
   const removeOnClick = (item: CarData) => (selectedCar && selectedCar.id === item.id
@@ -77,6 +83,7 @@ function GaragePage(
         selectOnClick={selectOnClick}
         removeOnClick={removeOnClick}
         startOnClick={startOnClick}
+        resetOnClick={resetOnClick}
       />
     </div>
   );

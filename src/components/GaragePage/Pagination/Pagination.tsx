@@ -17,6 +17,7 @@ interface PaginationProps {
   selectOnClick: (item: CarData) => void;
   removeOnClick: (item: CarData) => void;
   startOnClick: (id: number, driving: (progress: number, id: number) => void) => void;
+  resetOnClick: (id: number, reset: (id: number) => void) => void;
 }
 
 function Pagination(
@@ -29,6 +30,7 @@ function Pagination(
     selectOnClick,
     removeOnClick,
     startOnClick,
+    resetOnClick,
   }: PaginationProps,
 ) {
   if (isGarageLoading) {
@@ -59,8 +61,8 @@ function Pagination(
     }
   };
 
-  const resetOnClick = (car: CarData) => {
-    const currElem = carRef.current[car.id];
+  const reset = (id: number) => {
+    const currElem = carRef.current[id];
     if (currElem) {
       currElem.style.left = '0%';
     }
@@ -72,7 +74,7 @@ function Pagination(
   };
 
   const removeStarted = (car: CarData) => {
-    resetOnClick(car);
+    resetOnClick(car.id, reset);
     setStarted((prev) => prev.filter((el) => el !== car.id));
   };
 
