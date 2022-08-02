@@ -3,9 +3,11 @@ import React, {
   useRef,
   useState,
 } from 'react';
-import { CarData } from '@/ts/interfaces';
+import { Button, CarData } from '@/ts/interfaces';
 import CarSvg from '@/assets/icons/Car.svg';
 import { getTotalCount } from '@/utils';
+import BtnId from '@/ts/enum';
+import FinishFlag from '@/assets/icons/FinishFlag.svg';
 import styles from './Pagination.module.scss';
 
 interface PaginationProps {
@@ -44,6 +46,10 @@ function Pagination(
   const carRef = useRef<(HTMLDivElement | null)[]>([]);
   const [totalPages, setTotalPages] = useState(0);
   const [isStarted, setStarted] = useState<number[]>([]);
+  const btnsSelect: Button[] = [
+    { id: 1, text: 'Select' },
+    { id: 2, text: 'Update' },
+  ];
 
   useEffect(() => {
     setTotalPages(getTotalCount(totalCars));
@@ -77,6 +83,16 @@ function Pagination(
     resetOnClick(car.id, reset);
     setStarted((prev) => prev.filter((el) => el !== car.id));
   };
+  const handleEvent = (currentBtn: Button, currentCar: CarData) => {
+    switch (currentBtn.id) {
+      case BtnId.first:
+        return selectOnClick(currentCar);
+      case BtnId.second:
+        return removeOnClick(currentCar);
+      default:
+        return currentCar;
+    }
+  };
 
   return (
     <div className={styles.garage}>
@@ -85,46 +101,49 @@ function Pagination(
         <h3 className={styles.garagePaginationTitle}>{`Page #${currentPage}`}</h3>
         {cars.map((item) => (
           <div className={styles.carItem} key={item.id}>
-            <h4 className={styles.carItemTitle}>{item.name}</h4>
             <div className={styles.carItemTop}>
+              {btnsSelect.map((btn) => (
+                <button
+                  className={styles.carItemTopBtn}
+                  key={btn.id}
+                  type="button"
+                  onClick={() => handleEvent(btn, item)}
+                >
+                  {btn.text}
+                </button>
+              ))}
+              <h4 className={styles.carItemTitle}>{item.name}</h4>
+            </div>
+            <div className={styles.carItemWrapper}>
               <button
-                className={styles.carItemTopBtn}
-                type="button"
-                onClick={() => selectOnClick(item)}
-              >
-                Select
-              </button>
-              <button
-                className={styles.carItemTopBtn}
-                type="button"
-                onClick={() => removeOnClick(item)}
-              >
-                Remove
-              </button>
-              <button
-                className={styles.carItemTopBtn}
+                className={styles.carItemWrapperBtn}
                 type="button"
                 disabled={isStarted.includes(item.id)}
                 onClick={() => addStarted(item.id)}
               >
-                Start
+                S
               </button>
               <button
-                className={styles.carItemTopBtn}
+                className={styles.carItemWrapperBtn}
                 type="button"
                 disabled={!isStarted.includes(item.id)}
                 onClick={() => removeStarted(item)}
               >
-                Stop
+                R
               </button>
-            </div>
-            <div className={styles.carItemWrapper}>
-              <div className={styles.carItemTrack}>
-                <div className={styles.carItemImg} ref={(el) => { carRef.current[item.id] = el; }}>
-                  <CarSvg fill={item.color} />
+              <div className={styles.carItemRoad}>
+                <div className={styles.carItemTrack}>
+                  <div
+                    className={styles.carItemImg}
+                    ref={(el) => { carRef.current[item.id] = el; }}
+                  >
+                    <CarSvg fill={item.color} />
+                  </div>
+                </div>
+                <div className={styles.carItemFinish}>
+                  <FinishFlag className={styles.carItemFinishFlag} />
                 </div>
               </div>
-              <div className={styles.carItemFinish} />
             </div>
           </div>
         ))}

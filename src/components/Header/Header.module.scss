@@ -14,8 +14,9 @@
     width: 100%;
 
     &Title {
-      font-size: 20px;
+      font-size: 37px;
       color: #fff;
+      font-family: "Permanent Marker", cursive;
     }
 
     &Wrapper {
@@ -26,15 +27,18 @@
         display: flex;
         justify-content: center;
         align-items: center;
-        border: none;
+        border: 3px solid #fff;
         cursor: pointer;
         padding: 5px 30px;
         border-radius: 7px;
         font-size: 17px;
         transition: 0.3s ease-out;
+        background-color: transparent;
+        color: #fff;
 
         &:hover {
-          background-color: #81e211;
+          border-color: #81e211;
+          color: #81e211;
         }
       }
     }

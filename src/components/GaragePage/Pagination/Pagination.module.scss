@@ -6,13 +6,16 @@
   &Loading {
     display: flex;
     justify-content: center;
+
     &Title {
       font-size: 35px;
+      font-family: "Permanent Marker", cursive;
     }
   }
 
   &Title {
     font-size: 35px;
+    font-family: "Permanent Marker", cursive;
   }
 
   &Pagination {
@@ -24,6 +27,7 @@
       font-size: 23px;
       line-height: 20px;
       margin-bottom: 15px;
+      font-family: "Permanent Marker", cursive;
     }
 
     &Wrapper {
@@ -34,17 +38,24 @@
         display: flex;
         justify-content: center;
         align-items: center;
-        border: none;
+        border: 3px solid #fff;
         cursor: pointer;
-        padding: 0px 10px;
+        padding: 4px 45px;
         border-radius: 7px;
         font-size: 17px;
         transition: 0.3s ease-out;
-        min-width: 125px;
-        height: 25px;
+        height: 30px;
+        background-color: transparent;
+        color: #fff;
 
         &:hover {
-          background-color: #81e211;
+          border-color: #81e211;
+          color: #81e211;
+        }
+
+        &:disabled {
+          border-color: rgb(82, 72, 72);
+          color: rgb(82, 72, 72);
         }
       }
     }
@@ -55,49 +66,93 @@
     flex-direction: column;
 
     &Title {
-      margin-bottom: 10px;
       font-size: 20px;
+      font-family: "Uchen", serif;
     }
 
     &Top {
-      display: grid;
-      grid-template-columns: repeat(2, 100px);
       gap: 10px 10px;
-      margin-bottom: 20px;
+      margin-bottom: 15px;
+      display: flex;
 
       &Btn {
         display: flex;
         justify-content: center;
         align-items: center;
-        border: none;
+        border: 3px solid #fff;
         cursor: pointer;
-        padding: 0px 10px;
+        padding: 4px 25px;
         border-radius: 7px;
         font-size: 17px;
         transition: 0.3s ease-out;
-        height: 25px;
+        background-color: transparent;
+        color: #fff;
 
         &:hover {
-          background-color: #81e211;
+          border-color: #81e211;
+          color: #81e211;
         }
       }
     }
 
     &Wrapper {
-      border-bottom: solid 3px #fff;
       display: flex;
+      align-items: center;
+      gap: 10px;
+
+      &Btn {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        border: 3px solid;
+        cursor: pointer;
+        padding: 4px 10px;
+        border-radius: 7px;
+        font-size: 17px;
+        transition: 0.3s ease-out;
+        background-color: transparent;
+
+        &:nth-child(1) {
+          border-color: rgb(10, 209, 10);
+          color: rgb(10, 209, 10);
+        }
+
+        &:nth-child(2) {
+          border-color: rgb(175, 33, 33);
+          color: rgb(175, 33, 33);
+        }
+
+        &:disabled {
+          border-color: rgb(82, 72, 72);
+          color: rgb(82, 72, 72);
+        }
+      }
+
+      .carItemRoad {
+        border-bottom: 3px solid #fff;
+        display: flex;
+        width: 100%;
+      }
+
       .carItemTrack {
         width: 100%;
       }
 
       .carItemImg {
-        width: 135px;
-        height: 40px;
+        max-width: 135px;
         position: relative;
       }
 
       .carItemFinish {
-        width: 200px;
+        max-width: 155px;
+        width: 100%;
+
+        &Flag {
+          width: 40px;
+          position: relative;
+          transform: translateX(-85%);
+          z-index: -1;
+        }
       }
     }
   }

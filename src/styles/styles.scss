@@ -1,9 +1,18 @@
+@font-face {
+  font-family: "PermanentMarker";
+  src: url("../assets/fonts/PermanentMarker-Regular.ttf") format("tff");
+}
+
+@font-face {
+  font-family: "Uchen";
+  src: url("../assets/fonts/Uchen-Regular.ttf") format("tff");
+}
+
 body {
-  background-color: rgb(30, 29, 34);
+  background-color: rgb(45, 40, 77);
 }
 
 #root {
-  background-color: rgb(30, 29, 34);
   color: #fff;
   padding-bottom: 30px;
 }
@@ -11,7 +20,7 @@ body {
 .main {
   max-width: 1440px;
   margin: 0 auto;
-  padding: 0 50px 0 50px;
+  padding: 0 30px 0 30px;
   display: flex;
   flex-direction: column;
   gap: 30px;
