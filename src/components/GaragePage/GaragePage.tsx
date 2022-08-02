@@ -22,6 +22,7 @@ interface GaragePageProps {
   stopEngine: (resource: string, id: number, reset: (id: number) => void) => void;
   totalCars: number;
   isGarageLoading: boolean;
+  isGaragePage: boolean;
 }
 
 function GaragePage(
@@ -36,6 +37,7 @@ function GaragePage(
     stopEngine,
     totalCars,
     isGarageLoading,
+    isGaragePage,
   }: GaragePageProps,
 ) {
   const [currentPage, setCurrentPage] = useState(1);
@@ -56,8 +58,8 @@ function GaragePage(
     startEngine('engine', id, driving);
   };
 
-  const resetOnClick = async (id: number, reset: (id: number) => void) => {
-    await stopEngine('engine', id, reset);
+  const resetOnClick = (id: number, reset: (id: number) => void) => {
+    stopEngine('engine', id, reset);
   };
 
   const removeOnClick = (item: CarData) => (selectedCar && selectedCar.id === item.id
@@ -65,7 +67,7 @@ function GaragePage(
     : removeCar(item, 'garage', 'DELETE', currentPage));
 
   return (
-    <div className="garage">
+    <div className="garage" style={{ display: isGaragePage ? 'flex' : 'none' }}>
       <CarControl
         addNewCar={addNewCar}
         updateSelectedCar={updateSelectedCar}

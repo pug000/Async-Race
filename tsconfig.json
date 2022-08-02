@@ -50,6 +50,9 @@
       "@/Pagination": [
         "components/GaragePage/Pagination/Pagination"
       ],
+      "@/WinnersPage": [
+        "components/WinnersPage/WinnersPage"
+      ]
     }
   },
   "files": [

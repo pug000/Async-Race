@@ -11,8 +11,17 @@ import { CarData } from '@/ts/interfaces';
 import { OmitCarData, SetState } from '@/ts/types';
 import GaragePage from '@/GaragePage';
 import { getDuration, useAnimationFrame } from '@/utils';
+import WinnersPage from '@/WinnersPage';
 
-function Main() {
+interface MainProps {
+  isGaragePage: boolean;
+}
+
+function Main(
+  {
+    isGaragePage,
+  }: MainProps,
+) {
   const [cars, setCars] = useState<CarData[]>([]);
   const [isGarageLoading, setGarageLoading] = useState<boolean>(false);
   const [totalCars, setTotalCars] = useState(0);
@@ -115,6 +124,10 @@ function Main() {
         stopEngine={stopEngine}
         totalCars={totalCars}
         isGarageLoading={isGarageLoading}
+        isGaragePage={isGaragePage}
+      />
+      <WinnersPage
+        isGaragePage={isGaragePage}
       />
     </main>
   );
