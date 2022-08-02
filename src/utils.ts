@@ -1,13 +1,17 @@
 import { getStatusDrive } from './api';
+import carBrandName from './layout/carBrandName';
+import carModelName from './layout/carModelName';
 import { SetState } from './ts/types';
 
-const generateRandomName = () => Math.random().toString(36).replace(/[^a-z]+/g, '').slice(0, 7);
+const getRandomValue = (item: string[]) => Math.floor(Math.random() * item.length);
 
 const generateRandomColor = () => `#${Math.floor(Math.random() * 16777215).toString(16)}`;
 
+const getRandomName = () => `${carBrandName[getRandomValue(carBrandName)]} ${carModelName[getRandomValue(carModelName)]}`;
+
 export const generateRandomCars = () => new Array(100).fill(null).map(() => (
   {
-    name: generateRandomName(),
+    name: getRandomName(),
     color: generateRandomColor(),
   }
 ));

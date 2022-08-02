@@ -48,7 +48,7 @@ function Garage(
   const [isStarted, setStarted] = useState<number[]>([]);
   const btnsSelect: Button[] = [
     { id: 1, text: 'Select' },
-    { id: 2, text: 'Update' },
+    { id: 2, text: 'Remove' },
   ];
 
   useEffect(() => {
