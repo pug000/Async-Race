@@ -1,42 +1,31 @@
 import React, { useEffect, useState } from 'react';
 import { CarData } from '@/ts/interfaces';
 import {
-  OmitCarData,
   AsyncFn,
 } from '@/ts/types';
 import Garage from '@/Garage';
 import CarControl from '@/CarControl';
 
 interface GaragePageProps {
-  cars: CarData[];
   getCars: (resource: string, page: number) => Promise<void>;
-  addNewCar: AsyncFn<CarData | OmitCarData, string, void>;
   removeCar: AsyncFn<CarData, string, void>;
   selectCar: AsyncFn<CarData | null, string, void>;
-  updateSelectedCar: AsyncFn<CarData, string, void>;
   startEngine: (
     resource: string,
     id: number,
     driving: (progress: number, id: number) => void,
   ) => void;
   stopEngine: (resource: string, id: number, reset: (id: number) => void) => void;
-  totalCars: number;
-  isGarageLoading: boolean;
   isGaragePage: boolean;
 }
 
 function GaragePage(
   {
-    cars,
     getCars,
-    addNewCar,
     removeCar,
     selectCar,
-    updateSelectedCar,
     startEngine,
     stopEngine,
-    totalCars,
-    isGarageLoading,
     isGaragePage,
   }: GaragePageProps,
 ) {
@@ -69,18 +58,13 @@ function GaragePage(
   return (
     <div className="garage" style={{ display: isGaragePage ? 'flex' : 'none' }}>
       <CarControl
-        addNewCar={addNewCar}
-        updateSelectedCar={updateSelectedCar}
         selectedCar={selectedCar || null}
         updateState={(item: CarData | null) => setSelectedCar(item)}
         currentPage={currentPage}
         isDisabled={isDisabled}
       />
       <Garage
-        cars={cars}
         currentPage={currentPage}
-        totalCars={totalCars}
-        isGarageLoading={isGarageLoading}
         changePage={changePage}
         selectOnClick={selectOnClick}
         removeOnClick={removeOnClick}

@@ -1,4 +1,5 @@
 import React, {
+  useContext,
   useEffect,
   useRef,
   useState,
@@ -8,13 +9,11 @@ import CarSvg from '@/assets/icons/Car.svg';
 import { getTotalCount } from '@/utils';
 import BtnId from '@/ts/enum';
 import FinishFlag from '@/assets/icons/FinishFlag.svg';
+import GarageContext from '@/components/Context/GarageContext';
 import styles from './Garage.module.scss';
 
 interface GarageProps {
-  cars: CarData[],
   currentPage: number,
-  totalCars: number,
-  isGarageLoading: boolean,
   changePage: (page: number) => void;
   selectOnClick: (item: CarData) => void;
   removeOnClick: (item: CarData) => void;
@@ -24,10 +23,7 @@ interface GarageProps {
 
 function Garage(
   {
-    cars,
     currentPage,
-    totalCars,
-    isGarageLoading,
     changePage,
     selectOnClick,
     removeOnClick,
@@ -35,6 +31,8 @@ function Garage(
     resetOnClick,
   }: GarageProps,
 ) {
+  const { cars, isGarageLoading, totalCars } = useContext(GarageContext);
+
   if (isGarageLoading) {
     return (
       <div className={styles.garageLoading}>

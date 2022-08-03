@@ -1,18 +1,15 @@
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 import { generateRandomCars } from '@/utils';
 import BtnId from '@/ts/enum';
 import { Button, CarData } from '@/ts/interfaces';
 import {
   OmitCarData,
-  AsyncFn,
 } from '@/ts/types';
 import CarSettings from '@/CarSettings';
-
+import CarControlContext from '@/components/Context/CarControlContext';
 import styles from './CarControl.module.scss';
 
 interface CarControlProps {
-  addNewCar: AsyncFn<CarData | OmitCarData, string, void>;
-  updateSelectedCar: AsyncFn<CarData, string, void>;
   selectedCar: CarData | null;
   currentPage: number;
   updateState: (item: CarData | null) => void;
@@ -21,8 +18,6 @@ interface CarControlProps {
 
 function CarControl(
   {
-    addNewCar,
-    updateSelectedCar,
     selectedCar,
     currentPage,
     updateState,
@@ -34,6 +29,7 @@ function CarControl(
     color: '#ffffff',
     id: 0,
   };
+  const { addNewCar, updateSelectedCar } = useContext(CarControlContext);
 
   const [newCar, setNewCar] = useState<CarData>(defaultCar);
   const btns: Button[] = [

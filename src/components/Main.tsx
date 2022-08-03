@@ -1,4 +1,5 @@
 import React, {
+  useMemo,
   useState,
 } from 'react';
 import {
@@ -12,6 +13,8 @@ import { OmitCarData, SetState } from '@/ts/types';
 import GaragePage from '@/components/GaragePage/GaragePage';
 import { getDuration, useAnimationFrame } from '@/utils';
 import WinnersPage from '@/WinnersPage';
+import GarageContext from './Context/GarageContext';
+import CarControlContext from './Context/CarControlContext';
 
 interface MainProps {
   isGaragePage: boolean;
@@ -111,24 +114,36 @@ function Main(
     }
   };
 
+  const value = useMemo(() => (
+    {
+      cars,
+      isGarageLoading,
+      totalCars,
+    }
+  ), [cars, isGarageLoading, totalCars]);
+
+  const asyncFn = useMemo(() => ({
+    addNewCar,
+    updateSelectedCar,
+  }), [addNewCar, updateSelectedCar]);
+
   return (
     <main className="main">
-      <GaragePage
-        cars={cars}
-        getCars={getCars}
-        addNewCar={addNewCar}
-        removeCar={removeCar}
-        selectCar={selectCar}
-        updateSelectedCar={updateSelectedCar}
-        startEngine={startEngine}
-        stopEngine={stopEngine}
-        totalCars={totalCars}
-        isGarageLoading={isGarageLoading}
-        isGaragePage={isGaragePage}
-      />
-      <WinnersPage
-        isGaragePage={isGaragePage}
-      />
+      <GarageContext.Provider value={value}>
+        <CarControlContext.Provider value={asyncFn}>
+          <GaragePage
+            getCars={getCars}
+            removeCar={removeCar}
+            selectCar={selectCar}
+            startEngine={startEngine}
+            stopEngine={stopEngine}
+            isGaragePage={isGaragePage}
+          />
+          <WinnersPage
+            isGaragePage={isGaragePage}
+          />
+        </CarControlContext.Provider>
+      </GarageContext.Provider>
     </main>
   );
 }
