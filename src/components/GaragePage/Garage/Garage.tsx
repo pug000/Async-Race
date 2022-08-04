@@ -15,7 +15,6 @@ interface GarageProps {
   currentPage: number;
   isStartedEngine: number[];
   carRef: React.MutableRefObject<(HTMLDivElement | null)[]>;
-  changePage: (page: number) => void;
   selectOnClick: (item: CarData) => void;
   removeOnClick: (item: CarData) => void;
   startOnClick: (car: CarData, index: number) => void;
@@ -27,14 +26,18 @@ function Garage(
     currentPage,
     isStartedEngine,
     carRef,
-    changePage,
     selectOnClick,
     removeOnClick,
     startOnClick,
     resetOnClick,
   }: GarageProps,
 ) {
-  const { cars, totalCars, newWinner } = useContext(GarageContext);
+  const {
+    cars,
+    totalCars,
+    newWinner,
+    setCurrentGaragePage,
+  } = useContext(GarageContext);
   const [totalPages, setTotalPages] = useState(0);
   const btnsSelect: Button[] = [
     { id: 1, text: 'Select' },
@@ -114,7 +117,7 @@ function Garage(
             className={styles.garagePaginationBtn}
             type="button"
             disabled={currentPage === 1}
-            onClick={() => changePage(currentPage - 1)}
+            onClick={() => setCurrentGaragePage(currentPage - 1)}
           >
             Prev
           </button>
@@ -122,7 +125,7 @@ function Garage(
             className={styles.garagePaginationBtn}
             type="button"
             disabled={currentPage === totalPages}
-            onClick={() => changePage(currentPage + 1)}
+            onClick={() => setCurrentGaragePage(currentPage + 1)}
           >
             Next
           </button>

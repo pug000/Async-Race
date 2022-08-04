@@ -1,13 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import Car from '@/assets/icons/Car.svg';
-import { SetState, WinnerWithCar } from '@/ts/types';
+import { SetState } from '@/ts/types';
 import { getTotalCount } from '@/utils';
+import { Winner } from '@/ts/interfaces';
 import styles from './WinnersPage.module.scss';
 
 interface WinnersPageProps {
   isGaragePage: boolean;
   getWinners: (resource: string, pages: number) => void;
-  winners: WinnerWithCar[];
+  winners: Winner[];
   totalWinners: number;
   currentPage: number;
   setCurrentPage: SetState<number>;
@@ -49,16 +50,17 @@ function WinnersPage(
               id,
               wins,
               time,
-              car,
+              name,
+              color,
             },
             index
           ) => (
             <tr key={id}>
               <th>{index + 1}</th>
               <th>
-                <Car className={styles.winnersCar} fill={car.color} />
+                <Car className={styles.winnersCar} fill={color} />
               </th>
-              <th>{car.name}</th>
+              <th>{name}</th>
               <th>{wins}</th>
               <th>{time}</th>
             </tr>

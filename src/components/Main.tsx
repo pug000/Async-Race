@@ -13,8 +13,8 @@ import {
   saveWinner,
   getAllWinners,
 } from '@/api';
-import { CarData, NewWinner } from '@/ts/interfaces';
-import { OmitCarData, SetState, WinnerWithCar } from '@/ts/types';
+import { CarData, Winner } from '@/ts/interfaces';
+import { NewWinner, OmitCarData, SetState } from '@/ts/types';
 import GaragePage from '@/GaragePage';
 import { getDuration, useAnimationFrame } from '@/utils';
 import WinnersPage from '@/WinnersPage';
@@ -31,9 +31,10 @@ function Main(
   }: MainProps,
 ) {
   const [cars, setCars] = useState<CarData[]>([]);
-  const [winners, setWinners] = useState<WinnerWithCar[]>([]);
+  const [winners, setWinners] = useState<Winner[]>([]);
   const [totalCars, setTotalCars] = useState(0);
   const [totalWinners, setTotalWinners] = useState(0);
+  const [currentGaragePage, setCurrentGaragePage] = useState(1);
   const [currentWinnersPage, setCurrentWinnersPage] = useState(1);
   const [animation, setAnimation] = useState<Record<number, number> | null>({});
   const [newWinner, setNewWinner] = useState<NewWinner | void>();
@@ -167,8 +168,9 @@ function Main(
       cars,
       totalCars,
       newWinner,
+      setCurrentGaragePage,
     }
-  ), [cars, totalCars, newWinner]);
+  ), [cars, totalCars, newWinner, setCurrentGaragePage]);
 
   const carControl = useMemo(() => ({
     cars,
@@ -188,6 +190,7 @@ function Main(
             startEngine={startEngine}
             stopEngine={stopEngine}
             isGaragePage={isGaragePage}
+            currentPage={currentGaragePage}
           />
           <WinnersPage
             isGaragePage={isGaragePage}

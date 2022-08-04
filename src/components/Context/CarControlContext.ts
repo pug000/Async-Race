@@ -1,5 +1,5 @@
-import { CarData, NewWinner } from '@/ts/interfaces';
-import { AsyncFn, OmitCarData } from '@/ts/types';
+import { CarData } from '@/ts/interfaces';
+import { AsyncFn, NewWinner, OmitCarData } from '@/ts/types';
 import { createContext } from 'react';
 
 interface CarContorlContextProps {

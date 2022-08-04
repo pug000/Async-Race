@@ -1,4 +1,4 @@
-import { CarData, ResponseObject, Winner } from './interfaces';
+import { CarData, Winner } from './interfaces';
 
 export type SetState<T> = React.Dispatch<React.SetStateAction<T>>;
 
@@ -16,4 +16,4 @@ export type AsyncFn<T, S, R> = (
 
 export type WinnerWithCar = Winner & { car: CarData };
 
-export type MergeResponseObject = Omit<ResponseObject, 'data'> & { data: WinnerWithCar[] };
+export type NewWinner = Omit<Winner, 'wins' | 'color'>;

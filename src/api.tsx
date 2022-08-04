@@ -1,10 +1,11 @@
 import {
   CarData,
   Engine,
-  ResponseObject,
+  ResponseCarData,
+  ResponseWinner,
   Winner,
 } from '@/ts/interfaces';
-import { MergeResponseObject, SetState } from './ts/types';
+import { SetState } from './ts/types';
 
 const baseUrl = 'http://localhost:3000';
 
@@ -17,7 +18,7 @@ export const getAllCars = async (
     const res = await fetch(`${baseUrl}/${resource}?_page=${page}&_limit=${limit}`, {
       method: 'GET',
     });
-    const resObj: ResponseObject = {
+    const resObj: ResponseCarData = {
       data: await res.json(),
       count: Number(res.headers.get('X-Total-Count')),
     };
@@ -50,11 +51,14 @@ export const getAllWinners = async (
     const res = await fetch(`${baseUrl}/${resource}?_page=${page}&_limit=${limit}`, {
       method: 'GET',
     });
-    const winners: Winner[] = await res.json();
-    const data = await Promise.all(winners
-      .map(async (winner) => ({ ...winner, car: (await getCarOrWinner<CarData>('garage', 'GET', winner.id)) })));
+    const winners: Omit<Winner[], 'name' | 'color'> = await res.json();
+    const data: Winner[] = await Promise.all(winners
+      .map(async (winner) => {
+        const { name, color } = (await getCarOrWinner<CarData>('garage', 'GET', winner.id));
+        return { ...winner, name, color };
+      }));
 
-    const resObj: MergeResponseObject = {
+    const resObj: ResponseWinner = {
       data,
       count: Number(res.headers.get('X-Total-Count')),
     };

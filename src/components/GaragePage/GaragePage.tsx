@@ -25,6 +25,7 @@ interface GaragePageProps {
     setStartedEngine: SetState<number[]>,
   ) => void;
   isGaragePage: boolean;
+  currentPage: number;
 }
 
 function GaragePage(
@@ -35,9 +36,9 @@ function GaragePage(
     startEngine,
     stopEngine,
     isGaragePage,
+    currentPage,
   }: GaragePageProps,
 ) {
-  const [currentPage, setCurrentPage] = useState(1);
   const [isDisabled, setDisabled] = useState<boolean>(true);
   const [selectedCar, setSelectedCar] = useState<CarData | null>(null);
   const [isStartedEngine, setStartedEngine] = useState<number[]>([]);
@@ -85,7 +86,6 @@ function GaragePage(
       <Garage
         isStartedEngine={isStartedEngine}
         currentPage={currentPage}
-        changePage={(page: number) => setCurrentPage(page)}
         selectOnClick={selectOnClick}
         removeOnClick={removeOnClick}
         startOnClick={startOnClick}

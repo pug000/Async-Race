@@ -10,9 +10,13 @@ export interface Button {
   isDisabled?: boolean,
 }
 
-export interface ResponseObject {
+export interface ResponseCarData {
   data: CarData[],
   count: number | null,
+}
+
+export interface ResponseWinner extends Omit<ResponseCarData, 'data'> {
+  data: Winner[],
 }
 
 export interface Engine {
@@ -20,12 +24,7 @@ export interface Engine {
   distance: number,
 }
 
-export interface Winner {
-  id: number,
+export interface Winner extends CarData {
   wins: number,
   time: number,
-}
-
-export interface NewWinner extends Omit<Winner, 'wins'> {
-  name: string,
 }
