@@ -1,7 +1,7 @@
 import { CarData, Engine, ResponseObject } from '@/ts/interfaces';
 import { OmitCarData } from '@/ts/types';
 
-const baseUrl = 'http://127.0.0.1:3000';
+const baseUrl = 'http://localhost:3000';
 
 export const getAllCars = async (
   resource: string,

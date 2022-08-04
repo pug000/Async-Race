@@ -1,16 +1,16 @@
-import { CarData } from '@/ts/interfaces';
+import { CarData, Winner } from '@/ts/interfaces';
 import { createContext } from 'react';
 
 interface GarageContextProps {
   cars: CarData[];
-  isGarageLoading: boolean;
   totalCars: number;
+  winner: Winner | void;
 }
 
 const defaultValue = {
   cars: [],
-  isGarageLoading: false,
   totalCars: 0,
+  winner: undefined,
 };
 
 const GarageContext = createContext<GarageContextProps>(defaultValue);

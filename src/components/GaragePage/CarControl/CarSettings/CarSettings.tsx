@@ -7,6 +7,7 @@ interface CarSettingsProps {
   text: string;
   itemCar: CarData | null;
   isDisabled: boolean;
+  isRaceStarted: boolean;
   onChangeName: EventHandler<React.ChangeEvent<HTMLInputElement>, void>;
   onChangeColor: EventHandler<React.ChangeEvent<HTMLInputElement>, void>;
   onSubmit: (item: CarData) => void;
@@ -17,6 +18,7 @@ function CarSettings(
     text,
     itemCar,
     isDisabled,
+    isRaceStarted,
     onChangeName,
     onChangeColor,
     onSubmit,
@@ -28,21 +30,21 @@ function CarSettings(
       <input
         className={styles.settingsTopWrapperTextInput}
         type="text"
-        disabled={!!isDisabled}
+        disabled={!!isDisabled || isRaceStarted}
         value={itemCar ? itemCar.name : ''}
         onChange={onChangeName}
       />
       <input
         className={styles.settingsTopWrapperColorInput}
         type="color"
-        disabled={!!isDisabled}
+        disabled={!!isDisabled || isRaceStarted}
         value={itemCar ? itemCar.color : '#ffffff'}
         onChange={onChangeColor}
       />
       <button
         className={styles.settingsTopWrapperBtn}
         type="button"
-        disabled={!!isDisabled}
+        disabled={!!isDisabled || isRaceStarted}
         onClick={() => (itemCar ? handleEvent(itemCar) : null)}
       >
         {text}

@@ -7,6 +7,7 @@ export interface CarData {
 export interface Button {
   id: number,
   text: string,
+  isDisabled?: boolean,
 }
 
 export interface ResponseObject {
@@ -17,4 +18,10 @@ export interface ResponseObject {
 export interface Engine {
   velocity: number,
   distance: number,
+}
+
+export interface Winner {
+  name: string,
+  id: number,
+  duration: number,
 }

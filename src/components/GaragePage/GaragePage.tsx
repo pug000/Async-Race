@@ -1,7 +1,7 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { CarData } from '@/ts/interfaces';
 import {
-  AsyncFn,
+  AsyncFn, SetState,
 } from '@/ts/types';
 import Garage from '@/Garage';
 import CarControl from '@/CarControl';
@@ -12,10 +12,18 @@ interface GaragePageProps {
   selectCar: AsyncFn<CarData | null, string, void>;
   startEngine: (
     resource: string,
-    id: number,
+    car: CarData,
+    index: number,
     driving: (progress: number, id: number) => void,
+    setStartedEngine: SetState<number[]>,
   ) => void;
-  stopEngine: (resource: string, id: number, reset: (id: number) => void) => void;
+  stopEngine: (
+    resource: string,
+    id: number,
+    index: number,
+    reset: (id: number) => void,
+    setStartedEngine: SetState<number[]>,
+  ) => void;
   isGaragePage: boolean;
 }
 
@@ -32,6 +40,8 @@ function GaragePage(
   const [currentPage, setCurrentPage] = useState(1);
   const [isDisabled, setDisabled] = useState<boolean>(true);
   const [selectedCar, setSelectedCar] = useState<CarData | null>(null);
+  const [isStartedEngine, setStartedEngine] = useState<number[]>([]);
+  const carRef = useRef<(HTMLDivElement | null)[]>([]);
 
   useEffect(() => {
     getCars('garage', currentPage);
@@ -43,13 +53,24 @@ function GaragePage(
 
   const selectOnClick = (item: CarData) => selectCar(item, 'garage', 'GET', item.id, setSelectedCar);
 
-  const startOnClick = (id: number, driving: (progress: number, id: number) => void) => {
-    startEngine('engine', id, driving);
+  const driving = (progress: number, index: number) => {
+    const currElem = carRef.current[index];
+
+    if (currElem) {
+      currElem.style.left = `${progress * 100}%`;
+    }
   };
 
-  const resetOnClick = (id: number, reset: (id: number) => void) => {
-    stopEngine('engine', id, reset);
+  const reset = (index: number) => {
+    const currElem = carRef.current[index];
+    if (currElem) {
+      currElem.style.left = '0%';
+    }
   };
+
+  const startOnClick = async (car: CarData, index: number) => startEngine('engine', car, index, driving, setStartedEngine);
+
+  const resetOnClick = (id: number, index: number) => stopEngine('engine', id, index, reset, setStartedEngine);
 
   const removeOnClick = (item: CarData) => (selectedCar && selectedCar.id === item.id
     ? setSelectedCar(null)
@@ -62,14 +83,18 @@ function GaragePage(
         updateState={(item: CarData | null) => setSelectedCar(item)}
         currentPage={currentPage}
         isDisabled={isDisabled}
+        startOnClick={startOnClick}
+        resetOnClick={resetOnClick}
       />
       <Garage
+        isStartedEngine={isStartedEngine}
         currentPage={currentPage}
         changePage={changePage}
         selectOnClick={selectOnClick}
         removeOnClick={removeOnClick}
         startOnClick={startOnClick}
         resetOnClick={resetOnClick}
+        carRef={carRef}
       />
     </div>
   );

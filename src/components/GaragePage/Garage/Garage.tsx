@@ -1,7 +1,6 @@
 import React, {
   useContext,
   useEffect,
-  useRef,
   useState,
 } from 'react';
 import { Button, CarData } from '@/ts/interfaces';
@@ -13,17 +12,21 @@ import GarageContext from '@/components/Context/GarageContext';
 import styles from './Garage.module.scss';
 
 interface GarageProps {
-  currentPage: number,
+  currentPage: number;
+  isStartedEngine: number[];
+  carRef: React.MutableRefObject<(HTMLDivElement | null)[]>;
   changePage: (page: number) => void;
   selectOnClick: (item: CarData) => void;
   removeOnClick: (item: CarData) => void;
-  startOnClick: (id: number, driving: (progress: number, id: number) => void) => void;
-  resetOnClick: (id: number, reset: (id: number) => void) => void;
+  startOnClick: (car: CarData, index: number) => void;
+  resetOnClick: (id: number, index: number) => void;
 }
 
 function Garage(
   {
     currentPage,
+    isStartedEngine,
+    carRef,
     changePage,
     selectOnClick,
     removeOnClick,
@@ -31,23 +34,14 @@ function Garage(
     resetOnClick,
   }: GarageProps,
 ) {
-  const { cars, isGarageLoading, totalCars } = useContext(GarageContext);
-
-  if (isGarageLoading) {
-    return (
-      <div className={styles.garageLoading}>
-        <h2 className={styles.garageLoadingTitle}>Loading in progress...</h2>
-      </div>
-    );
-  }
-
-  const carRef = useRef<(HTMLDivElement | null)[]>([]);
+  const { cars, totalCars, winner } = useContext(GarageContext);
   const [totalPages, setTotalPages] = useState(0);
-  const [isStarted, setStarted] = useState<number[]>([]);
   const btnsSelect: Button[] = [
     { id: 1, text: 'Select' },
     { id: 2, text: 'Remove' },
   ];
+
+  const ref = carRef.current;
 
   useEffect(() => {
     setTotalPages(getTotalCount(totalCars));
@@ -57,30 +51,6 @@ function Garage(
 
   const onNext = () => changePage(currentPage + 1);
 
-  const driving = (progress: number, id: number) => {
-    const currElem = carRef.current[id];
-
-    if (currElem) {
-      currElem.style.left = `${progress * 100}%`;
-    }
-  };
-
-  const reset = (id: number) => {
-    const currElem = carRef.current[id];
-    if (currElem) {
-      currElem.style.left = '0%';
-    }
-  };
-
-  const addStarted = (carId: number) => {
-    startOnClick(carId, driving);
-    setStarted((prev) => [...prev, carId]);
-  };
-
-  const removeStarted = (car: CarData) => {
-    resetOnClick(car.id, reset);
-    setStarted((prev) => prev.filter((el) => el !== car.id));
-  };
   const handleEvent = (currentBtn: Button, currentCar: CarData) => {
     switch (currentBtn.id) {
       case BtnId.first:
@@ -97,7 +67,7 @@ function Garage(
       <h2 className={styles.garageTitle}>{`Garage(${totalCars})`}</h2>
       <div className={styles.garageContainer}>
         <h3 className={styles.garageContainerTitle}>{`Page #${currentPage}`}</h3>
-        {cars.map((item) => (
+        {cars.map((item, i) => (
           <div className={styles.carItem} key={item.id}>
             <div className={styles.carItemTop}>
               {btnsSelect.map((btn) => (
@@ -116,16 +86,16 @@ function Garage(
               <button
                 className={styles.carItemWrapperBtn}
                 type="button"
-                disabled={isStarted.includes(item.id)}
-                onClick={() => addStarted(item.id)}
+                disabled={isStartedEngine.includes(item.id)}
+                onClick={() => startOnClick(item, i)}
               >
                 S
               </button>
               <button
                 className={styles.carItemWrapperBtn}
                 type="button"
-                disabled={!isStarted.includes(item.id)}
-                onClick={() => removeStarted(item)}
+                disabled={!isStartedEngine.includes(item.id)}
+                onClick={() => resetOnClick(item.id, i)}
               >
                 R
               </button>
@@ -133,7 +103,7 @@ function Garage(
                 <div className={styles.carItemTrack}>
                   <div
                     className={styles.carItemImg}
-                    ref={(el) => { carRef.current[item.id] = el; }}
+                    ref={(el) => { ref[i] = el; }}
                   >
                     <CarSvg fill={item.color} />
                   </div>

@@ -27,6 +27,7 @@ export const useAnimationFrame = async (
   resource: string,
   method: string,
   id: number,
+  index: number,
   duration: number,
   driving: (progress: number, id: number) => void,
   setState: SetState<Record<number, number> | null>,
@@ -40,7 +41,7 @@ export const useAnimationFrame = async (
       timeFraction = 1;
     }
 
-    driving(timeFraction, id);
+    driving(timeFraction, index);
 
     if (timeFraction < 1) {
       map[id] = requestAnimationFrame(animate);
@@ -51,9 +52,11 @@ export const useAnimationFrame = async (
 
   requestAnimationFrame(animate);
 
-  const { success } = await getStatusDrive(resource, id, 'drive', method);
+  const { success }: { success: boolean } = await getStatusDrive(resource, id, 'drive', method);
 
-  if (success !== 200) {
+  if (!success) {
     cancelAnimationFrame(map[id]);
   }
+
+  return success;
 };
