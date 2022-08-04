@@ -16,7 +16,7 @@ export const generateRandomCars = () => new Array(100).fill(null).map(() => (
   }
 ));
 
-export const getTotalCount = (totalCount: number, limit = 7) => Math.ceil(totalCount / limit);
+export const getTotalCount = (totalCount: number, limit: number) => Math.ceil(totalCount / limit);
 
 export const getDuration = (
   velocity: number,

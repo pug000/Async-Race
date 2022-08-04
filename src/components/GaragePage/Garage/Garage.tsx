@@ -43,13 +43,7 @@ function Garage(
 
   const ref = carRef.current;
 
-  useEffect(() => {
-    setTotalPages(getTotalCount(totalCars));
-  }, [totalCars]);
-
-  const onPrevious = () => changePage(currentPage - 1);
-
-  const onNext = () => changePage(currentPage + 1);
+  useEffect(() => setTotalPages(getTotalCount(totalCars, 7)), [totalCars]);
 
   const handleEvent = (currentBtn: Button, currentCar: CarData) => {
     switch (currentBtn.id) {
@@ -120,7 +114,7 @@ function Garage(
             className={styles.garagePaginationBtn}
             type="button"
             disabled={currentPage === 1}
-            onClick={onPrevious}
+            onClick={() => changePage(currentPage - 1)}
           >
             Prev
           </button>
@@ -128,7 +122,7 @@ function Garage(
             className={styles.garagePaginationBtn}
             type="button"
             disabled={currentPage === totalPages}
-            onClick={onNext}
+            onClick={() => changePage(currentPage + 1)}
           >
             Next
           </button>
@@ -137,7 +131,7 @@ function Garage(
       {!!newWinner && (
         <div className={styles.popupNotify}>
           <div className={styles.popupNotifyContainer}>
-            <h4 className={styles.popupNotifyContainerTitle}>{`${newWinner.name} went first (${newWinner.time})s!`}</h4>
+            <h4 className={styles.popupNotifyContainerTitle}>{`${newWinner.name} went first (${newWinner.time}s)!`}</h4>
           </div>
         </div>
       )}

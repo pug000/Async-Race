@@ -1,20 +1,38 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import Car from '@/assets/icons/Car.svg';
+import { SetState, WinnerWithCar } from '@/ts/types';
+import { getTotalCount } from '@/utils';
 import styles from './WinnersPage.module.scss';
 
 interface WinnersPageProps {
   isGaragePage: boolean;
+  getWinners: (resource: string, pages: number) => void;
+  winners: WinnerWithCar[];
+  totalWinners: number;
+  currentPage: number;
+  setCurrentPage: SetState<number>;
 }
 
 function WinnersPage(
   {
     isGaragePage,
+    getWinners,
+    winners,
+    totalWinners,
+    currentPage,
+    setCurrentPage,
   }: WinnersPageProps,
 ) {
+  const [totalPages, setTotalPages] = useState(0);
+
+  useEffect(() => { getWinners('winners', currentPage); }, [currentPage]);
+
+  useEffect(() => setTotalPages(getTotalCount(totalWinners, 10)), [totalWinners]);
+
   return (
     <div className={styles.winners} style={{ display: !isGaragePage ? 'flex' : 'none' }}>
-      <h2 className={styles.winnersTitleWinners}>Winners</h2>
-      <h3 className={styles.winnersTitlePage}>Page</h3>
+      <h2 className={styles.winnersTitleWinners}>{`Winners (${totalWinners})`}</h2>
+      <h3 className={styles.winnersTitlePage}>{`Page #${currentPage}`}</h3>
       <table className={styles.winnersTable}>
         <thead className={styles.winnersTableHeader}>
           <tr>
@@ -26,20 +44,44 @@ function WinnersPage(
           </tr>
         </thead>
         <tbody>
-          <tr>
-            <th>1</th>
-            <th>
-              <Car className={styles.winnersCar} fill="#fffff" />
-            </th>
-            <th>Tesla</th>
-            <th>1</th>
-            <th>3.00</th>
-          </tr>
+          {winners.map((
+            {
+              id,
+              wins,
+              time,
+              car,
+            },
+            index
+          ) => (
+            <tr key={id}>
+              <th>{index + 1}</th>
+              <th>
+                <Car className={styles.winnersCar} fill={car.color} />
+              </th>
+              <th>{car.name}</th>
+              <th>{wins}</th>
+              <th>{time}</th>
+            </tr>
+          ))}
         </tbody>
       </table>
       <div className={styles.winnersPagination}>
-        <button className={styles.winnersPaginationBtn} type="button">prev</button>
-        <button className={styles.winnersPaginationBtn} type="button">next</button>
+        <button
+          className={styles.winnersPaginationBtn}
+          type="button"
+          disabled={currentPage === 1}
+          onClick={() => setCurrentPage(currentPage - 1)}
+        >
+          Prev
+        </button>
+        <button
+          className={styles.winnersPaginationBtn}
+          type="button"
+          disabled={currentPage === totalPages}
+          onClick={() => setCurrentPage(currentPage + 1)}
+        >
+          Next
+        </button>
       </div>
     </div>
   );

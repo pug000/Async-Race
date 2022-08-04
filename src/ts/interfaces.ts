@@ -21,7 +21,6 @@ export interface Engine {
 }
 
 export interface Winner {
-  name: string,
   id: number,
   wins: number,
   time: number,

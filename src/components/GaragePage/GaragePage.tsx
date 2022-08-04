@@ -43,13 +43,9 @@ function GaragePage(
   const [isStartedEngine, setStartedEngine] = useState<number[]>([]);
   const carRef = useRef<(HTMLDivElement | null)[]>([]);
 
-  useEffect(() => {
-    getCars('garage', currentPage);
-  }, [currentPage]);
+  useEffect(() => { getCars('garage', currentPage); }, [currentPage]);
 
   useEffect(() => (selectedCar ? setDisabled(false) : setDisabled(true)), [selectedCar]);
-
-  const changePage = (page: number) => setCurrentPage(page);
 
   const selectOnClick = (item: CarData) => selectCar(item, 'garage', 'GET', item.id, setSelectedCar);
 
@@ -89,7 +85,7 @@ function GaragePage(
       <Garage
         isStartedEngine={isStartedEngine}
         currentPage={currentPage}
-        changePage={changePage}
+        changePage={(page: number) => setCurrentPage(page)}
         selectOnClick={selectOnClick}
         removeOnClick={removeOnClick}
         startOnClick={startOnClick}

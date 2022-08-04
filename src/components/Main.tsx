@@ -11,9 +11,10 @@ import {
   updateCarOrWinner,
   getCarOrWinner,
   saveWinner,
+  getAllWinners,
 } from '@/api';
-import { CarData, NewWinner, Winner } from '@/ts/interfaces';
-import { OmitCarData, SetState } from '@/ts/types';
+import { CarData, NewWinner } from '@/ts/interfaces';
+import { OmitCarData, SetState, WinnerWithCar } from '@/ts/types';
 import GaragePage from '@/GaragePage';
 import { getDuration, useAnimationFrame } from '@/utils';
 import WinnersPage from '@/WinnersPage';
@@ -30,7 +31,10 @@ function Main(
   }: MainProps,
 ) {
   const [cars, setCars] = useState<CarData[]>([]);
+  const [winners, setWinners] = useState<WinnerWithCar[]>([]);
   const [totalCars, setTotalCars] = useState(0);
+  const [totalWinners, setTotalWinners] = useState(0);
+  const [currentWinnersPage, setCurrentWinnersPage] = useState(1);
   const [animation, setAnimation] = useState<Record<number, number> | null>({});
   const [newWinner, setNewWinner] = useState<NewWinner | void>();
 
@@ -42,7 +46,15 @@ function Main(
     }
   };
 
-  const getNewWinner = (item: Winner | void) => setNewWinner(item);
+  const getWinners = async (resource: string, pages: number) => {
+    const res = await getAllWinners(resource, pages);
+    setWinners(res.data);
+    if (res.count) {
+      setTotalWinners(res.count);
+    }
+  };
+
+  const getNewWinner = (item: NewWinner | void) => setNewWinner(item);
 
   const addNewCar = async (
     item: CarData | OmitCarData,
@@ -55,11 +67,12 @@ function Main(
   };
 
   useEffect(() => {
-    (async (resource: string) => {
+    (async (resource: string, currentPage: number) => {
       if (newWinner) {
         await saveWinner<NewWinner>(resource, newWinner.id, newWinner.time, setNewWinner);
+        await getWinners(resource, currentPage);
       }
-    })('winners');
+    })('winners', currentWinnersPage);
   }, [newWinner]);
 
   const selectCar = async (
@@ -122,7 +135,7 @@ function Main(
       setAnimation,
     );
 
-    const result: Omit<Winner, 'wins'> = {
+    const result: Omit<NewWinner, 'wins'> = {
       name: car.name,
       id: car.id,
       time: Number((duration / 1000).toFixed(2)),
@@ -178,6 +191,11 @@ function Main(
           />
           <WinnersPage
             isGaragePage={isGaragePage}
+            getWinners={getWinners}
+            winners={winners}
+            totalWinners={totalWinners}
+            currentPage={currentWinnersPage}
+            setCurrentPage={setCurrentWinnersPage}
           />
         </CarControlContext.Provider>
       </GarageContext.Provider>

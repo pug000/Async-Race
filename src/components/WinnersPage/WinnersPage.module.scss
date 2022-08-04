@@ -56,6 +56,11 @@
         border-color: #81e211;
         color: #81e211;
       }
+
+      &:disabled {
+        border-color: rgb(82, 72, 72);
+        color: rgb(82, 72, 72);
+      }
     }
   }
 }
