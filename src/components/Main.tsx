@@ -1,14 +1,18 @@
 import React, {
+  useEffect,
   useMemo,
   useState,
 } from 'react';
 import {
-  createOrUpdateCar,
+  createCarOrWinner,
   getAllCars,
-  getOrRemoveCar,
+  removeCarOrWinner,
   startOrStopEngine,
+  updateCarOrWinner,
+  getCarOrWinner,
+  saveWinner,
 } from '@/api';
-import { CarData, Winner } from '@/ts/interfaces';
+import { CarData, NewWinner, Winner } from '@/ts/interfaces';
 import { OmitCarData, SetState } from '@/ts/types';
 import GaragePage from '@/GaragePage';
 import { getDuration, useAnimationFrame } from '@/utils';
@@ -28,7 +32,7 @@ function Main(
   const [cars, setCars] = useState<CarData[]>([]);
   const [totalCars, setTotalCars] = useState(0);
   const [animation, setAnimation] = useState<Record<number, number> | null>({});
-  const [winner, setWinner] = useState<Winner | void>();
+  const [newWinner, setNewWinner] = useState<NewWinner | void>();
 
   const getCars = async (resource: string, pages: number) => {
     const res = await getAllCars(resource, pages);
@@ -38,7 +42,7 @@ function Main(
     }
   };
 
-  const getWinner = (item: Winner | void) => setWinner(item);
+  const getNewWinner = (item: Winner | void) => setNewWinner(item);
 
   const addNewCar = async (
     item: CarData | OmitCarData,
@@ -46,9 +50,17 @@ function Main(
     method: string,
     currentPage: number,
   ) => {
-    await createOrUpdateCar(resource, method, item);
+    await createCarOrWinner(resource, method, item);
     await getCars(resource, currentPage);
   };
+
+  useEffect(() => {
+    (async (resource: string) => {
+      if (newWinner) {
+        await saveWinner<NewWinner>(resource, newWinner.id, newWinner.time, setNewWinner);
+      }
+    })('winners');
+  }, [newWinner]);
 
   const selectCar = async (
     item: CarData | null,
@@ -58,7 +70,7 @@ function Main(
     setState: SetState<CarData | null> | undefined,
   ) => {
     if (item && setState) {
-      const car = await getOrRemoveCar(resource, method, id);
+      const car = await getCarOrWinner<CarData>(resource, method, id);
       setState(car);
     }
   };
@@ -69,7 +81,7 @@ function Main(
     method: string,
     id: number,
   ) => {
-    const car = await createOrUpdateCar(resource, method, item, String(id));
+    const car = await updateCarOrWinner(resource, method, item, id);
     setCars(cars.map((el) => (el.id === car.id ? car : el)));
   };
 
@@ -79,7 +91,7 @@ function Main(
     method: string,
     currentPage: number,
   ) => {
-    await getOrRemoveCar(resource, method, item.id);
+    await removeCarOrWinner(resource, method, item.id);
     await getCars(resource, currentPage);
   };
 
@@ -110,12 +122,10 @@ function Main(
       setAnimation,
     );
 
-    const { id, name } = car;
-
-    const result: Winner = {
-      name,
-      id,
-      duration: Number((duration / 1000).toFixed(2)),
+    const result: Omit<Winner, 'wins'> = {
+      name: car.name,
+      id: car.id,
+      time: Number((duration / 1000).toFixed(2)),
     };
 
     return success ? result : Promise.reject();
@@ -143,16 +153,16 @@ function Main(
     {
       cars,
       totalCars,
-      winner,
+      newWinner,
     }
-  ), [cars, totalCars, winner]);
+  ), [cars, totalCars, newWinner]);
 
   const carControl = useMemo(() => ({
     cars,
     addNewCar,
     updateSelectedCar,
-    getWinner,
-  }), [cars, addNewCar, updateSelectedCar, getWinner]);
+    getNewWinner,
+  }), [cars, addNewCar, updateSelectedCar, getNewWinner]);
 
   return (
     <main className="main">

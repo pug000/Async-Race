@@ -37,7 +37,7 @@ function CarControl(
     cars,
     addNewCar,
     updateSelectedCar,
-    getWinner,
+    getNewWinner,
   } = useContext(CarControlContext);
 
   const [newCar, setNewCar] = useState<CarData>(defaultCar);
@@ -68,7 +68,7 @@ function CarControl(
 
   const startRace = () => Promise.any(cars.map((car, i) => startOnClick(car, i)))
     .then((data) => {
-      getWinner(data);
+      getNewWinner(data);
     });
 
   const resetRace = () => Promise.all(cars.map((car, i) => resetOnClick(car.id, i)));

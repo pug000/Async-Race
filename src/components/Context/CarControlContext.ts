@@ -6,14 +6,14 @@ interface CarContorlContextProps {
   cars: CarData[];
   addNewCar: AsyncFn<CarData | OmitCarData, string, void>;
   updateSelectedCar: AsyncFn<CarData, string, void>;
-  getWinner: (item: Winner | void) => void;
+  getNewWinner: (item: Winner | void) => void;
 }
 
 const defaultValue = {
   cars: [],
   addNewCar: async () => { },
   updateSelectedCar: async () => { },
-  getWinner: () => { },
+  getNewWinner: () => { },
 };
 
 const GarageContext = createContext<CarContorlContextProps>(defaultValue);

@@ -1,5 +1,10 @@
-import { CarData, Engine, ResponseObject } from '@/ts/interfaces';
-import { OmitCarData } from '@/ts/types';
+import {
+  CarData,
+  Engine,
+  ResponseObject,
+  Winner,
+} from '@/ts/interfaces';
+import { SetState } from './ts/types';
 
 const baseUrl = 'http://localhost:3000';
 
@@ -22,7 +27,21 @@ export const getAllCars = async (
   }
 };
 
-export const getOrRemoveCar = async (
+export const getCarOrWinner = async <T,>(
+  resource: string,
+  method: string,
+  id: number,
+) => {
+  try {
+    const res = await fetch(`${baseUrl}/${resource}/${id}`, { method });
+    const data: T = await res.json();
+    return data;
+  } catch (err) {
+    throw new Error(`${err}`);
+  }
+};
+
+export const removeCarOrWinner = async (
   resource: string,
   method: string,
   id: number,
@@ -36,11 +55,38 @@ export const getOrRemoveCar = async (
   }
 };
 
-export const createOrUpdateCar = async (
+export const getWinnerStatus = async (resource: string, method: string, id: number) => {
+  try {
+    const resStatus = (await fetch(`${baseUrl}/${resource}/${id}`, { method })).status;
+    return resStatus;
+  } catch (err) {
+    throw new Error(`${err}`);
+  }
+};
+
+export const createCarOrWinner = async <T,>(
   resource: string,
   method: string,
-  item: CarData | OmitCarData,
-  id = '',
+  item: T,
+) => {
+  try {
+    const res = await fetch(`${baseUrl}/${resource}`, {
+      method,
+      body: JSON.stringify(item),
+      headers: { 'Content-Type': 'application/json' },
+    });
+    const data: T = await res.json();
+    return data;
+  } catch (err) {
+    throw new Error(`${err}`);
+  }
+};
+
+export const updateCarOrWinner = async <T,>(
+  resource: string,
+  method: string,
+  item: T,
+  id: number,
 ) => {
   try {
     const res = await fetch(`${baseUrl}/${resource}/${id}`, {
@@ -48,7 +94,7 @@ export const createOrUpdateCar = async (
       body: JSON.stringify(item),
       headers: { 'Content-Type': 'application/json' },
     });
-    const data: CarData = await res.json();
+    const data: T = await res.json();
     return data;
   } catch (err) {
     throw new Error(`${err}`);
@@ -82,4 +128,31 @@ export const getStatusDrive = async (
     method,
   }).catch();
   return res.status !== 200 ? { success: false } : { ...(await res.json()) };
+};
+
+export const saveWinner = async <T,>(
+  resource: string,
+  id: number,
+  time: number,
+  setState: SetState<T | void>
+) => {
+  const winnerStatus = await getWinnerStatus(resource, 'GET', id);
+
+  if (winnerStatus === 404) {
+    await createCarOrWinner(resource, 'POST', {
+      id,
+      wins: 1,
+      time,
+    });
+  } else {
+    const winner: Winner = await getCarOrWinner(resource, 'GET', id);
+    const highScoreTime = time < winner.time ? time : winner.time;
+    await updateCarOrWinner(resource, 'PUT', {
+      id,
+      wins: winner.wins + 1,
+      time: highScoreTime,
+    }, id);
+  }
+
+  setTimeout(() => setState(undefined), 2000);
 };

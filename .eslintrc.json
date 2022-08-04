@@ -25,7 +25,8 @@
     "@typescript-eslint"
   ],
   "rules": {
-    "@typescript-eslint/no-explicit-any": "error"
+    "@typescript-eslint/no-explicit-any": "error",
+    "@typescript-eslint/comma-dangle": "off"
   },
   "settings": {
     "import/resolver": {

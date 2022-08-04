@@ -23,5 +23,10 @@ export interface Engine {
 export interface Winner {
   name: string,
   id: number,
-  duration: number,
+  wins: number,
+  time: number,
+}
+
+export interface NewWinner extends Omit<Winner, 'wins'> {
+  name: string,
 }

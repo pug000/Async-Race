@@ -34,7 +34,7 @@ function Garage(
     resetOnClick,
   }: GarageProps,
 ) {
-  const { cars, totalCars, winner } = useContext(GarageContext);
+  const { cars, totalCars, newWinner } = useContext(GarageContext);
   const [totalPages, setTotalPages] = useState(0);
   const btnsSelect: Button[] = [
     { id: 1, text: 'Select' },
@@ -134,6 +134,13 @@ function Garage(
           </button>
         </div>
       </div>
+      {!!newWinner && (
+        <div className={styles.popupNotify}>
+          <div className={styles.popupNotifyContainer}>
+            <h4 className={styles.popupNotifyContainerTitle}>{`${newWinner.name} went first (${newWinner.time})s!`}</h4>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
