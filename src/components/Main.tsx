@@ -96,7 +96,9 @@ function Main(
     item: CarData,
   ) => {
     await removeCarOrWinner(endpoints.garage, item.id);
+    await removeCarOrWinner(endpoints.winners, item.id);
     await getCars(currentGaragePage);
+    await getWinners(currentWinnersPage);
   };
 
   const startEngine = async (
