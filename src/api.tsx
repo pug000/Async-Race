@@ -1,4 +1,5 @@
 import {
+  Api,
   CarData,
   Engine,
   ResponseCarData,
@@ -8,15 +9,33 @@ import {
 import { SetState } from './ts/types';
 
 const baseUrl = 'http://localhost:3000';
+export const endpoints: Api = {
+  garage: 'garage',
+  winners: 'winners',
+  engine: 'engine',
+};
+
+export const methods: Api = {
+  get: 'GET',
+  post: 'POST',
+  put: 'PUT',
+  patch: 'PATCH',
+  delete: 'DELETE',
+};
+
+export const statusEngine: Api = {
+  started: 'started',
+  drive: 'drive',
+  stopped: 'stopped',
+};
 
 export const getAllCars = async (
-  resource: string,
   page: number,
   limit = 7,
 ) => {
   try {
-    const res = await fetch(`${baseUrl}/${resource}?_page=${page}&_limit=${limit}`, {
-      method: 'GET',
+    const res = await fetch(`${baseUrl}/${endpoints.garage}?_page=${page}&_limit=${limit}`, {
+      method: methods.get,
     });
     const resObj: ResponseCarData = {
       data: await res.json(),
@@ -30,11 +49,10 @@ export const getAllCars = async (
 
 export const getCarOrWinner = async <T,>(
   resource: string,
-  method: string,
   id: number,
 ) => {
   try {
-    const res = await fetch(`${baseUrl}/${resource}/${id}`, { method });
+    const res = await fetch(`${baseUrl}/${resource}/${id}`, { method: methods.get });
     const data: T = await res.json();
     return data;
   } catch (err) {
@@ -43,18 +61,20 @@ export const getCarOrWinner = async <T,>(
 };
 
 export const getAllWinners = async (
-  resource: string,
   page: number,
   limit = 10
 ) => {
   try {
-    const res = await fetch(`${baseUrl}/${resource}?_page=${page}&_limit=${limit}`, {
-      method: 'GET',
+    const res = await fetch(`${baseUrl}/${endpoints.winners}?_page=${page}&_limit=${limit}`, {
+      method: methods.get,
     });
     const winners: Omit<Winner[], 'name' | 'color'> = await res.json();
     const data: Winner[] = await Promise.all(winners
       .map(async (winner) => {
-        const { name, color } = (await getCarOrWinner<CarData>('garage', 'GET', winner.id));
+        const {
+          name,
+          color,
+        } = (await getCarOrWinner<CarData>(endpoints.garage, winner.id));
         return { ...winner, name, color };
       }));
 
@@ -69,12 +89,11 @@ export const getAllWinners = async (
 };
 
 export const removeCarOrWinner = async (
-  resource: string,
-  method: string,
+  endpoint: string,
   id: number,
 ) => {
   try {
-    const res = await fetch(`${baseUrl}/${resource}/${id}`, { method });
+    const res = await fetch(`${baseUrl}/${endpoint}/${id}`, { method: methods.delete });
     const data: CarData = await res.json();
     return data;
   } catch (err) {
@@ -82,9 +101,9 @@ export const removeCarOrWinner = async (
   }
 };
 
-export const getWinnerStatus = async (resource: string, method: string, id: number) => {
+export const getWinnerStatus = async (id: number) => {
   try {
-    const resStatus = (await fetch(`${baseUrl}/${resource}/${id}`, { method })).status;
+    const resStatus = (await fetch(`${baseUrl}/${endpoints.winners}/${id}`, { method: methods.get })).status;
     return resStatus;
   } catch (err) {
     throw new Error(`${err}`);
@@ -92,13 +111,12 @@ export const getWinnerStatus = async (resource: string, method: string, id: numb
 };
 
 export const createCarOrWinner = async <T,>(
-  resource: string,
-  method: string,
+  endpoint: string,
   item: T,
 ) => {
   try {
-    const res = await fetch(`${baseUrl}/${resource}`, {
-      method,
+    const res = await fetch(`${baseUrl}/${endpoint}`, {
+      method: methods.post,
       body: JSON.stringify(item),
       headers: { 'Content-Type': 'application/json' },
     });
@@ -110,14 +128,13 @@ export const createCarOrWinner = async <T,>(
 };
 
 export const updateCarOrWinner = async <T,>(
-  resource: string,
-  method: string,
+  endpoint: string,
   item: T,
   id: number,
 ) => {
   try {
-    const res = await fetch(`${baseUrl}/${resource}/${id}`, {
-      method,
+    const res = await fetch(`${baseUrl}/${endpoint}/${id}`, {
+      method: methods.put,
       body: JSON.stringify(item),
       headers: { 'Content-Type': 'application/json' },
     });
@@ -129,14 +146,12 @@ export const updateCarOrWinner = async <T,>(
 };
 
 export const startOrStopEngine = async (
-  resource: string,
   status: string,
   id: number,
-  method: string,
 ) => {
   try {
-    const res = await fetch(`${baseUrl}/${resource}?id=${id}&status=${status}`, {
-      method,
+    const res = await fetch(`${baseUrl}/${endpoints.engine}?id=${id}&status=${status}`, {
+      method: methods.patch,
     });
     const data: Engine = await res.json();
     return data;
@@ -146,35 +161,31 @@ export const startOrStopEngine = async (
 };
 
 export const getStatusDrive = async (
-  resource: string,
   id: number,
-  status: string,
-  method: string,
 ) => {
-  const res = await fetch(`${baseUrl}/${resource}?id=${id}&status=${status}`, {
-    method,
+  const res = await fetch(`${baseUrl}/${endpoints.engine}?id=${id}&status=${statusEngine.drive}`, {
+    method: methods.patch,
   }).catch();
   return res.status !== 200 ? { success: false } : { ...(await res.json()) };
 };
 
 export const saveWinner = async <T,>(
-  resource: string,
   id: number,
   time: number,
   setState: SetState<T | void>
 ) => {
-  const winnerStatus = await getWinnerStatus(resource, 'GET', id);
+  const winnerStatus = await getWinnerStatus(id);
 
   if (winnerStatus === 404) {
-    await createCarOrWinner(resource, 'POST', {
+    await createCarOrWinner(endpoints.winners, {
       id,
       wins: 1,
       time,
     });
   } else {
-    const winner: Winner = await getCarOrWinner(resource, 'GET', id);
+    const winner: Winner = await getCarOrWinner(endpoints.winners, id);
     const highScoreTime = time < winner.time ? time : winner.time;
-    await updateCarOrWinner(resource, 'PUT', {
+    await updateCarOrWinner(endpoints.winners, {
       id,
       wins: winner.wins + 1,
       time: highScoreTime,

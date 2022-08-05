@@ -7,18 +7,16 @@ import Garage from '@/Garage';
 import CarControl from '@/CarControl';
 
 interface GaragePageProps {
-  getCars: (resource: string, page: number) => Promise<void>;
-  removeCar: AsyncFn<CarData, string, void>;
-  selectCar: AsyncFn<CarData | null, string, void>;
+  getCars: (page: number) => Promise<void>;
+  removeCar: AsyncFn<CarData, void>;
+  selectCar: AsyncFn<CarData | null, void>;
   startEngine: (
-    resource: string,
     car: CarData,
     index: number,
     driving: (progress: number, id: number) => void,
     setStartedEngine: SetState<number[]>,
   ) => void;
   stopEngine: (
-    resource: string,
     id: number,
     index: number,
     reset: (id: number) => void,
@@ -44,11 +42,12 @@ function GaragePage(
   const [isStartedEngine, setStartedEngine] = useState<number[]>([]);
   const carRef = useRef<(HTMLDivElement | null)[]>([]);
 
-  useEffect(() => { getCars('garage', currentPage); }, [currentPage]);
+  useEffect(() => { getCars(currentPage); }, [currentPage]);
 
   useEffect(() => (selectedCar ? setDisabled(false) : setDisabled(true)), [selectedCar]);
 
-  const selectOnClick = (item: CarData) => selectCar(item, 'garage', 'GET', item.id, setSelectedCar);
+  const selectOnClick = (item: CarData) => (
+    selectCar(item, setSelectedCar));
 
   const driving = (progress: number, index: number) => {
     const currElem = carRef.current[index];
@@ -65,20 +64,21 @@ function GaragePage(
     }
   };
 
-  const startOnClick = async (car: CarData, index: number) => startEngine('engine', car, index, driving, setStartedEngine);
+  const startOnClick = async (car: CarData, index: number) => (
+    startEngine(car, index, driving, setStartedEngine));
 
-  const resetOnClick = (id: number, index: number) => stopEngine('engine', id, index, reset, setStartedEngine);
+  const resetOnClick = (id: number, index: number) => (
+    stopEngine(id, index, reset, setStartedEngine));
 
   const removeOnClick = (item: CarData) => (selectedCar && selectedCar.id === item.id
     ? setSelectedCar(null)
-    : removeCar(item, 'garage', 'DELETE', currentPage));
+    : removeCar(item, undefined));
 
   return (
     <div className="garage" style={{ display: isGaragePage ? 'flex' : 'none' }}>
       <CarControl
         selectedCar={selectedCar || null}
         updateState={(item: CarData | null) => setSelectedCar(item)}
-        currentPage={currentPage}
         isDisabled={isDisabled}
         startOnClick={startOnClick}
         resetOnClick={resetOnClick}

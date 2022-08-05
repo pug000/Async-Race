@@ -11,7 +11,6 @@ import styles from './CarControl.module.scss';
 
 interface CarControlProps {
   selectedCar: CarData | null;
-  currentPage: number;
   updateState: (item: CarData | null) => void;
   isDisabled: boolean;
   startOnClick: (car: CarData, index: number) => void;
@@ -21,7 +20,6 @@ interface CarControlProps {
 function CarControl(
   {
     selectedCar,
-    currentPage,
     updateState,
     isDisabled,
     startOnClick,
@@ -49,12 +47,12 @@ function CarControl(
   ]);
 
   const updateOnSubmit = (item: CarData) => {
-    updateSelectedCar(item, 'garage', 'PUT', item.id);
+    updateSelectedCar(item);
     updateState(null);
   };
 
   const addOnSubmit = (item: CarData) => {
-    addNewCar(item, 'garage', 'POST', currentPage);
+    addNewCar(item);
     setNewCar(defaultCar);
   };
 
@@ -63,13 +61,11 @@ function CarControl(
 
   const getRandomCars = () => {
     const newCars: OmitCarData[] = generateRandomCars();
-    Promise.all(newCars.map((car) => addNewCar(car, 'garage', 'POST', currentPage)));
+    Promise.all(newCars.map((car) => addNewCar(car)));
   };
 
   const startRace = () => Promise.any(cars.map((car, i) => startOnClick(car, i)))
-    .then((data) => {
-      getNewWinner(data);
-    });
+    .then((data) => getNewWinner(data));
 
   const resetRace = () => Promise.all(cars.map((car, i) => resetOnClick(car.id, i)));
 

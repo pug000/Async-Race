@@ -24,8 +24,6 @@ export const getDuration = (
 ) => Number((distance / velocity));
 
 export const useAnimationFrame = async (
-  resource: string,
-  method: string,
   id: number,
   index: number,
   duration: number,
@@ -52,7 +50,7 @@ export const useAnimationFrame = async (
 
   requestAnimationFrame(animate);
 
-  const { success }: { success: boolean } = await getStatusDrive(resource, id, 'drive', method);
+  const { success }: { success: boolean } = await getStatusDrive(id);
 
   if (!success) {
     cancelAnimationFrame(map[id]);

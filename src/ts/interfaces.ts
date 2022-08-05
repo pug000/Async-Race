@@ -28,3 +28,7 @@ export interface Winner extends CarData {
   wins: number,
   time: number,
 }
+
+export interface Api {
+  [key: string]: string,
+}

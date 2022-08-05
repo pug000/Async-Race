@@ -12,6 +12,8 @@ import {
   getCarOrWinner,
   saveWinner,
   getAllWinners,
+  statusEngine,
+  endpoints,
 } from '@/api';
 import { CarData, Winner } from '@/ts/interfaces';
 import { NewWinner, OmitCarData, SetState } from '@/ts/types';
@@ -39,16 +41,16 @@ function Main(
   const [animation, setAnimation] = useState<Record<number, number> | null>({});
   const [newWinner, setNewWinner] = useState<NewWinner | void>();
 
-  const getCars = async (resource: string, pages: number) => {
-    const res = await getAllCars(resource, pages);
+  const getCars = async (pages: number) => {
+    const res = await getAllCars(pages);
     setCars(res.data);
     if (res.count) {
       setTotalCars(res.count);
     }
   };
 
-  const getWinners = async (resource: string, pages: number) => {
-    const res = await getAllWinners(resource, pages);
+  const getWinners = async (pages: number) => {
+    const res = await getAllWinners(pages);
     setWinners(res.data);
     if (res.count) {
       setTotalWinners(res.count);
@@ -59,76 +61,58 @@ function Main(
 
   const addNewCar = async (
     item: CarData | OmitCarData,
-    resource: string,
-    method: string,
-    currentPage: number,
   ) => {
-    await createCarOrWinner(resource, method, item);
-    await getCars(resource, currentPage);
+    await createCarOrWinner(endpoints.garage, item);
+    await getCars(currentGaragePage);
   };
 
   useEffect(() => {
-    (async (resource: string, currentPage: number) => {
+    (async (currentPage: number) => {
       if (newWinner) {
-        await saveWinner<NewWinner>(resource, newWinner.id, newWinner.time, setNewWinner);
-        await getWinners(resource, currentPage);
+        await saveWinner<NewWinner>(newWinner.id, newWinner.time, setNewWinner);
+        await getWinners(currentPage);
       }
-    })('winners', currentWinnersPage);
+    })(currentWinnersPage);
   }, [newWinner]);
 
   const selectCar = async (
     item: CarData | null,
-    resource: string,
-    method: string,
-    id: number,
     setState: SetState<CarData | null> | undefined,
   ) => {
     if (item && setState) {
-      const car = await getCarOrWinner<CarData>(resource, method, id);
+      const car = await getCarOrWinner<CarData>(endpoints.garage, item.id);
       setState(car);
     }
   };
 
   const updateSelectedCar = async (
     item: CarData,
-    resource: string,
-    method: string,
-    id: number,
   ) => {
-    const car = await updateCarOrWinner(resource, method, item, id);
+    const car = await updateCarOrWinner(endpoints.garage, item, item.id);
     setCars(cars.map((el) => (el.id === car.id ? car : el)));
   };
 
   const removeCar = async (
     item: CarData,
-    resource: string,
-    method: string,
-    currentPage: number,
   ) => {
-    await removeCarOrWinner(resource, method, item.id);
-    await getCars(resource, currentPage);
+    await removeCarOrWinner(endpoints.garage, item.id);
+    await getCars(currentGaragePage);
   };
 
   const startEngine = async (
-    resource: string,
     car: CarData,
     index: number,
     driving: (progress: number, id: number) => void,
     setState: SetState<number[]>,
-    status = 'started',
-    method = 'PATCH',
+    status = statusEngine.started,
   ) => {
     const { velocity, distance } = await startOrStopEngine(
-      resource,
       status,
       car.id,
-      method,
     );
     const duration = getDuration(velocity, distance);
     setState((prev) => [...prev, car.id]);
     const success = await useAnimationFrame(
-      resource,
-      method,
       car.id,
       index,
       duration,
@@ -146,15 +130,13 @@ function Main(
   };
 
   const stopEngine = async (
-    resource: string,
     id: number,
     index: number,
     reset: (id: number) => void,
     setState: SetState<number[]>,
-    status = 'stopped',
-    method = 'PATCH',
+    status = statusEngine.stopped,
   ) => {
-    await startOrStopEngine(resource, status, id, method);
+    await startOrStopEngine(status, id);
     setState((prev) => prev.filter((el) => el !== id));
     reset(index);
 

@@ -7,7 +7,7 @@ import styles from './WinnersPage.module.scss';
 
 interface WinnersPageProps {
   isGaragePage: boolean;
-  getWinners: (resource: string, pages: number) => void;
+  getWinners: (pages: number) => void;
   winners: Winner[];
   totalWinners: number;
   currentPage: number;
@@ -26,7 +26,7 @@ function WinnersPage(
 ) {
   const [totalPages, setTotalPages] = useState(0);
 
-  useEffect(() => { getWinners('winners', currentPage); }, [currentPage]);
+  useEffect(() => { getWinners(currentPage); }, [currentPage]);
 
   useEffect(() => setTotalPages(getTotalCount(totalWinners, 10)), [totalWinners]);
 

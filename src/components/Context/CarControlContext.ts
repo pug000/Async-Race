@@ -4,8 +4,8 @@ import { createContext } from 'react';
 
 interface CarContorlContextProps {
   cars: CarData[];
-  addNewCar: AsyncFn<CarData | OmitCarData, string, void>;
-  updateSelectedCar: AsyncFn<CarData, string, void>;
+  addNewCar: AsyncFn<CarData | OmitCarData, void>;
+  updateSelectedCar: AsyncFn<CarData, void>;
   getNewWinner: (item: NewWinner | void) => void;
 }
 
