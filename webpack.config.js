@@ -49,12 +49,19 @@ const config = {
         exclude: ['/node_modules/'],
       },
       {
-        test: /\.css$/i,
-        use: [stylesHandler, 'css-loader'],
-      },
-      {
-        test: /\.s[ac]ss$/i,
-        use: [stylesHandler, 'css-loader', 'sass-loader'],
+        test: /\.(css|scss|sass)$/,
+        use: [
+          stylesHandler,
+          {
+            loader: 'css-loader',
+            options: {
+              modules: {
+                localIdentName: '[local]',
+              },
+            },
+          },
+          'sass-loader',
+        ],
       },
       {
         test: /\.(eot|ttf|woff|woff2|png|jpg|gif)$/i,
