@@ -18,10 +18,7 @@ export const generateRandomCars = () => new Array(100).fill(null).map(() => (
 
 export const getTotalCount = (totalCount: number, limit: number) => Math.ceil(totalCount / limit);
 
-export const getDuration = (
-  velocity: number,
-  distance: number,
-) => Number((distance / velocity));
+export const getDuration = (velocity: number, distance: number) => Number((distance / velocity));
 
 export const useAnimationFrame = async (
   id: number,

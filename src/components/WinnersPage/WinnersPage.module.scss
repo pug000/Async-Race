@@ -15,9 +15,26 @@
     font-family: "Permanent Marker", cursive;
   }
 
+  &SortBy {
+    cursor: pointer;
+  }
+
   &Table {
     display: flow-root;
     align-items: center;
+
+    thead th {
+      user-select: none;
+
+      &:nth-child(4),
+      &:nth-child(5) {
+        cursor: pointer;
+
+        span {
+          margin-left: 5px;
+        }
+      }
+    }
 
     th {
       border: 2px solid #fff;

@@ -32,3 +32,15 @@ export interface Winner extends CarData {
 export interface Api {
   [key: string]: string,
 }
+
+export interface TableHeadTh {
+  id: number,
+  text: string,
+  isASC?: boolean,
+  isDESC?: boolean,
+}
+
+export interface SortBy {
+  type: string,
+  order: string,
+}

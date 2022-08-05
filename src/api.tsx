@@ -29,10 +29,7 @@ export const statusEngine: Api = {
   stopped: 'stopped',
 };
 
-export const getAllCars = async (
-  page: number,
-  limit = 7,
-) => {
+export const getAllCars = async (page: number, limit = 7) => {
   try {
     const res = await fetch(`${baseUrl}/${endpoints.garage}?_page=${page}&_limit=${limit}`, {
       method: methods.get,
@@ -47,10 +44,7 @@ export const getAllCars = async (
   }
 };
 
-export const getCarOrWinner = async <T,>(
-  resource: string,
-  id: number,
-) => {
+export const getCarOrWinner = async <T,>(resource: string, id: number) => {
   try {
     const res = await fetch(`${baseUrl}/${resource}/${id}`, { method: methods.get });
     const data: T = await res.json();
@@ -60,12 +54,9 @@ export const getCarOrWinner = async <T,>(
   }
 };
 
-export const getAllWinners = async (
-  page: number,
-  limit = 10
-) => {
+export const getAllWinners = async (page: number, type: string, order: string, limit = 10) => {
   try {
-    const res = await fetch(`${baseUrl}/${endpoints.winners}?_page=${page}&_limit=${limit}`, {
+    const res = await fetch(`${baseUrl}/${endpoints.winners}?_page=${page}&_limit=${limit}&_sort=${type}&_order=${order}`, {
       method: methods.get,
     });
     const winners: Omit<Winner[], 'name' | 'color'> = await res.json();
@@ -88,10 +79,7 @@ export const getAllWinners = async (
   }
 };
 
-export const removeCarOrWinner = async (
-  endpoint: string,
-  id: number,
-) => {
+export const removeCarOrWinner = async (endpoint: string, id: number) => {
   try {
     const res = await fetch(`${baseUrl}/${endpoint}/${id}`, { method: methods.delete });
     const data: CarData = await res.json();
@@ -110,10 +98,7 @@ export const getWinnerStatus = async (id: number) => {
   }
 };
 
-export const createCarOrWinner = async <T,>(
-  endpoint: string,
-  item: T,
-) => {
+export const createCarOrWinner = async <T,>(endpoint: string, item: T) => {
   try {
     const res = await fetch(`${baseUrl}/${endpoint}`, {
       method: methods.post,
@@ -127,11 +112,7 @@ export const createCarOrWinner = async <T,>(
   }
 };
 
-export const updateCarOrWinner = async <T,>(
-  endpoint: string,
-  item: T,
-  id: number,
-) => {
+export const updateCarOrWinner = async <T,>(endpoint: string, item: T, id: number) => {
   try {
     const res = await fetch(`${baseUrl}/${endpoint}/${id}`, {
       method: methods.put,
@@ -145,10 +126,7 @@ export const updateCarOrWinner = async <T,>(
   }
 };
 
-export const startOrStopEngine = async (
-  status: string,
-  id: number,
-) => {
+export const startOrStopEngine = async (status: string, id: number) => {
   try {
     const res = await fetch(`${baseUrl}/${endpoints.engine}?id=${id}&status=${status}`, {
       method: methods.patch,
@@ -160,9 +138,7 @@ export const startOrStopEngine = async (
   }
 };
 
-export const getStatusDrive = async (
-  id: number,
-) => {
+export const getStatusDrive = async (id: number) => {
   const res = await fetch(`${baseUrl}/${endpoints.engine}?id=${id}&status=${statusEngine.drive}`, {
     method: methods.patch,
   }).catch();

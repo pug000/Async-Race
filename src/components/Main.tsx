@@ -15,7 +15,7 @@ import {
   statusEngine,
   endpoints,
 } from '@/api';
-import { CarData, Winner } from '@/ts/interfaces';
+import { CarData, SortBy, Winner } from '@/ts/interfaces';
 import { NewWinner, OmitCarData, SetState } from '@/ts/types';
 import GaragePage from '@/GaragePage';
 import { getDuration, useAnimationFrame } from '@/utils';
@@ -40,6 +40,17 @@ function Main(
   const [currentWinnersPage, setCurrentWinnersPage] = useState(1);
   const [animation, setAnimation] = useState<Record<number, number> | null>({});
   const [newWinner, setNewWinner] = useState<NewWinner | void>();
+  const [sortWinners, setSortWinners] = useState<SortBy>({
+    type: 'id',
+    order: 'ASC',
+  });
+
+  const toggleSort = (text: string) => setSortWinners((prev) => (
+    {
+      type: text,
+      order: prev.order === 'ASC' ? 'DESC' : 'ASC'
+    }
+  ));
 
   const getCars = async (pages: number) => {
     const res = await getAllCars(pages);
@@ -49,8 +60,8 @@ function Main(
     }
   };
 
-  const getWinners = async (pages: number) => {
-    const res = await getAllWinners(pages);
+  const getWinners = async (pages: number, type: string, order: string) => {
+    const res = await getAllWinners(pages, type, order);
     setWinners(res.data);
     if (res.count) {
       setTotalWinners(res.count);
@@ -70,7 +81,7 @@ function Main(
     (async (currentPage: number) => {
       if (newWinner) {
         await saveWinner<NewWinner>(newWinner.id, newWinner.time, setNewWinner);
-        await getWinners(currentPage);
+        await getWinners(currentPage, sortWinners.type, sortWinners.order);
       }
     })(currentWinnersPage);
   }, [newWinner]);
@@ -85,20 +96,16 @@ function Main(
     }
   };
 
-  const updateSelectedCar = async (
-    item: CarData,
-  ) => {
+  const updateSelectedCar = async (item: CarData) => {
     const car = await updateCarOrWinner(endpoints.garage, item, item.id);
     setCars(cars.map((el) => (el.id === car.id ? car : el)));
   };
 
-  const removeCar = async (
-    item: CarData,
-  ) => {
+  const removeCar = async (item: CarData) => {
     await removeCarOrWinner(endpoints.garage, item.id);
     await removeCarOrWinner(endpoints.winners, item.id);
     await getCars(currentGaragePage);
-    await getWinners(currentWinnersPage);
+    await getWinners(currentWinnersPage, sortWinners.type, sortWinners.order);
   };
 
   const startEngine = async (
@@ -183,6 +190,8 @@ function Main(
             totalWinners={totalWinners}
             currentPage={currentWinnersPage}
             setCurrentPage={setCurrentWinnersPage}
+            sortWinners={sortWinners}
+            toggleSort={toggleSort}
           />
         </CarControlContext.Provider>
       </GarageContext.Provider>

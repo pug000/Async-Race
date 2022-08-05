@@ -3,6 +3,7 @@ enum BtnId {
   second,
   third,
   fourth,
+  fifth,
 }
 
 export default BtnId;
