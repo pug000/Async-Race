@@ -1,15 +1,22 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { CarData } from '@/ts/interfaces';
 import {
-  AsyncFn, SetState,
+  AsyncFn,
+  NewWinner,
+  OmitCarData,
+  SetState,
 } from '@/ts/types';
 import Garage from '@/Garage';
 import CarControl from '@/CarControl';
+import { generateRandomCars } from '@/utils';
+import { endpoints, getCarOrWinner } from '@/api';
 
 interface GaragePageProps {
-  getCars: (page: number) => Promise<void>;
+  cars: CarData[];
+  getNewWinner: (car: NewWinner | void) => void;
+  addNewCar: AsyncFn<CarData | OmitCarData, void>;
+  updateSelectedCar: (item: CarData) => void;
   removeCar: AsyncFn<CarData, void>;
-  selectCar: AsyncFn<CarData | null, void>;
   startEngine: (
     car: CarData,
     index: number,
@@ -23,31 +30,33 @@ interface GaragePageProps {
     setStartedEngine: SetState<number[]>,
   ) => void;
   isGaragePage: boolean;
-  currentPage: number;
 }
 
 function GaragePage(
   {
-    getCars,
+    cars,
+    getNewWinner,
+    addNewCar,
+    updateSelectedCar,
     removeCar,
-    selectCar,
     startEngine,
     stopEngine,
     isGaragePage,
-    currentPage,
   }: GaragePageProps,
 ) {
-  const [isDisabled, setDisabled] = useState<boolean>(true);
-  const [selectedCar, setSelectedCar] = useState<CarData | null>(null);
+  const defaultCar: CarData = {
+    name: '',
+    color: '#ffffff',
+    id: 0,
+  };
   const [isStartedEngine, setStartedEngine] = useState<number[]>([]);
+  const [newCar, setNewCar] = useState<CarData>(defaultCar);
+  const [randomCars, setRandomCars] = useState<OmitCarData[]>([]);
+  const [selectedCar, setSelectedCar] = useState<CarData | null>(null);
+  const [updatedCar, setUpdatedCar] = useState<CarData | null>(null);
+  const [removedCar, setRemovedCar] = useState<CarData | null>(null);
+  const [isRaceStarted, setRaceStarted] = useState<boolean>(false);
   const carRef = useRef<(HTMLDivElement | null)[]>([]);
-
-  useEffect(() => { getCars(currentPage); }, [currentPage]);
-
-  useEffect(() => (selectedCar ? setDisabled(false) : setDisabled(true)), [selectedCar]);
-
-  const selectOnClick = (item: CarData) => (
-    selectCar(item, setSelectedCar));
 
   const driving = (progress: number, index: number) => {
     const currElem = carRef.current[index];
@@ -70,26 +79,72 @@ function GaragePage(
   const resetOnClick = (id: number, index: number) => (
     stopEngine(id, index, reset, setStartedEngine));
 
-  const removeOnClick = (item: CarData) => (selectedCar && selectedCar.id === item.id
-    ? setSelectedCar(null)
-    : removeCar(item, undefined));
+  const selectOnClick = async (car: CarData) => (
+    setSelectedCar(await getCarOrWinner<CarData>(endpoints.garage, car.id))
+  );
+
+  const removeOnClick = async (car: CarData) => setRemovedCar(car);
+
+  useEffect(() => {
+    if (newCar.name) {
+      addNewCar(newCar);
+      setNewCar(defaultCar);
+    }
+  }, [newCar]);
+
+  useEffect(() => {
+    Promise.all(randomCars.map((car) => addNewCar(car)));
+    return () => setRandomCars([]);
+  }, [randomCars.length]);
+
+  useEffect(() => {
+    if (updatedCar) {
+      updateSelectedCar(updatedCar);
+      setSelectedCar(null);
+      setUpdatedCar(null);
+    }
+  }, [updatedCar]);
+
+  useEffect(() => {
+    if (removedCar) {
+      if (selectedCar?.id === removedCar.id) {
+        removeCar(removedCar);
+        setSelectedCar(null);
+        setRemovedCar(null);
+      } else {
+        removeCar(removedCar);
+        setRemovedCar(null);
+      }
+    }
+  }, [removedCar]);
+
+  useEffect(() => {
+    if (isRaceStarted) {
+      Promise.any(cars.map((car, i) => startOnClick(car, i)))
+        .then((data) => getNewWinner(data));
+      setSelectedCar(null);
+    } else {
+      Promise.all(cars.map((car, i) => resetOnClick(car.id, i)));
+    }
+  }, [isRaceStarted]);
 
   return (
     <div className="garage" style={{ display: isGaragePage ? 'flex' : 'none' }}>
       <CarControl
-        selectedCar={selectedCar || null}
-        updateState={(item: CarData | null) => setSelectedCar(item)}
-        isDisabled={isDisabled}
-        startOnClick={startOnClick}
-        resetOnClick={resetOnClick}
+        newCar={newCar}
+        isRaceStarted={isRaceStarted}
+        setNewCar={setNewCar}
+        setRaceStarted={setRaceStarted}
+        selectedCar={selectedCar}
+        getRandomCars={() => setRandomCars(generateRandomCars())}
+        setUpdatedCar={setUpdatedCar}
       />
       <Garage
         isStartedEngine={isStartedEngine}
-        currentPage={currentPage}
         selectOnClick={selectOnClick}
-        removeOnClick={removeOnClick}
         startOnClick={startOnClick}
         resetOnClick={resetOnClick}
+        removeOnClick={removeOnClick}
         carRef={carRef}
       />
     </div>

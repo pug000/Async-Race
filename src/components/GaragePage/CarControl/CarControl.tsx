@@ -1,90 +1,59 @@
-import React, { useContext, useState } from 'react';
-import { generateRandomCars } from '@/utils';
+import React, { useEffect, useState } from 'react';
 import BtnId from '@/ts/enum';
 import { Button, CarData } from '@/ts/interfaces';
-import {
-  OmitCarData,
-} from '@/ts/types';
+import { SetState } from '@/ts/types';
 import CarSettings from '@/CarSettings';
-import CarControlContext from '@/components/Context/CarControlContext';
 import styles from './CarControl.module.scss';
 
 interface CarControlProps {
+  newCar: CarData;
   selectedCar: CarData | null;
-  updateState: (item: CarData | null) => void;
-  isDisabled: boolean;
-  startOnClick: (car: CarData, index: number) => void;
-  resetOnClick: (id: number, index: number) => void;
+  isRaceStarted: boolean;
+  setRaceStarted: SetState<boolean>;
+  setNewCar: SetState<CarData>;
+  getRandomCars: () => void;
+  setUpdatedCar: SetState<CarData | null>;
 }
 
 function CarControl(
   {
+    newCar,
     selectedCar,
-    updateState,
-    isDisabled,
-    startOnClick,
-    resetOnClick,
+    isRaceStarted,
+    setRaceStarted,
+    setNewCar,
+    setUpdatedCar,
+    getRandomCars,
   }: CarControlProps,
 ) {
-  const defaultCar: CarData = {
-    name: '',
-    color: '#ffffff',
-    id: 0,
-  };
-  const {
-    cars,
-    addNewCar,
-    updateSelectedCar,
-    getNewWinner,
-  } = useContext(CarControlContext);
-
-  const [newCar, setNewCar] = useState<CarData>(defaultCar);
-  const [isRaceStarted, setRaceState] = useState<boolean>(false);
+  const [isDisabled, setDisabled] = useState<boolean>(true);
   const [btns, setBtns] = useState<Button[]>([
     { id: 1, text: 'Race', isDisabled: false },
     { id: 2, text: 'Reset', isDisabled: true },
     { id: 3, text: 'Generate Cars', isDisabled: false },
   ]);
 
-  const updateOnSubmit = (item: CarData) => {
-    updateSelectedCar(item);
-    updateState(null);
-  };
-
-  const addOnSubmit = (item: CarData) => {
-    addNewCar(item);
-    setNewCar(defaultCar);
-  };
-
   const toggleDisableBtn = () => setBtns((prev) => prev
     .map((el) => ({ ...el, isDisabled: !el.isDisabled })));
-
-  const getRandomCars = () => {
-    const newCars: OmitCarData[] = generateRandomCars();
-    Promise.all(newCars.map((car) => addNewCar(car)));
-  };
-
-  const startRace = () => Promise.any(cars.map((car, i) => startOnClick(car, i)))
-    .then((data) => getNewWinner(data));
-
-  const resetRace = () => Promise.all(cars.map((car, i) => resetOnClick(car.id, i)));
 
   const handleEvent = (currentBtn: Button) => {
     switch (currentBtn.id) {
       case BtnId.first:
-        setRaceState(true);
+        setRaceStarted(true);
         toggleDisableBtn();
-        return startRace();
+        return currentBtn;
       case BtnId.second:
-        setRaceState(false);
+        setRaceStarted(false);
         toggleDisableBtn();
-        return resetRace();
+        return currentBtn;
       case BtnId.third:
         return getRandomCars();
       default:
         return currentBtn;
     }
   };
+
+  useEffect(() => (selectedCar ? setDisabled(false) : setDisabled(true)), [selectedCar]);
 
   return (
     <div className={styles.settings}>
@@ -93,23 +62,15 @@ function CarControl(
           text="Create"
           itemCar={newCar}
           isDisabled={false}
+          setState={setNewCar}
           isRaceStarted={isRaceStarted}
-          onChangeName={({ target }) => setNewCar({ ...newCar, name: target.value })}
-          onChangeColor={({ target }) => setNewCar({ ...newCar, color: target.value })}
-          onSubmit={addOnSubmit}
         />
         <CarSettings
           text="Update"
-          itemCar={selectedCar || null}
+          itemCar={selectedCar}
           isDisabled={isDisabled}
+          setState={setUpdatedCar}
           isRaceStarted={isRaceStarted}
-          onChangeName={({ target }) => (selectedCar
-            ? updateState({ ...selectedCar, name: target.value })
-            : null)}
-          onChangeColor={({ target }) => (selectedCar
-            ? updateState({ ...selectedCar, color: target.value })
-            : null)}
-          onSubmit={updateOnSubmit}
         />
         <div className={styles.settingsBottom}>
           {btns.map((btn) => (

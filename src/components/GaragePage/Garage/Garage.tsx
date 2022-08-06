@@ -12,30 +12,29 @@ import GarageContext from '@/components/Context/GarageContext';
 import styles from './Garage.module.scss';
 
 interface GarageProps {
-  currentPage: number;
   isStartedEngine: number[];
   carRef: React.MutableRefObject<(HTMLDivElement | null)[]>;
-  selectOnClick: (item: CarData) => void;
-  removeOnClick: (item: CarData) => void;
+  selectOnClick: (car: CarData) => void;
   startOnClick: (car: CarData, index: number) => void;
   resetOnClick: (id: number, index: number) => void;
+  removeOnClick: (car: CarData) => void;
 }
 
 function Garage(
   {
-    currentPage,
     isStartedEngine,
     carRef,
     selectOnClick,
-    removeOnClick,
     startOnClick,
     resetOnClick,
+    removeOnClick,
   }: GarageProps,
 ) {
   const {
     cars,
     totalCars,
     newWinner,
+    currentGaragePage,
     setCurrentGaragePage,
   } = useContext(GarageContext);
   const [totalPages, setTotalPages] = useState(0);
@@ -59,11 +58,13 @@ function Garage(
     }
   };
 
+  const toggleDisable = (id: number) => isStartedEngine.includes(id);
+
   return (
     <div className={styles.garage}>
       <h2 className={styles.garageTitle}>{`Garage(${totalCars})`}</h2>
       <div className={styles.garageContainer}>
-        <h3 className={styles.garageContainerTitle}>{`Page #${currentPage}`}</h3>
+        <h3 className={styles.garageContainerTitle}>{`Page #${currentGaragePage}`}</h3>
         {cars.map((item, i) => (
           <div className={styles.carItem} key={item.id}>
             <div className={styles.carItemTop}>
@@ -72,6 +73,7 @@ function Garage(
                   className={styles.carItemTopBtn}
                   key={btn.id}
                   type="button"
+                  disabled={toggleDisable(item.id)}
                   onClick={() => handleEvent(btn, item)}
                 >
                   {btn.text}
@@ -83,7 +85,7 @@ function Garage(
               <button
                 className={styles.carItemWrapperBtn}
                 type="button"
-                disabled={isStartedEngine.includes(item.id)}
+                disabled={toggleDisable(item.id)}
                 onClick={() => startOnClick(item, i)}
               >
                 S
@@ -91,7 +93,7 @@ function Garage(
               <button
                 className={styles.carItemWrapperBtn}
                 type="button"
-                disabled={!isStartedEngine.includes(item.id)}
+                disabled={!toggleDisable(item.id)}
                 onClick={() => resetOnClick(item.id, i)}
               >
                 R
@@ -116,16 +118,16 @@ function Garage(
           <button
             className={styles.garagePaginationBtn}
             type="button"
-            disabled={currentPage === 1}
-            onClick={() => setCurrentGaragePage(currentPage - 1)}
+            disabled={currentGaragePage === 1 || isStartedEngine.length > 0}
+            onClick={() => setCurrentGaragePage(currentGaragePage - 1)}
           >
             Prev
           </button>
           <button
             className={styles.garagePaginationBtn}
             type="button"
-            disabled={currentPage === totalPages}
-            onClick={() => setCurrentGaragePage(currentPage + 1)}
+            disabled={currentGaragePage === totalPages || isStartedEngine.length > 0}
+            onClick={() => setCurrentGaragePage(currentGaragePage + 1)}
           >
             Next
           </button>

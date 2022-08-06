@@ -92,6 +92,11 @@
           border-color: #81e211;
           color: #81e211;
         }
+
+        &:disabled {
+          border-color: rgb(82, 72, 72);
+          color: rgb(82, 72, 72);
+        }
       }
     }
 
@@ -132,6 +137,7 @@
         border-bottom: 3px solid #fff;
         display: flex;
         width: 100%;
+        align-items: end;
       }
 
       .carItemTrack {

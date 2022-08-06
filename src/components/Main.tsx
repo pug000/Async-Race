@@ -9,7 +9,6 @@ import {
   removeCarOrWinner,
   startOrStopEngine,
   updateCarOrWinner,
-  getCarOrWinner,
   saveWinner,
   getAllWinners,
   statusEngine,
@@ -21,7 +20,6 @@ import GaragePage from '@/GaragePage';
 import { getDuration, useAnimationFrame } from '@/utils';
 import WinnersPage from '@/WinnersPage';
 import GarageContext from './Context/GarageContext';
-import CarControlContext from './Context/CarControlContext';
 
 interface MainProps {
   isGaragePage: boolean;
@@ -68,33 +66,22 @@ function Main(
     }
   };
 
-  const getNewWinner = (item: NewWinner | void) => setNewWinner(item);
-
-  const addNewCar = async (
-    item: CarData | OmitCarData,
-  ) => {
+  const addNewCar = async (item: CarData | OmitCarData) => {
     await createCarOrWinner(endpoints.garage, item);
     await getCars(currentGaragePage);
   };
 
   useEffect(() => {
-    (async (currentPage: number) => {
+    (async () => {
       if (newWinner) {
-        await saveWinner<NewWinner>(newWinner.id, newWinner.time, setNewWinner);
-        await getWinners(currentPage, sortWinners.type, sortWinners.order);
+        await saveWinner(newWinner.id, newWinner.time);
+        setTimeout(() => setNewWinner(undefined), 2000);
+        await getWinners(currentWinnersPage, sortWinners.type, sortWinners.order);
       }
-    })(currentWinnersPage);
+    })();
   }, [newWinner]);
 
-  const selectCar = async (
-    item: CarData | null,
-    setState: SetState<CarData | null> | undefined,
-  ) => {
-    if (item && setState) {
-      const car = await getCarOrWinner<CarData>(endpoints.garage, item.id);
-      setState(car);
-    }
-  };
+  useEffect(() => { getCars(currentGaragePage); }, [currentGaragePage]);
 
   const updateSelectedCar = async (item: CarData) => {
     const car = await updateCarOrWinner(endpoints.garage, item, item.id);
@@ -115,10 +102,7 @@ function Main(
     setState: SetState<number[]>,
     status = statusEngine.started,
   ) => {
-    const { velocity, distance } = await startOrStopEngine(
-      status,
-      car.id,
-    );
+    const { velocity, distance } = await startOrStopEngine(status, car.id);
     const duration = getDuration(velocity, distance);
     setState((prev) => [...prev, car.id]);
     const success = await useAnimationFrame(
@@ -160,40 +144,34 @@ function Main(
       totalCars,
       newWinner,
       setCurrentGaragePage,
+      removeCar,
+      currentGaragePage,
     }
-  ), [cars, totalCars, newWinner, setCurrentGaragePage]);
-
-  const carControl = useMemo(() => ({
-    cars,
-    addNewCar,
-    updateSelectedCar,
-    getNewWinner,
-  }), [cars, addNewCar, updateSelectedCar, getNewWinner]);
+  ), [cars, totalCars, newWinner, currentGaragePage]);
 
   return (
     <main className="main">
       <GarageContext.Provider value={garageValues}>
-        <CarControlContext.Provider value={carControl}>
-          <GaragePage
-            getCars={getCars}
-            removeCar={removeCar}
-            selectCar={selectCar}
-            startEngine={startEngine}
-            stopEngine={stopEngine}
-            isGaragePage={isGaragePage}
-            currentPage={currentGaragePage}
-          />
-          <WinnersPage
-            isGaragePage={isGaragePage}
-            getWinners={getWinners}
-            winners={winners}
-            totalWinners={totalWinners}
-            currentPage={currentWinnersPage}
-            setCurrentPage={setCurrentWinnersPage}
-            sortWinners={sortWinners}
-            toggleSort={toggleSort}
-          />
-        </CarControlContext.Provider>
+        <GaragePage
+          cars={cars}
+          getNewWinner={(item: NewWinner | void) => setNewWinner(item)}
+          updateSelectedCar={updateSelectedCar}
+          addNewCar={addNewCar}
+          startEngine={startEngine}
+          stopEngine={stopEngine}
+          removeCar={removeCar}
+          isGaragePage={isGaragePage}
+        />
+        <WinnersPage
+          isGaragePage={isGaragePage}
+          getWinners={getWinners}
+          winners={winners}
+          totalWinners={totalWinners}
+          currentPage={currentWinnersPage}
+          setCurrentPage={setCurrentWinnersPage}
+          sortWinners={sortWinners}
+          toggleSort={toggleSort}
+        />
       </GarageContext.Provider>
     </main>
   );

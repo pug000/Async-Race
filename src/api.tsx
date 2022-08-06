@@ -6,7 +6,6 @@ import {
   ResponseWinner,
   Winner,
 } from '@/ts/interfaces';
-import { SetState } from './ts/types';
 
 const baseUrl = 'http://localhost:3000';
 export const endpoints: Api = {
@@ -145,10 +144,9 @@ export const getStatusDrive = async (id: number) => {
   return res.status !== 200 ? { success: false } : { ...(await res.json()) };
 };
 
-export const saveWinner = async <T,>(
+export const saveWinner = async (
   id: number,
   time: number,
-  setState: SetState<T | void>
 ) => {
   const winnerStatus = await getWinnerStatus(id);
 
@@ -167,6 +165,4 @@ export const saveWinner = async <T,>(
       time: highScoreTime,
     }, id);
   }
-
-  setTimeout(() => setState(undefined), 2000);
 };

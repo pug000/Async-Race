@@ -1,6 +1,6 @@
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 import { CarData } from '@/ts/interfaces';
-import { EventHandler } from '@/ts/types';
+import { SetState } from '@/ts/types';
 import styles from './CarSettings.module.scss';
 
 interface CarSettingsProps {
@@ -8,9 +8,7 @@ interface CarSettingsProps {
   itemCar: CarData | null;
   isDisabled: boolean;
   isRaceStarted: boolean;
-  onChangeName: EventHandler<React.ChangeEvent<HTMLInputElement>, void>;
-  onChangeColor: EventHandler<React.ChangeEvent<HTMLInputElement>, void>;
-  onSubmit: (item: CarData) => void;
+  setState: SetState<CarData> | SetState<CarData | null>;
 }
 
 function CarSettings(
@@ -19,33 +17,51 @@ function CarSettings(
     itemCar,
     isDisabled,
     isRaceStarted,
-    onChangeName,
-    onChangeColor,
-    onSubmit,
+    setState,
   }: CarSettingsProps,
 ) {
-  const handleEvent = (item: CarData) => (item.name ? onSubmit(item) : '');
+  const inputTextRef = useRef<HTMLInputElement>(null);
+  const inputColorRef = useRef<HTMLInputElement>(null);
+
+  const handleEvent = () => {
+    if (itemCar && inputTextRef.current?.value) {
+      setState(
+        {
+          ...itemCar,
+          name: inputTextRef.current ? inputTextRef.current.value : '',
+          color: inputColorRef.current ? inputColorRef.current.value : '#ffffff',
+        }
+      );
+    }
+  };
+
+  useEffect(() => {
+    if (inputColorRef.current
+      && inputTextRef.current) {
+      inputTextRef.current.value = itemCar ? itemCar.name : '';
+      inputColorRef.current.value = itemCar ? itemCar.color : '#ffffff';
+    }
+  }, [itemCar]);
+
   return (
     <div className={styles.settingsTopWrapper}>
       <input
         className={styles.settingsTopWrapperTextInput}
         type="text"
+        ref={inputTextRef}
         disabled={!!isDisabled || isRaceStarted}
-        value={itemCar ? itemCar.name : ''}
-        onChange={onChangeName}
       />
       <input
         className={styles.settingsTopWrapperColorInput}
         type="color"
+        ref={inputColorRef}
         disabled={!!isDisabled || isRaceStarted}
-        value={itemCar ? itemCar.color : '#ffffff'}
-        onChange={onChangeColor}
       />
       <button
         className={styles.settingsTopWrapperBtn}
         type="button"
         disabled={!!isDisabled || isRaceStarted}
-        onClick={() => (itemCar ? handleEvent(itemCar) : null)}
+        onClick={handleEvent}
       >
         {text}
       </button>
