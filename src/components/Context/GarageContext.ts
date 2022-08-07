@@ -9,6 +9,7 @@ interface GarageContextProps {
   currentGaragePage: number;
   setCurrentGaragePage: SetState<number>;
   removeCar: AsyncFn<CarData, void>;
+  getNewWinner: (item: NewWinner | void) => void;
 }
 
 const defaultValue = {
@@ -17,6 +18,7 @@ const defaultValue = {
   newWinner: undefined,
   currentGaragePage: 1,
   setCurrentGaragePage: () => { },
+  getNewWinner: () => { },
   removeCar: async () => { },
 };
 

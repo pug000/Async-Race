@@ -7,17 +7,14 @@ import {
   createCarOrWinner,
   getAllCars,
   removeCarOrWinner,
-  startOrStopEngine,
   updateCarOrWinner,
   saveWinner,
   getAllWinners,
-  statusEngine,
   endpoints,
 } from '@/api';
 import { CarData, SortBy, Winner } from '@/ts/interfaces';
-import { NewWinner, OmitCarData, SetState } from '@/ts/types';
+import { NewWinner, OmitCarData } from '@/ts/types';
 import GaragePage from '@/GaragePage';
-import { getDuration, useAnimationFrame } from '@/utils';
 import WinnersPage from '@/WinnersPage';
 import GarageContext from './Context/GarageContext';
 
@@ -36,7 +33,6 @@ function Main(
   const [totalWinners, setTotalWinners] = useState(0);
   const [currentGaragePage, setCurrentGaragePage] = useState(1);
   const [currentWinnersPage, setCurrentWinnersPage] = useState(1);
-  const [animation, setAnimation] = useState<Record<number, number> | null>({});
   const [newWinner, setNewWinner] = useState<NewWinner | void>();
   const [sortWinners, setSortWinners] = useState<SortBy>({
     type: 'id',
@@ -95,48 +91,7 @@ function Main(
     await getWinners(currentWinnersPage, sortWinners.type, sortWinners.order);
   };
 
-  const startEngine = async (
-    car: CarData,
-    index: number,
-    driving: (progress: number, id: number) => void,
-    setState: SetState<number[]>,
-    status = statusEngine.started,
-  ) => {
-    const { velocity, distance } = await startOrStopEngine(status, car.id);
-    const duration = getDuration(velocity, distance);
-    setState((prev) => [...prev, car.id]);
-    const success = await useAnimationFrame(
-      car.id,
-      index,
-      duration,
-      driving,
-      setAnimation,
-    );
-
-    const result: Omit<NewWinner, 'wins'> = {
-      name: car.name,
-      id: car.id,
-      time: Number((duration / 1000).toFixed(2)),
-    };
-
-    return success ? result : Promise.reject();
-  };
-
-  const stopEngine = async (
-    id: number,
-    index: number,
-    reset: (id: number) => void,
-    setState: SetState<number[]>,
-    status = statusEngine.stopped,
-  ) => {
-    await startOrStopEngine(status, id);
-    setState((prev) => prev.filter((el) => el !== id));
-    reset(index);
-
-    if (animation) {
-      cancelAnimationFrame(animation[id]);
-    }
-  };
+  const getNewWinner = (item: NewWinner | void) => setNewWinner(item);
 
   const garageValues = useMemo(() => (
     {
@@ -145,6 +100,7 @@ function Main(
       newWinner,
       setCurrentGaragePage,
       removeCar,
+      getNewWinner,
       currentGaragePage,
     }
   ), [cars, totalCars, newWinner, currentGaragePage]);
@@ -153,12 +109,8 @@ function Main(
     <main className="main">
       <GarageContext.Provider value={garageValues}>
         <GaragePage
-          cars={cars}
-          getNewWinner={(item: NewWinner | void) => setNewWinner(item)}
           updateSelectedCar={updateSelectedCar}
           addNewCar={addNewCar}
-          startEngine={startEngine}
-          stopEngine={stopEngine}
           removeCar={removeCar}
           isGaragePage={isGaragePage}
         />

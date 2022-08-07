@@ -1,33 +1,32 @@
 import React, {
   useContext,
   useEffect,
+  useRef,
   useState,
 } from 'react';
 import { Button, CarData } from '@/ts/interfaces';
 import CarSvg from '@/assets/icons/Car.svg';
-import { getTotalCount } from '@/utils';
+import { getDuration, getTotalCount, useAnimationFrame } from '@/utils';
 import BtnId from '@/ts/enum';
 import FinishFlag from '@/assets/icons/FinishFlag.svg';
 import GarageContext from '@/components/Context/GarageContext';
+import { startOrStopEngine, statusEngine } from '@/api';
+import { SetState } from '@/ts/types';
 import styles from './Garage.module.scss';
 
 interface GarageProps {
-  isStartedEngine: number[];
-  carRef: React.MutableRefObject<(HTMLDivElement | null)[]>;
+  isRaceStarted: boolean;
   selectOnClick: (car: CarData) => void;
-  startOnClick: (car: CarData, index: number) => void;
-  resetOnClick: (id: number, index: number) => void;
   removeOnClick: (car: CarData) => void;
+  setSelectedCar: SetState<CarData | null>;
 }
 
 function Garage(
   {
-    isStartedEngine,
-    carRef,
+    isRaceStarted,
     selectOnClick,
-    startOnClick,
-    resetOnClick,
     removeOnClick,
+    setSelectedCar,
   }: GarageProps,
 ) {
   const {
@@ -35,15 +34,18 @@ function Garage(
     totalCars,
     newWinner,
     currentGaragePage,
+    getNewWinner,
     setCurrentGaragePage,
   } = useContext(GarageContext);
   const [totalPages, setTotalPages] = useState(0);
+  const carRef = useRef<(HTMLDivElement | null)[]>([]);
+  const [isStartedEngine, setStartedEngine] = useState<number[]>([]);
+  const duration = useRef(0);
+  const mapRef = useRef<Record<number, number>>({});
   const btnsSelect: Button[] = [
     { id: 1, text: 'Select' },
     { id: 2, text: 'Remove' },
   ];
-
-  const ref = carRef.current;
 
   useEffect(() => setTotalPages(getTotalCount(totalCars, 7)), [totalCars]);
 
@@ -58,7 +60,60 @@ function Garage(
     }
   };
 
+  const driving = (progress: number, index: number) => {
+    const currElem = carRef.current[index];
+
+    if (currElem) {
+      currElem.style.left = `${progress * 100}%`;
+    }
+  };
+
+  const reset = (index: number) => {
+    const currElem = carRef.current[index];
+    if (currElem) {
+      currElem.style.left = '0%';
+    }
+  };
+
   const toggleDisable = (id: number) => isStartedEngine.includes(id);
+
+  const startEngine = async (car: CarData, index: number) => {
+    const { velocity, distance } = await startOrStopEngine(statusEngine.started, car.id);
+    duration.current = getDuration(velocity, distance);
+    setStartedEngine((prev) => [...prev, car.id]);
+    const success = await useAnimationFrame(
+      car.id,
+      index,
+      duration.current,
+      driving,
+      mapRef.current,
+    );
+
+    const result = {
+      name: car.name,
+      id: car.id,
+      time: Number((duration.current / 1000).toFixed(2)),
+    };
+
+    return success ? result : Promise.reject();
+  };
+
+  const stopEngine = async (car: CarData, index: number) => {
+    await startOrStopEngine(statusEngine.stopped, car.id);
+    cancelAnimationFrame(mapRef.current[car.id]);
+    reset(index);
+    setStartedEngine((prev) => prev.filter((el) => el !== car.id));
+  };
+
+  useEffect(() => {
+    if (isRaceStarted) {
+      Promise.any(cars.map((car, i) => startEngine(car, i)))
+        .then((data) => getNewWinner(data));
+      setSelectedCar(null);
+    } else {
+      Promise.all(cars.map((car, i) => stopEngine(car, i)));
+    }
+  }, [isRaceStarted]);
 
   return (
     <div className={styles.garage}>
@@ -86,7 +141,7 @@ function Garage(
                 className={styles.carItemWrapperBtn}
                 type="button"
                 disabled={toggleDisable(item.id)}
-                onClick={() => startOnClick(item, i)}
+                onClick={() => startEngine(item, i)}
               >
                 S
               </button>
@@ -94,7 +149,7 @@ function Garage(
                 className={styles.carItemWrapperBtn}
                 type="button"
                 disabled={!toggleDisable(item.id)}
-                onClick={() => resetOnClick(item.id, i)}
+                onClick={() => stopEngine(item, i)}
               >
                 R
               </button>
@@ -102,7 +157,7 @@ function Garage(
                 <div className={styles.carItemTrack}>
                   <div
                     className={styles.carItemImg}
-                    ref={(el) => { ref[i] = el; }}
+                    ref={(el) => { carRef.current[i] = el; }}
                   >
                     <CarSvg fill={item.color} />
                   </div>

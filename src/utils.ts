@@ -1,7 +1,6 @@
 import { getStatusDrive } from './api';
 import carBrandName from './layout/carBrandName';
 import carModelName from './layout/carModelName';
-import { SetState } from './ts/types';
 
 const getRandomValue = (item: string[]) => Math.floor(Math.random() * item.length);
 
@@ -25,10 +24,10 @@ export const useAnimationFrame = async (
   index: number,
   duration: number,
   driving: (progress: number, id: number) => void,
-  setState: SetState<Record<number, number> | null>,
+  ref: Record<number, number>,
 ) => {
   const start = performance.now();
-  const map: Record<number, number> = {};
+  const map = ref;
 
   const animate = (time: number) => {
     let timeFraction = (time - start) / duration;
@@ -43,9 +42,7 @@ export const useAnimationFrame = async (
     }
   };
 
-  setState(() => map);
-
-  requestAnimationFrame(animate);
+  map[id] = requestAnimationFrame(animate);
 
   const { success }: { success: boolean } = await getStatusDrive(id);
 
