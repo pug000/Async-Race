@@ -5,6 +5,7 @@ import { createContext } from 'react';
 interface GarageContextProps {
   cars: CarData[];
   totalCars: number;
+  errorMessage: string | null;
   newWinner: NewWinner | void;
   currentGaragePage: number;
   setCurrentGaragePage: SetState<number>;
@@ -15,6 +16,7 @@ interface GarageContextProps {
 const defaultValue = {
   cars: [],
   totalCars: 0,
+  errorMessage: null,
   newWinner: undefined,
   currentGaragePage: 1,
   setCurrentGaragePage: () => { },

@@ -8,7 +8,6 @@ import styles from './WinnersPage.module.scss';
 
 interface WinnersPageProps {
   isGaragePage: boolean;
-  getWinners: (pages: number, type: string, order: string) => void;
   winners: Winner[];
   totalWinners: number;
   currentPage: number;
@@ -20,7 +19,6 @@ interface WinnersPageProps {
 function WinnersPage(
   {
     isGaragePage,
-    getWinners,
     winners,
     totalWinners,
     currentPage,
@@ -41,10 +39,6 @@ function WinnersPage(
       id: 5, text: 'Best time (s)', isASC: false, isDESC: false
     }
   ]);
-
-  useEffect(() => {
-    getWinners(currentPage, sortWinners.type, sortWinners.order);
-  }, [currentPage, sortWinners]);
 
   useEffect(() => setTotalPages(getTotalCount(totalWinners, 10)), [totalWinners]);
 
@@ -117,7 +111,7 @@ function WinnersPage(
         <button
           className={styles.winnersPaginationBtn}
           type="button"
-          disabled={currentPage === 1}
+          disabled={currentPage <= 1}
           onClick={() => setCurrentPage(currentPage - 1)}
         >
           Prev
@@ -125,7 +119,7 @@ function WinnersPage(
         <button
           className={styles.winnersPaginationBtn}
           type="button"
-          disabled={currentPage === totalPages}
+          disabled={currentPage >= totalPages}
           onClick={() => setCurrentPage(currentPage + 1)}
         >
           Next

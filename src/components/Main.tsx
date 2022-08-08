@@ -33,6 +33,7 @@ function Main(
   const [totalWinners, setTotalWinners] = useState(0);
   const [currentGaragePage, setCurrentGaragePage] = useState(1);
   const [currentWinnersPage, setCurrentWinnersPage] = useState(1);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [newWinner, setNewWinner] = useState<NewWinner | void>();
   const [sortWinners, setSortWinners] = useState<SortBy>({
     type: 'id',
@@ -47,10 +48,12 @@ function Main(
   ));
 
   const getCars = async (pages: number) => {
-    const res = await getAllCars(pages);
+    const res = await getAllCars(pages, setErrorMessage);
     setCars(res.data);
     if (res.count) {
       setTotalCars(res.count);
+    } else {
+      setTotalCars(0);
     }
   };
 
@@ -59,6 +62,8 @@ function Main(
     setWinners(res.data);
     if (res.count) {
       setTotalWinners(res.count);
+    } else {
+      setTotalWinners(0);
     }
   };
 
@@ -79,14 +84,21 @@ function Main(
 
   useEffect(() => { getCars(currentGaragePage); }, [currentGaragePage]);
 
+  useEffect(() => {
+    getWinners(currentWinnersPage, sortWinners.type, sortWinners.order);
+  }, [currentWinnersPage, sortWinners]);
+
   const updateSelectedCar = async (item: CarData) => {
     const car = await updateCarOrWinner(endpoints.garage, item, item.id);
     setCars(cars.map((el) => (el.id === car.id ? car : el)));
   };
 
   const removeCar = async (item: CarData) => {
-    await removeCarOrWinner(endpoints.garage, item.id);
-    await removeCarOrWinner(endpoints.winners, item.id);
+    await Promise.all(Object.values(endpoints)
+      .slice(0, -1)
+      .map((key) => (
+        removeCarOrWinner(key, item.id)
+      )));
     await getCars(currentGaragePage);
     await getWinners(currentWinnersPage, sortWinners.type, sortWinners.order);
   };
@@ -98,12 +110,19 @@ function Main(
       cars,
       totalCars,
       newWinner,
+      errorMessage,
       setCurrentGaragePage,
       removeCar,
       getNewWinner,
       currentGaragePage,
     }
-  ), [cars, totalCars, newWinner, currentGaragePage]);
+  ), [
+    cars,
+    errorMessage,
+    totalCars,
+    newWinner,
+    currentGaragePage,
+  ]);
 
   return (
     <main className="main">
@@ -116,7 +135,6 @@ function Main(
         />
         <WinnersPage
           isGaragePage={isGaragePage}
-          getWinners={getWinners}
           winners={winners}
           totalWinners={totalWinners}
           currentPage={currentWinnersPage}

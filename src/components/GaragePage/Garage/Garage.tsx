@@ -33,6 +33,7 @@ function Garage(
     cars,
     totalCars,
     newWinner,
+    errorMessage,
     currentGaragePage,
     getNewWinner,
     setCurrentGaragePage,
@@ -115,6 +116,20 @@ function Garage(
     }
   }, [isRaceStarted]);
 
+  useEffect(() => {
+    if (currentGaragePage !== 1 && !cars.length) {
+      setCurrentGaragePage(currentGaragePage - 1);
+    }
+  }, [cars.length]);
+
+  if (errorMessage) {
+    return (
+      <div className={styles.garageError}>
+        <h2 className={styles.garageErrorTitle}>{`Error: ${errorMessage}`}</h2>
+      </div>
+    );
+  }
+
   return (
     <div className={styles.garage}>
       <h2 className={styles.garageTitle}>{`Garage(${totalCars})`}</h2>
@@ -173,7 +188,7 @@ function Garage(
           <button
             className={styles.garagePaginationBtn}
             type="button"
-            disabled={currentGaragePage === 1 || isStartedEngine.length > 0}
+            disabled={currentGaragePage <= 1 || isStartedEngine.length > 0}
             onClick={() => setCurrentGaragePage(currentGaragePage - 1)}
           >
             Prev
@@ -181,7 +196,7 @@ function Garage(
           <button
             className={styles.garagePaginationBtn}
             type="button"
-            disabled={currentGaragePage === totalPages || isStartedEngine.length > 0}
+            disabled={currentGaragePage >= totalPages || isStartedEngine.length > 0}
             onClick={() => setCurrentGaragePage(currentGaragePage + 1)}
           >
             Next

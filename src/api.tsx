@@ -6,6 +6,7 @@ import {
   ResponseWinner,
   Winner,
 } from '@/ts/interfaces';
+import { SetState } from './ts/types';
 
 const baseUrl = 'http://localhost:3000';
 export const endpoints: Api = {
@@ -28,7 +29,11 @@ export const statusEngine: Api = {
   stopped: 'stopped',
 };
 
-export const getAllCars = async (page: number, limit = 7) => {
+export const getAllCars = async (
+  page: number,
+  setError: SetState<string | null>,
+  limit = 7
+) => {
   try {
     const res = await fetch(`${baseUrl}/${endpoints.garage}?_page=${page}&_limit=${limit}`, {
       method: methods.get,
@@ -39,6 +44,9 @@ export const getAllCars = async (page: number, limit = 7) => {
     };
     return resObj;
   } catch (err) {
+    if (err instanceof Error) {
+      setError(err.message);
+    }
     throw new Error(`${err}`);
   }
 };
@@ -53,7 +61,12 @@ export const getCarOrWinner = async <T,>(resource: string, id: number) => {
   }
 };
 
-export const getAllWinners = async (page: number, type: string, order: string, limit = 10) => {
+export const getAllWinners = async (
+  page: number,
+  type: string,
+  order: string,
+  limit = 10,
+) => {
   try {
     const res = await fetch(`${baseUrl}/${endpoints.winners}?_page=${page}&_limit=${limit}&_sort=${type}&_order=${order}`, {
       method: methods.get,
