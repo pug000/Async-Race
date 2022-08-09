@@ -91,6 +91,11 @@ function Main(
   const updateSelectedCar = async (item: CarData) => {
     const car = await updateCarOrWinner(endpoints.garage, item, item.id);
     setCars(cars.map((el) => (el.id === car.id ? car : el)));
+    setWinners(winners.map((el) => (el.id !== car.id ? el : {
+      ...el,
+      name: car.name,
+      color: car.color,
+    })));
   };
 
   const removeCar = async (item: CarData) => {
