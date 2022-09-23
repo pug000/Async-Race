@@ -14,7 +14,7 @@ import {
 import {
   getDuration,
   getTotalCount,
-  useAnimationFrame
+  startAnimation
 } from 'utils';
 
 import CarSvg from 'assets/icons/Car.svg';
@@ -63,7 +63,9 @@ function Garage(
     { id: 2, text: 'Remove' },
   ];
 
-  useEffect(() => setTotalPages(getTotalCount(totalCars, 7)), [totalCars]);
+  useEffect(() => {
+    setTotalPages(getTotalCount(totalCars, 7));
+  }, [totalCars]);
 
   const handleEvent = (currentBtn: Button, currentCar: CarData) => {
     switch (currentBtn.id) {
@@ -76,18 +78,18 @@ function Garage(
     }
   };
 
-  const driving = (progress: number, index: number) => {
-    const currElem = carRef.current[index];
+  const drive = (progress: number, index: number) => {
+    const currentCarElement = carRef.current[index];
 
-    if (currElem) {
-      currElem.style.left = `${progress * 100}%`;
+    if (currentCarElement) {
+      currentCarElement.style.left = `${progress * 100}%`;
     }
   };
 
   const reset = (index: number) => {
-    const currElem = carRef.current[index];
-    if (currElem) {
-      currElem.style.left = '0%';
+    const currentCarElement = carRef.current[index];
+    if (currentCarElement) {
+      currentCarElement.style.left = '0%';
     }
   };
 
@@ -97,11 +99,11 @@ function Garage(
     const { velocity, distance } = await startOrStopEngine(statusEngine.started, car.id);
     duration.current = getDuration(velocity, distance);
     setStartedEngine((prev) => [...prev, car.id]);
-    const success = await useAnimationFrame(
+    const success = await startAnimation(
       car.id,
       index,
       duration.current,
-      driving,
+      drive,
       mapRef.current,
     );
 

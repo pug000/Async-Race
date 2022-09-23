@@ -35,29 +35,29 @@ const getAllCars = async (
   limit = 7
 ) => {
   try {
-    const res = await fetch(`${baseUrl}/${endpoints.garage}?_page=${page}&_limit=${limit}`, {
+    const response = await fetch(`${baseUrl}/${endpoints.garage}?_page=${page}&_limit=${limit}`, {
       method: methods.get,
     });
-    const resObj: ResponseCarData = {
-      data: await res.json(),
-      count: Number(res.headers.get('X-Total-Count')),
+    const responseCar: ResponseCarData = {
+      data: await response.json(),
+      count: Number(response.headers.get('X-Total-Count')),
     };
-    return resObj;
-  } catch (err) {
-    if (err instanceof Error) {
-      setError(err.message);
+    return responseCar;
+  } catch (error) {
+    if (error instanceof Error) {
+      setError(error.message);
     }
-    throw new Error(`${err}`);
+    throw new Error(`${error}`);
   }
 };
 
 const getCarOrWinner = async <T,>(resource: string, id: number) => {
   try {
-    const res = await fetch(`${baseUrl}/${resource}/${id}`, { method: methods.get });
-    const data: T = await res.json();
+    const response = await fetch(`${baseUrl}/${resource}/${id}`, { method: methods.get });
+    const data: T = await response.json();
     return data;
-  } catch (err) {
-    throw new Error(`${err}`);
+  } catch (error) {
+    throw new Error(`${error}`);
   }
 };
 
@@ -68,10 +68,10 @@ const getAllWinners = async (
   limit = 10,
 ) => {
   try {
-    const res = await fetch(`${baseUrl}/${endpoints.winners}?_page=${page}&_limit=${limit}&_sort=${type}&_order=${order}`, {
+    const response = await fetch(`${baseUrl}/${endpoints.winners}?_page=${page}&_limit=${limit}&_sort=${type}&_order=${order}`, {
       method: methods.get,
     });
-    const winners: Omit<Winner[], 'name' | 'color'> = await res.json();
+    const winners: Omit<Winner[], 'name' | 'color'> = await response.json();
     const data: Winner[] = await Promise.all(winners
       .map(async (winner) => {
         const {
@@ -81,80 +81,80 @@ const getAllWinners = async (
         return { ...winner, name, color };
       }));
 
-    const resObj: ResponseWinner = {
+    const responseWinner: ResponseWinner = {
       data,
-      count: Number(res.headers.get('X-Total-Count')),
+      count: Number(response.headers.get('X-Total-Count')),
     };
-    return resObj;
-  } catch (err) {
-    throw new Error(`${err}`);
+    return responseWinner;
+  } catch (error) {
+    throw new Error(`${error}`);
   }
 };
 
 const removeCarOrWinner = async (endpoint: string, id: number) => {
   try {
-    const res = await fetch(`${baseUrl}/${endpoint}/${id}`, { method: methods.delete });
-    const data: CarData = await res.json();
+    const response = await fetch(`${baseUrl}/${endpoint}/${id}`, { method: methods.delete });
+    const data: CarData = await response.json();
     return data;
-  } catch (err) {
-    throw new Error(`${err}`);
+  } catch (error) {
+    throw new Error(`${error}`);
   }
 };
 
 const getWinnerStatus = async (id: number) => {
   try {
-    const resStatus = (await fetch(`${baseUrl}/${endpoints.winners}/${id}`, { method: methods.get })).status;
-    return resStatus;
-  } catch (err) {
-    throw new Error(`${err}`);
+    const responseStatus = (await fetch(`${baseUrl}/${endpoints.winners}/${id}`, { method: methods.get })).status;
+    return responseStatus;
+  } catch (error) {
+    throw new Error(`${error}`);
   }
 };
 
 const createCarOrWinner = async <T,>(endpoint: string, item: T) => {
   try {
-    const res = await fetch(`${baseUrl}/${endpoint}`, {
+    const response = await fetch(`${baseUrl}/${endpoint}`, {
       method: methods.post,
       body: JSON.stringify(item),
       headers: { 'Content-Type': 'application/json' },
     });
-    const data: T = await res.json();
+    const data: T = await response.json();
     return data;
-  } catch (err) {
-    throw new Error(`${err}`);
+  } catch (error) {
+    throw new Error(`${error}`);
   }
 };
 
 const updateCarOrWinner = async <T,>(endpoint: string, item: T, id: number) => {
   try {
-    const res = await fetch(`${baseUrl}/${endpoint}/${id}`, {
+    const response = await fetch(`${baseUrl}/${endpoint}/${id}`, {
       method: methods.put,
       body: JSON.stringify(item),
       headers: { 'Content-Type': 'application/json' },
     });
-    const data: T = await res.json();
+    const data: T = await response.json();
     return data;
-  } catch (err) {
-    throw new Error(`${err}`);
+  } catch (error) {
+    throw new Error(`${error}`);
   }
 };
 
 const startOrStopEngine = async (status: string, id: number) => {
   try {
-    const res = await fetch(`${baseUrl}/${endpoints.engine}?id=${id}&status=${status}`, {
+    const response = await fetch(`${baseUrl}/${endpoints.engine}?id=${id}&status=${status}`, {
       method: methods.patch,
     });
-    const data: Engine = await res.json();
+    const data: Engine = await response.json();
     return data;
-  } catch (err) {
-    throw new Error(`${err}`);
+  } catch (error) {
+    throw new Error(`${error}`);
   }
 };
 
 const getStatusDrive = async (id: number) => {
-  const res = await fetch(`${baseUrl}/${endpoints.engine}?id=${id}&status=${statusEngine.drive}`, {
+  const response = await fetch(`${baseUrl}/${endpoints.engine}?id=${id}&status=${statusEngine.drive}`, {
     method: methods.patch,
   }).catch();
-  return res.status !== 200 ? { success: false } : { ...(await res.json()) };
+  return response.status !== 200 ? { success: false } : { ...(await response.json()) };
 };
 
 const saveWinner = async (

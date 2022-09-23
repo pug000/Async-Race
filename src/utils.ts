@@ -19,7 +19,7 @@ const getTotalCount = (totalCount: number, limit: number) => Math.ceil(totalCoun
 
 const getDuration = (velocity: number, distance: number) => Number((distance / velocity));
 
-const useAnimationFrame = async (
+const startAnimation = async (
   id: number,
   index: number,
   duration: number,
@@ -57,5 +57,5 @@ export {
   generateRandomCars,
   getTotalCount,
   getDuration,
-  useAnimationFrame
+  startAnimation
 };

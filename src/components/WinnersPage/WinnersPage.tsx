@@ -51,7 +51,9 @@ function WinnersPage(
     }
   ]);
 
-  useEffect(() => setTotalPages(getTotalCount(totalWinners, 10)), [totalWinners]);
+  useEffect(() => {
+    setTotalPages(getTotalCount(totalWinners, 10));
+  }, [totalWinners]);
 
   const toggleSortBy = (text: string, id: number) => {
     toggleSort(text);

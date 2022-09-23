@@ -62,7 +62,13 @@ function CarControl(
     }
   };
 
-  useEffect(() => (selectedCar ? setDisabled(false) : setDisabled(true)), [selectedCar]);
+  useEffect(() => {
+    if (selectedCar) {
+      setDisabled(false);
+    } else {
+      setDisabled(true);
+    }
+  }, [selectedCar]);
 
   return (
     <div className={styles.settings}>
