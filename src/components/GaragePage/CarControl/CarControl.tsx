@@ -1,8 +1,17 @@
-import React, { useEffect, useState } from 'react';
-import BtnId from '@/ts/enum';
-import { Button, CarData } from '@/ts/interfaces';
-import { SetState } from '@/ts/types';
-import CarSettings from '@/CarSettings';
+import React, {
+  useEffect,
+  useState
+} from 'react';
+
+import BtnId from 'ts/enum';
+import {
+  Button,
+  CarData
+} from 'ts/interfaces';
+import { SetState } from 'ts/types';
+
+import CarSettings from './CarSettings/CarSettings';
+
 import styles from './CarControl.module.scss';
 
 interface CarControlProps {

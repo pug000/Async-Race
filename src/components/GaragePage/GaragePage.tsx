@@ -1,13 +1,22 @@
-import React, { useEffect, useState } from 'react';
-import { CarData } from '@/ts/interfaces';
+import React, {
+  useEffect,
+  useState
+} from 'react';
+
+import { generateRandomCars } from 'utils';
+import {
+  endpoints,
+  getCarOrWinner
+} from 'api';
+
+import { CarData } from 'ts/interfaces';
 import {
   AsyncFn,
   OmitCarData,
-} from '@/ts/types';
-import Garage from '@/Garage';
-import CarControl from '@/CarControl';
-import { generateRandomCars } from '@/utils';
-import { endpoints, getCarOrWinner } from '@/api';
+} from 'ts/types';
+
+import Garage from './Garage/Garage';
+import CarControl from './CarControl/CarControl';
 
 interface GaragePageProps {
   addNewCar: AsyncFn<CarData | OmitCarData, void>;

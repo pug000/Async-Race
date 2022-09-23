@@ -4,14 +4,29 @@ import React, {
   useRef,
   useState,
 } from 'react';
-import { Button, CarData } from '@/ts/interfaces';
-import CarSvg from '@/assets/icons/Car.svg';
-import { getDuration, getTotalCount, useAnimationFrame } from '@/utils';
-import BtnId from '@/ts/enum';
-import FinishFlag from '@/assets/icons/FinishFlag.svg';
-import GarageContext from '@/components/Context/GarageContext';
-import { startOrStopEngine, statusEngine } from '@/api';
-import { SetState } from '@/ts/types';
+
+import GarageContext from 'components/Context/GarageContext';
+
+import {
+  startOrStopEngine,
+  statusEngine
+} from 'api';
+import {
+  getDuration,
+  getTotalCount,
+  useAnimationFrame
+} from 'utils';
+
+import CarSvg from 'assets/icons/Car.svg';
+import FinishFlag from 'assets/icons/FinishFlag.svg';
+
+import BtnId from 'ts/enum';
+import {
+  Button,
+  CarData
+} from 'ts/interfaces';
+import { SetState } from 'ts/types';
+
 import styles from './Garage.module.scss';
 
 interface GarageProps {

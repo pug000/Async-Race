@@ -1,6 +1,11 @@
-import { CarData } from '@/ts/interfaces';
-import { AsyncFn, NewWinner, SetState } from '@/ts/types';
 import { createContext } from 'react';
+
+import { CarData } from 'ts/interfaces';
+import {
+  AsyncFn,
+  NewWinner,
+  SetState
+} from 'ts/types';
 
 interface GarageContextProps {
   cars: CarData[];

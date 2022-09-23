@@ -8,18 +8,18 @@ const generateRandomColor = () => `#${Math.floor(Math.random() * 16777215).toStr
 
 const getRandomName = () => `${carBrandName[getRandomValue(carBrandName)]} ${carModelName[getRandomValue(carModelName)]}`;
 
-export const generateRandomCars = () => new Array(100).fill(null).map(() => (
+const generateRandomCars = () => new Array(100).fill(null).map(() => (
   {
     name: getRandomName(),
     color: generateRandomColor(),
   }
 ));
 
-export const getTotalCount = (totalCount: number, limit: number) => Math.ceil(totalCount / limit);
+const getTotalCount = (totalCount: number, limit: number) => Math.ceil(totalCount / limit);
 
-export const getDuration = (velocity: number, distance: number) => Number((distance / velocity));
+const getDuration = (velocity: number, distance: number) => Number((distance / velocity));
 
-export const useAnimationFrame = async (
+const useAnimationFrame = async (
   id: number,
   index: number,
   duration: number,
@@ -51,4 +51,11 @@ export const useAnimationFrame = async (
   }
 
   return success;
+};
+
+export {
+  generateRandomCars,
+  getTotalCount,
+  getDuration,
+  useAnimationFrame
 };

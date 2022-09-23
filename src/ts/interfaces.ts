@@ -1,46 +1,58 @@
-export interface CarData {
+interface CarData {
   name: string,
   color: string,
   id: number,
 }
 
-export interface Button {
+interface Button {
   id: number,
   text: string,
   isDisabled?: boolean,
 }
 
-export interface ResponseCarData {
+interface ResponseCarData {
   data: CarData[],
   count: number | null,
 }
 
-export interface ResponseWinner extends Omit<ResponseCarData, 'data'> {
+interface ResponseWinner extends Omit<ResponseCarData, 'data'> {
   data: Winner[],
 }
 
-export interface Engine {
+interface Engine {
   velocity: number,
   distance: number,
 }
 
-export interface Winner extends CarData {
+interface Winner extends CarData {
   wins: number,
   time: number,
 }
 
-export interface Api {
+interface Api {
   [key: string]: string,
 }
 
-export interface TableHeadTh {
+interface TableHeadTh {
   id: number,
   text: string,
   isASC?: boolean,
   isDESC?: boolean,
 }
 
-export interface SortBy {
+interface SortBy {
   type: string,
   order: string,
 }
+
+export type {
+  CarData,
+  Button,
+  ResponseCarData,
+  ResponseWinner,
+  Engine,
+  Winner,
+  Api,
+  TableHeadTh,
+  SortBy
+};

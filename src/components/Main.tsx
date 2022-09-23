@@ -3,6 +3,7 @@ import React, {
   useMemo,
   useState,
 } from 'react';
+
 import {
   createCarOrWinner,
   getAllCars,
@@ -11,11 +12,20 @@ import {
   saveWinner,
   getAllWinners,
   endpoints,
-} from '@/api';
-import { CarData, SortBy, Winner } from '@/ts/interfaces';
-import { NewWinner, OmitCarData } from '@/ts/types';
-import GaragePage from '@/GaragePage';
-import WinnersPage from '@/WinnersPage';
+} from 'api';
+
+import {
+  CarData,
+  SortBy,
+  Winner
+} from 'ts/interfaces';
+import {
+  NewWinner,
+  OmitCarData
+} from 'ts/types';
+
+import GaragePage from './GaragePage/GaragePage';
+import WinnersPage from './WinnersPage/WinnersPage';
 import GarageContext from './Context/GarageContext';
 
 interface MainProps {

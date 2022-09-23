@@ -1,9 +1,20 @@
-import React, { useEffect, useState } from 'react';
-import Car from '@/assets/icons/Car.svg';
-import { SetState } from '@/ts/types';
-import { getTotalCount } from '@/utils';
-import { SortBy, TableHeadTh, Winner } from '@/ts/interfaces';
-import BtnId from '@/ts/enum';
+import React, {
+  useEffect,
+  useState
+} from 'react';
+
+import { getTotalCount } from 'utils';
+
+import Car from 'assets/icons/Car.svg';
+
+import { SetState } from 'ts/types';
+import {
+  SortBy,
+  TableHeadTh,
+  Winner
+} from 'ts/interfaces';
+import BtnId from 'ts/enum';
+
 import styles from './WinnersPage.module.scss';
 
 interface WinnersPageProps {

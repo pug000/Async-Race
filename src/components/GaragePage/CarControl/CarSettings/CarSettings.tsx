@@ -1,6 +1,11 @@
-import React, { useEffect, useRef } from 'react';
-import { CarData } from '@/ts/interfaces';
-import { SetState } from '@/ts/types';
+import React, {
+  useEffect,
+  useRef
+} from 'react';
+
+import { CarData } from 'ts/interfaces';
+import { SetState } from 'ts/types';
+
 import styles from './CarSettings.module.scss';
 
 interface CarSettingsProps {
