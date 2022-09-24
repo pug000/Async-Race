@@ -74,10 +74,7 @@ const getAllWinners = async (
     const winners: Omit<Winner[], 'name' | 'color'> = await response.json();
     const data: Winner[] = await Promise.all(winners
       .map(async (winner) => {
-        const {
-          name,
-          color,
-        } = (await getCarOrWinner<CarData>(endpoints.garage, winner.id));
+        const { name, color } = (await getCarOrWinner<CarData>(endpoints.garage, winner.id));
         return { ...winner, name, color };
       }));
 
@@ -153,14 +150,16 @@ const startOrStopEngine = async (status: string, id: number) => {
 const getStatusDrive = async (id: number) => {
   const response = await fetch(`${baseUrl}/${endpoints.engine}?id=${id}&status=${statusEngine.drive}`, {
     method: methods.patch,
-  }).catch();
-  return response.status !== 200 ? { success: false } : { ...(await response.json()) };
+  });
+
+  if (response.status !== 200) {
+    return { success: false };
+  }
+
+  return response.json();
 };
 
-const saveWinner = async (
-  id: number,
-  time: number,
-) => {
+const saveWinner = async (id: number, time: number) => {
   const winnerStatus = await getWinnerStatus(id);
 
   if (winnerStatus === 404) {

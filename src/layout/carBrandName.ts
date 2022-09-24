@@ -5,7 +5,7 @@ const carBrandName = [
   'BMW',
   'Bentley',
   'Buick',
-  ' Cadillac',
+  'Cadillac',
   'Chevrolet',
   'Chrysler',
   'Dodge',

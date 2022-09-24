@@ -44,7 +44,7 @@ function App() {
     order: 'ASC',
   });
 
-  const switchPages = (bool: boolean) => setGaragePage(bool);
+  const switchPages = (pageState: boolean) => setGaragePage(pageState);
 
   const toggleSort = (text: string) => setSortWinners((prev) => (
     {
@@ -88,7 +88,9 @@ function App() {
     })();
   }, [newWinner]);
 
-  useEffect(() => { getCars(currentGaragePage); }, [currentGaragePage]);
+  useEffect(() => {
+    getCars(currentGaragePage);
+  }, [currentGaragePage]);
 
   useEffect(() => {
     getWinners(currentWinnersPage, sortWinners.type, sortWinners.order);
