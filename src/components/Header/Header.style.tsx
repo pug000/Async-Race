@@ -26,28 +26,9 @@ const HeaderWrapper = styled.div`
   gap: 20px;
 `;
 
-const HeaderWrapperButton = styled.button`
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  border: 3px solid ${({ theme }) => theme.colors.whiteColor};
-  color: ${({ theme }) => theme.colors.whiteColor};
-  cursor: pointer;
-  padding: 5px 30px;
-  border-radius: 7px;
-  transition: ${({ theme }) => theme.effects.transition};
-  background-color: transparent;
-
-  &:hover {
-    border-color: ${({ theme }) => theme.colors.lightGreenColor};
-    color: ${({ theme }) => theme.colors.lightGreenColor};
-  }
-`;
-
 export {
   StyledHeader,
   HeaderTitle,
   HeaderContainer,
   HeaderWrapper,
-  HeaderWrapperButton
 };

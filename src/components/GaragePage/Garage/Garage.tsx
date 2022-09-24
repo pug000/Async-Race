@@ -7,6 +7,8 @@ import React, {
 
 import GarageContext from 'components/Context/GarageContext';
 import Pagination from 'components/Pagination/Pagination';
+import PopupNotify from 'components/PopupNotify/PopupNotify';
+import Button from 'components/Button/Button';
 
 import {
   startOrStopEngine,
@@ -18,9 +20,9 @@ import {
   startAnimation
 } from 'utils';
 
-import BtnId from 'ts/enum';
+import ButtonId from 'ts/enum';
 import {
-  Button,
+  ButtonState,
   CarData
 } from 'ts/interfaces';
 import { SetState } from 'ts/types';
@@ -29,7 +31,7 @@ import {
   Title,
   TitlePage
 } from 'styles/styles';
-import PopupNotify from 'components/PopupNotify/PopupNotify';
+
 import {
   CarItem,
   CarItemFinish,
@@ -39,10 +41,8 @@ import {
   CarIcon,
   CarItemTitle,
   CarItemTop,
-  CarItemTopButton,
   CarItemTrack,
   CarItemWrapper,
-  CarItemWrapperButton,
   GarageContainer,
   GarageError,
   StyledGarage
@@ -77,7 +77,7 @@ function Garage(
   const [isStartedEngine, setStartedEngine] = useState<number[]>([]);
   const duration = useRef(0);
   const mapRef = useRef<Record<number, number>>({});
-  const btnsSelect: Button[] = [
+  const buttonsSelect: ButtonState[] = [
     { id: 1, text: 'Select' },
     { id: 2, text: 'Remove' },
   ];
@@ -86,11 +86,11 @@ function Garage(
     setTotalPages(getTotalCount(totalCars, 7));
   }, [totalCars]);
 
-  const handleEvent = (currentBtn: Button, currentCar: CarData) => {
-    switch (currentBtn.id) {
-      case BtnId.first:
+  const handleEvent = (currentButton: ButtonState, currentCar: CarData) => {
+    switch (currentButton.id) {
+      case ButtonId.first:
         return selectOnClick(currentCar);
-      case BtnId.second:
+      case ButtonId.second:
         return removeOnClick(currentCar);
       default:
         return currentCar;
@@ -144,11 +144,11 @@ function Garage(
 
   useEffect(() => {
     if (isRaceStarted) {
-      Promise.any(cars.map((car, i) => startEngine(car, i)))
+      Promise.any(cars.map((car, index) => startEngine(car, index)))
         .then((data) => getNewWinner(data));
       setSelectedCar(null);
     } else {
-      Promise.all(cars.map((car, i) => stopEngine(car, i)));
+      Promise.all(cars.map((car, index) => stopEngine(car, index)));
     }
   }, [isRaceStarted]);
 
@@ -174,33 +174,29 @@ function Garage(
         {cars.map((item, index) => (
           <CarItem key={item.id}>
             <CarItemTop>
-              {btnsSelect.map((button) => (
-                <CarItemTopButton
+              {buttonsSelect.map((button) => (
+                <Button
                   key={button.id}
-                  type="button"
+                  text={button.text}
                   disabled={toggleDisable(item.id)}
-                  onClick={() => handleEvent(button, item)}
-                >
-                  {button.text}
-                </CarItemTopButton>
+                  callback={() => handleEvent(button, item)}
+                />
               ))}
               <CarItemTitle>{item.name}</CarItemTitle>
             </CarItemTop>
             <CarItemWrapper>
-              <CarItemWrapperButton
-                type="button"
+              <Button
+                text="S"
                 disabled={toggleDisable(item.id)}
-                onClick={() => startEngine(item, index)}
-              >
-                S
-              </CarItemWrapperButton>
-              <CarItemWrapperButton
-                type="button"
+                isStartButton
+                callback={() => startEngine(item, index)}
+              />
+              <Button
+                text="R"
                 disabled={!toggleDisable(item.id)}
-                onClick={() => stopEngine(item, index)}
-              >
-                R
-              </CarItemWrapperButton>
+                isStopButton
+                callback={() => stopEngine(item, index)}
+              />
               <CarItemRoad>
                 <CarItemTrack>
                   <CarItemImg ref={(el) => { carRef.current[index] = el; }}>

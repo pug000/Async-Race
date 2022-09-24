@@ -1,9 +1,8 @@
 import React from 'react';
 
-import {
-  PaginationButton,
-  StyledPagination
-} from './Pagination.style';
+import Button from 'components/Button/Button';
+
+import StyledPagination from './Pagination.style';
 
 interface PaginationProps {
   isPrevButtonDisabled: boolean,
@@ -20,20 +19,18 @@ function Pagination({
 }: PaginationProps) {
   return (
     <StyledPagination>
-      <PaginationButton
-        type="button"
+      <Button
+        text="Prev"
         disabled={isPrevButtonDisabled}
-        onClick={prevPageOnClick}
-      >
-        Prev
-      </PaginationButton>
-      <PaginationButton
-        type="button"
+        callback={prevPageOnClick}
+        isControlButton
+      />
+      <Button
+        text="Next"
         disabled={isNextButtonDisabled}
-        onClick={nextPageOnClick}
-      >
-        Next
-      </PaginationButton>
+        callback={nextPageOnClick}
+        isControlButton
+      />
     </StyledPagination>
   );
 }

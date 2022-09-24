@@ -30,34 +30,7 @@ const CarSettingsInput = styled.input.attrs<InputType>(({ $type }) => ({
   )}
 `;
 
-const CarSettingsButton = styled.button`
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  border: 3px solid ${({ theme }) => theme.colors.whiteColor};
-  cursor: pointer;
-  padding: 4px 45px;
-  border-radius: 7px;
-  font-size: 17px;
-  transition: ${({ theme }) => theme.effects.transition};
-  min-width: 115px;
-  max-width: 125px;
-  width: 100%;
-  background-color: ${({ theme }) => theme.colors.transparentColor};
-
-  &:hover {
-    border-color: ${({ theme }) => theme.colors.lightGreenColor};
-    color: ${({ theme }) => theme.colors.lightGreenColor};
-  }
-
-  &:disabled {
-    border-color: ${({ theme }) => theme.colors.brownColor};
-    color: ${({ theme }) => theme.colors.brownColor};
-  }
-`;
-
 export {
   StyledCarSettings,
-  CarSettingsButton,
   CarSettingsInput
 };

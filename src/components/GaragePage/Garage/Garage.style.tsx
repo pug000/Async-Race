@@ -31,29 +31,6 @@ const CarItemTop = styled.div`
   display: flex;
 `;
 
-const CarItemTopButton = styled.button`
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  border: 3px solid ${({ theme }) => theme.colors.whiteColor};
-  cursor: pointer;
-  padding: 4px 25px;
-  border-radius: 7px;
-  transition: ${({ theme }) => theme.effects.transition};
-  background-color: ${({ theme }) => theme.colors.transparentColor};
-  color: ${({ theme }) => theme.colors.whiteColor};
-
-  &:hover {
-    border-color: ${({ theme }) => theme.colors.lightGreenColor};
-    color: ${({ theme }) => theme.colors.lightGreenColor};
-  }
-
-  &:disabled {
-    border-color: ${({ theme }) => theme.colors.brownColor};
-    color: ${({ theme }) => theme.colors.brownColor};
-  }
-`;
-
 const CarItemTitle = styled.h4`
   font-size: ${({ theme }) => theme.fontSizes.h4};
   color: ${({ theme }) => theme.colors.whiteColor};
@@ -63,33 +40,6 @@ const CarItemWrapper = styled.div`
   display: flex;
   align-items: center;
   gap: 10px;
-`;
-
-const CarItemWrapperButton = styled.button`
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  border: 3px solid;
-  cursor: pointer;
-  padding: 4px 10px;
-  border-radius: 7px;
-  transition: ${({ theme }) => theme.effects.transition};
-  background-color: ${({ theme }) => theme.colors.transparentColor};
-
-  &:nth-child(1) {
-    border-color: ${({ theme }) => theme.colors.greenColor};
-    color: ${({ theme }) => theme.colors.greenColor};
-  }
-
-  &:nth-child(2) {
-    border-color: ${({ theme }) => theme.colors.redColor};
-    color: ${({ theme }) => theme.colors.redColor};
-  }
-
-  &:disabled {
-    border-color: ${({ theme }) => theme.colors.brownColor};
-    color: ${({ theme }) => theme.colors.brownColor};
-  }
 `;
 
 const CarItemRoad = styled.div`
@@ -150,10 +100,8 @@ export {
   GarageContainer,
   CarItem,
   CarItemTop,
-  CarItemTopButton,
   CarItemTitle,
   CarItemWrapper,
-  CarItemWrapperButton,
   CarItemTrack,
   CarItemRoad,
   CarItemImg,

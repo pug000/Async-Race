@@ -19,32 +19,8 @@ const CarControlWrapper = styled.div`
   gap: 10px;
 `;
 
-const CarControlWrapperButton = styled.button`
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  border: 3px solid ${({ theme }) => theme.colors.whiteColor};
-  cursor: pointer;
-  padding: 5px 15px;
-  border-radius: 7px;
-  transition: ${({ theme }) => theme.effects.transition};
-  background-color: ${({ theme }) => theme.colors.transparentColor};
-  color: ${({ theme }) => theme.colors.whiteColor};
-
-  &:hover {
-    border-color: ${({ theme }) => theme.colors.lightGreenColor};
-    color: ${({ theme }) => theme.colors.lightGreenColor};
-  }
-
-  &:disabled {
-    border-color: ${({ theme }) => theme.colors.brownColor};
-    color: ${({ theme }) => theme.colors.brownColor};
-  }
-`;
-
 export {
   StyledCarControl,
   CarControlTop,
   CarControlWrapper,
-  CarControlWrapperButton,
 };

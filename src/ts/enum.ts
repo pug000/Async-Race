@@ -1,4 +1,4 @@
-enum BtnId {
+enum ButtonId {
   first = 1,
   second,
   third,
@@ -6,4 +6,4 @@ enum BtnId {
   fifth,
 }
 
-export default BtnId;
+export default ButtonId;

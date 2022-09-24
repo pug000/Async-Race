@@ -3,9 +3,11 @@ import React, {
   useState
 } from 'react';
 
-import BtnId from 'ts/enum';
+import Button from 'components/Button/Button';
+
+import ButtonId from 'ts/enum';
 import {
-  Button,
+  ButtonState,
   CarData
 } from 'ts/interfaces';
 import { SetState } from 'ts/types';
@@ -15,7 +17,6 @@ import CarSettings from './CarSettings/CarSettings';
 import {
   CarControlTop,
   CarControlWrapper,
-  CarControlWrapperButton,
   StyledCarControl
 } from './CarControl.style';
 
@@ -41,7 +42,7 @@ function CarControl(
   }: CarControlProps,
 ) {
   const [isDisabled, setDisabled] = useState<boolean>(true);
-  const [buttons, setButtons] = useState<Button[]>([
+  const [buttons, setButtons] = useState<ButtonState[]>([
     { id: 1, text: 'Race', isDisabled: false },
     { id: 2, text: 'Reset', isDisabled: true },
     { id: 3, text: 'Generate Cars', isDisabled: false },
@@ -50,20 +51,20 @@ function CarControl(
   const toggleDisableBtn = () => setButtons((prev) => prev
     .map((button) => ({ ...button, isDisabled: !button.isDisabled })));
 
-  const handleEvent = (currentBtn: Button) => {
-    switch (currentBtn.id) {
-      case BtnId.first:
+  const handleEvent = (currentButton: ButtonState) => {
+    switch (currentButton.id) {
+      case ButtonId.first:
         setRaceStarted(true);
         toggleDisableBtn();
-        return currentBtn;
-      case BtnId.second:
+        return currentButton;
+      case ButtonId.second:
         setRaceStarted(false);
         toggleDisableBtn();
-        return currentBtn;
-      case BtnId.third:
+        return currentButton;
+      case ButtonId.third:
         return getRandomCars();
       default:
-        return currentBtn;
+        return currentButton;
     }
   };
 
@@ -94,13 +95,12 @@ function CarControl(
         />
         <CarControlWrapper>
           {buttons.map((button) => (
-            <CarControlWrapperButton
+            <Button
               key={button.id}
+              text={button.text}
               disabled={button.isDisabled}
-              onClick={() => handleEvent(button)}
-            >
-              {button.text}
-            </CarControlWrapperButton>
+              callback={() => handleEvent(button)}
+            />
           ))}
         </CarControlWrapper>
       </CarControlTop>

@@ -13,7 +13,7 @@ import {
   TableHeadTh,
   Winner
 } from 'ts/interfaces';
-import BtnId from 'ts/enum';
+import ButtonId from 'ts/enum';
 
 import {
   Title,
@@ -80,9 +80,9 @@ function WinnersPage(
 
   const handleEvent = (id: number) => {
     switch (id) {
-      case BtnId.fourth:
+      case ButtonId.fourth:
         return toggleSortBy('wins', id);
-      case BtnId.fifth:
+      case ButtonId.fifth:
         return toggleSortBy('time', id);
       default:
         return id;

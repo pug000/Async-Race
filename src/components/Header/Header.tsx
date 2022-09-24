@@ -1,14 +1,16 @@
 import React from 'react';
+
+import Button from 'components/Button/Button';
+
 import {
   HeaderContainer,
   HeaderTitle,
   HeaderWrapper,
-  HeaderWrapperButton,
   StyledHeader
 } from './Header.style';
 
 interface HeaderProps {
-  switchPages: (bool: boolean) => void;
+  switchPages: (pageState: boolean) => void;
 }
 
 function Header(
@@ -21,16 +23,14 @@ function Header(
       <HeaderContainer>
         <HeaderTitle>Async Race</HeaderTitle>
         <HeaderWrapper>
-          <HeaderWrapperButton
-            onClick={() => switchPages(true)}
-          >
-            Garage
-          </HeaderWrapperButton>
-          <HeaderWrapperButton
-            onClick={() => switchPages(false)}
-          >
-            Winners
-          </HeaderWrapperButton>
+          <Button
+            text="Garage"
+            callback={() => switchPages(true)}
+          />
+          <Button
+            text="Winners"
+            callback={() => switchPages(false)}
+          />
         </HeaderWrapper>
       </HeaderContainer>
     </StyledHeader>

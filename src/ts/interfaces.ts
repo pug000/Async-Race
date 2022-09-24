@@ -4,7 +4,7 @@ interface CarData {
   id: number,
 }
 
-interface Button {
+interface ButtonState {
   id: number,
   text: string,
   isDisabled?: boolean,
@@ -56,7 +56,7 @@ interface InputType {
 
 export type {
   CarData,
-  Button,
+  ButtonState,
   ResponseCarData,
   ResponseWinner,
   Engine,

@@ -56,10 +56,6 @@ const WinnersTh = styled.th<StyledClickable>`
 
   ${({ $isClickable }) => $isClickable && `
     cursor: pointer;
-
-    span {
-      margin-left: 5px;
-    }
   `}
 `;
 

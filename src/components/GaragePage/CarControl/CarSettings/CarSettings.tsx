@@ -3,11 +3,12 @@ import React, {
   useRef
 } from 'react';
 
+import Button from 'components/Button/Button';
+
 import { CarData } from 'ts/interfaces';
 import { SetState } from 'ts/types';
 
 import {
-  CarSettingsButton,
   CarSettingsInput,
   StyledCarSettings
 } from './CarSettings.style';
@@ -64,12 +65,11 @@ function CarSettings(
         ref={inputColorRef}
         disabled={!!isDisabled || isRaceStarted}
       />
-      <CarSettingsButton
-        type="button"
-        onClick={handleEvent}
-      >
-        {text}
-      </CarSettingsButton>
+      <Button
+        text={text}
+        callback={handleEvent}
+        isControlButton
+      />
     </StyledCarSettings>
   );
 }
