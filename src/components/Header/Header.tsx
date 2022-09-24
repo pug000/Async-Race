@@ -1,6 +1,11 @@
 import React from 'react';
-
-import styles from './Header.module.scss';
+import {
+  HeaderContainer,
+  HeaderTitle,
+  HeaderWrapper,
+  HeaderWrapperButton,
+  StyledHeader
+} from './Header.style';
 
 interface HeaderProps {
   switchPages: (bool: boolean) => void;
@@ -12,27 +17,23 @@ function Header(
   }: HeaderProps,
 ) {
   return (
-    <header className={styles.header}>
-      <div className={styles.headerContainer}>
-        <h1 className={styles.headerContainerTitle}>Async Race</h1>
-        <div className={styles.headerContainerWrapper}>
-          <button
-            className={styles.headerContainerWrapperBtn}
-            type="button"
+    <StyledHeader>
+      <HeaderContainer>
+        <HeaderTitle>Async Race</HeaderTitle>
+        <HeaderWrapper>
+          <HeaderWrapperButton
             onClick={() => switchPages(true)}
           >
             Garage
-          </button>
-          <button
-            className={styles.headerContainerWrapperBtn}
-            type="button"
+          </HeaderWrapperButton>
+          <HeaderWrapperButton
             onClick={() => switchPages(false)}
           >
             Winners
-          </button>
-        </div>
-      </div>
-    </header>
+          </HeaderWrapperButton>
+        </HeaderWrapper>
+      </HeaderContainer>
+    </StyledHeader>
   );
 }
 

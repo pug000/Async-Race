@@ -36,6 +36,7 @@ interface Api {
 interface TableHeadTh {
   id: number,
   text: string,
+  isClickable: boolean,
   isASC?: boolean,
   isDESC?: boolean,
 }
@@ -43,6 +44,18 @@ interface TableHeadTh {
 interface SortBy {
   type: string,
   order: string,
+}
+
+interface StyledActive {
+  active: boolean,
+}
+
+interface InputType {
+  $type: string,
+}
+
+interface StyledColor {
+  $color: string,
 }
 
 export type {
@@ -54,5 +67,8 @@ export type {
   Winner,
   Api,
   TableHeadTh,
-  SortBy
+  SortBy,
+  StyledActive,
+  StyledColor,
+  InputType,
 };

@@ -12,7 +12,12 @@ import { SetState } from 'ts/types';
 
 import CarSettings from './CarSettings/CarSettings';
 
-import styles from './CarControl.module.scss';
+import {
+  CarControlTop,
+  CarControlWrapper,
+  CarControlWrapperButton,
+  StyledCarControl
+} from './CarControl.style';
 
 interface CarControlProps {
   newCar: CarData;
@@ -36,14 +41,14 @@ function CarControl(
   }: CarControlProps,
 ) {
   const [isDisabled, setDisabled] = useState<boolean>(true);
-  const [btns, setBtns] = useState<Button[]>([
+  const [buttons, setButtons] = useState<Button[]>([
     { id: 1, text: 'Race', isDisabled: false },
     { id: 2, text: 'Reset', isDisabled: true },
     { id: 3, text: 'Generate Cars', isDisabled: false },
   ]);
 
-  const toggleDisableBtn = () => setBtns((prev) => prev
-    .map((el) => ({ ...el, isDisabled: !el.isDisabled })));
+  const toggleDisableBtn = () => setButtons((prev) => prev
+    .map((button) => ({ ...button, isDisabled: !button.isDisabled })));
 
   const handleEvent = (currentBtn: Button) => {
     switch (currentBtn.id) {
@@ -71,8 +76,8 @@ function CarControl(
   }, [selectedCar]);
 
   return (
-    <div className={styles.settings}>
-      <div className={styles.settingsTop}>
+    <StyledCarControl>
+      <CarControlTop>
         <CarSettings
           text="Create"
           itemCar={newCar}
@@ -87,21 +92,19 @@ function CarControl(
           setState={setUpdatedCar}
           isRaceStarted={isRaceStarted}
         />
-        <div className={styles.settingsBottom}>
-          {btns.map((btn) => (
-            <button
-              className={styles.settingsBottomBtn}
-              disabled={btn.isDisabled}
-              key={btn.id}
-              type="button"
-              onClick={() => handleEvent(btn)}
+        <CarControlWrapper>
+          {buttons.map((button) => (
+            <CarControlWrapperButton
+              key={button.id}
+              disabled={button.isDisabled}
+              onClick={() => handleEvent(button)}
             >
-              {btn.text}
-            </button>
+              {button.text}
+            </CarControlWrapperButton>
           ))}
-        </div>
-      </div>
-    </div>
+        </CarControlWrapper>
+      </CarControlTop>
+    </StyledCarControl>
   );
 }
 

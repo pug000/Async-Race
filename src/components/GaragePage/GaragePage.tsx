@@ -17,6 +17,7 @@ import {
 
 import Garage from './Garage/Garage';
 import CarControl from './CarControl/CarControl';
+import StyledGaragePage from './GaragePage.style';
 
 interface GaragePageProps {
   addNewCar: AsyncFn<CarData | OmitCarData, void>;
@@ -85,7 +86,7 @@ function GaragePage(
   }, [removedCar]);
 
   return (
-    <div className="garage" style={{ display: isGaragePage ? 'flex' : 'none' }}>
+    <StyledGaragePage active={isGaragePage}>
       <CarControl
         newCar={newCar}
         isRaceStarted={isRaceStarted}
@@ -101,7 +102,7 @@ function GaragePage(
         removeOnClick={removeOnClick}
         setSelectedCar={setSelectedCar}
       />
-    </div>
+    </StyledGaragePage>
   );
 }
 

@@ -29,8 +29,6 @@ import {
   Winner
 } from 'ts/interfaces';
 
-import './styles/reset.scss';
-
 function App() {
   const [isGaragePage, setGaragePage] = useState<boolean>(true);
   const [cars, setCars] = useState<CarData[]>([]);

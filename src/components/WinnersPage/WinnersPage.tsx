@@ -5,8 +5,6 @@ import React, {
 
 import { getTotalCount } from 'utils';
 
-import Car from 'assets/icons/Car.svg';
-
 import { SetState } from 'ts/types';
 import {
   SortBy,
@@ -15,7 +13,22 @@ import {
 } from 'ts/interfaces';
 import BtnId from 'ts/enum';
 
-import styles from './WinnersPage.module.scss';
+import {
+  Title,
+  TitlePage
+} from 'styles/styles';
+import {
+  CarIcon,
+  Pagination,
+  PaginationButton,
+  Winners,
+  WinnersTable,
+  WinnersTableBody,
+  WinnersTableHead,
+  WinnersTh,
+  WinnersTr,
+  WinnersText
+} from './WinnerPage.style';
 
 interface WinnersPageProps {
   isGaragePage: boolean;
@@ -40,14 +53,14 @@ function WinnersPage(
 ) {
   const [totalPages, setTotalPages] = useState(0);
   const [tableHeadTh, setTableHeadTh] = useState<TableHeadTh[]>([
-    { id: 1, text: 'Number' },
-    { id: 2, text: 'Car' },
-    { id: 3, text: 'Name' },
+    { id: 1, text: 'Number', isClickable: false },
+    { id: 2, text: 'Car', isClickable: false },
+    { id: 3, text: 'Name', isClickable: false },
     {
-      id: 4, text: 'Wins', isASC: false, isDESC: false
+      id: 4, text: 'Wins', isASC: false, isDESC: false, isClickable: true
     },
     {
-      id: 5, text: 'Best time (s)', isASC: false, isDESC: false
+      id: 5, text: 'Best time (s)', isASC: false, isDESC: false, isClickable: true
     }
   ]);
 
@@ -77,27 +90,31 @@ function WinnersPage(
   };
 
   return (
-    <div className={styles.winners} style={{ display: !isGaragePage ? 'flex' : 'none' }}>
-      <h2 className={styles.winnersTitleWinners}>{`Winners (${totalWinners})`}</h2>
-      <h3 className={styles.winnersTitlePage}>{`Page #${currentPage}`}</h3>
-      <table className={styles.winnersTable}>
-        <thead>
-          <tr>
+    <Winners active={isGaragePage}>
+      <Title>{`Winners (${totalWinners})`}</Title>
+      <TitlePage>{`Page #${currentPage}`}</TitlePage>
+      <WinnersTable>
+        <WinnersTableHead>
+          <WinnersTr>
             {tableHeadTh.map(({
-              id, text, isASC, isDESC
+              id,
+              text,
+              isASC,
+              isDESC,
+              isClickable,
             }) => (
-              <th
+              <WinnersTh
                 key={id}
                 onClick={() => handleEvent(id)}
+                $isClickable={isClickable}
               >
                 {text}
-                {isDESC ? (<span>&#8593;</span>) : ''}
-                {isASC ? (<span>&#8595;</span>) : ''}
-              </th>
+                <WinnersText $isDESC={isDESC} $isASC={isASC} />
+              </WinnersTh>
             ))}
-          </tr>
-        </thead>
-        <tbody>
+          </WinnersTr>
+        </WinnersTableHead>
+        <WinnersTableBody>
           {winners.map((
             {
               id,
@@ -108,37 +125,35 @@ function WinnersPage(
             },
             index
           ) => (
-            <tr key={id}>
-              <th>{index + 1}</th>
-              <th>
-                <Car className={styles.winnersCar} fill={color} />
-              </th>
-              <th>{name}</th>
-              <th>{wins}</th>
-              <th>{time}</th>
-            </tr>
+            <WinnersTr key={id}>
+              <WinnersTh>{index + 1}</WinnersTh>
+              <WinnersTh>
+                <CarIcon fill={color} />
+              </WinnersTh>
+              <WinnersTh>{name}</WinnersTh>
+              <WinnersTh>{wins}</WinnersTh>
+              <WinnersTh>{time}</WinnersTh>
+            </WinnersTr>
           ))}
-        </tbody>
-      </table>
-      <div className={styles.winnersPagination}>
-        <button
-          className={styles.winnersPaginationBtn}
+        </WinnersTableBody>
+      </WinnersTable>
+      <Pagination>
+        <PaginationButton
           type="button"
           disabled={currentPage <= 1}
           onClick={() => setCurrentPage(currentPage - 1)}
         >
           Prev
-        </button>
-        <button
-          className={styles.winnersPaginationBtn}
+        </PaginationButton>
+        <PaginationButton
           type="button"
           disabled={currentPage >= totalPages}
           onClick={() => setCurrentPage(currentPage + 1)}
         >
           Next
-        </button>
-      </div>
-    </div>
+        </PaginationButton>
+      </Pagination>
+    </Winners>
   );
 }
 

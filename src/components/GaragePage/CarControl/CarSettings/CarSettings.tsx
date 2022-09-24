@@ -6,7 +6,11 @@ import React, {
 import { CarData } from 'ts/interfaces';
 import { SetState } from 'ts/types';
 
-import styles from './CarSettings.module.scss';
+import {
+  CarSettingsButton,
+  CarSettingsInput,
+  StyledCarSettings
+} from './CarSettings.style';
 
 interface CarSettingsProps {
   text: string;
@@ -49,28 +53,24 @@ function CarSettings(
   }, [itemCar]);
 
   return (
-    <div className={styles.settingsTopWrapper}>
-      <input
-        className={styles.settingsTopWrapperTextInput}
-        type="text"
+    <StyledCarSettings>
+      <CarSettingsInput
+        $type="text"
         ref={inputTextRef}
         disabled={!!isDisabled || isRaceStarted}
       />
-      <input
-        className={styles.settingsTopWrapperColorInput}
-        type="color"
+      <CarSettingsInput
+        $type="color"
         ref={inputColorRef}
         disabled={!!isDisabled || isRaceStarted}
       />
-      <button
-        className={styles.settingsTopWrapperBtn}
+      <CarSettingsButton
         type="button"
-        disabled={!!isDisabled || isRaceStarted}
         onClick={handleEvent}
       >
         {text}
-      </button>
-    </div>
+      </CarSettingsButton>
+    </StyledCarSettings>
   );
 }
 
