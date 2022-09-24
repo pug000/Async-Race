@@ -3,6 +3,8 @@ import React, {
   useState
 } from 'react';
 
+import Pagination from 'components/Pagination/Pagination';
+
 import { getTotalCount } from 'utils';
 
 import { SetState } from 'ts/types';
@@ -17,7 +19,6 @@ import {
   Title,
   TitlePage
 } from 'styles/styles';
-import Pagination from 'components/Pagination/Pagination';
 import {
   CarIcon,
   Winners,

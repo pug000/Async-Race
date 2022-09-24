@@ -54,10 +54,6 @@ interface InputType {
   $type: string,
 }
 
-interface StyledColor {
-  $color: string,
-}
-
 export type {
   CarData,
   Button,
@@ -69,6 +65,5 @@ export type {
   TableHeadTh,
   SortBy,
   StyledActive,
-  StyledColor,
   InputType,
 };

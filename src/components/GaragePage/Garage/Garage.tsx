@@ -6,6 +6,7 @@ import React, {
 } from 'react';
 
 import GarageContext from 'components/Context/GarageContext';
+import Pagination from 'components/Pagination/Pagination';
 
 import {
   startOrStopEngine,
@@ -28,14 +29,13 @@ import {
   Title,
   TitlePage
 } from 'styles/styles';
-import Pagination from 'components/Pagination/Pagination';
 import {
   CarItem,
   CarItemFinish,
   CarItemFinishSvg,
   CarItemImg,
   CarItemRoad,
-  CarItemSvg,
+  CarIcon,
   CarItemTitle,
   CarItemTop,
   CarItemTopButton,
@@ -206,7 +206,7 @@ function Garage(
               <CarItemRoad>
                 <CarItemTrack>
                   <CarItemImg ref={(el) => { carRef.current[index] = el; }}>
-                    <CarItemSvg $color={item.color} />
+                    <CarIcon fill={item.color} />
                   </CarItemImg>
                 </CarItemTrack>
                 <CarItemFinish>

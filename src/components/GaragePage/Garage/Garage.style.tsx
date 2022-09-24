@@ -1,7 +1,7 @@
 import styled from 'styled-components';
+
 import CarSvg from 'assets/icons/Car.svg';
 import FinishFlag from 'assets/icons/FinishFlag.svg';
-import { StyledColor } from 'ts/interfaces';
 
 const StyledGarage = styled.div`
   display: flex;
@@ -108,9 +108,7 @@ const CarItemImg = styled.div`
   position: relative;
 `;
 
-const CarItemSvg = styled(CarSvg) <StyledColor>`
-  fill: ${({ $color }) => $color};
-`;
+const CarIcon = styled(CarSvg)``;
 
 const CarItemFinish = styled.div`
   max-width: 155px;
@@ -159,7 +157,7 @@ export {
   CarItemTrack,
   CarItemRoad,
   CarItemImg,
-  CarItemSvg,
+  CarIcon,
   CarItemFinish,
   CarItemFinishSvg,
   PopupNotify,
