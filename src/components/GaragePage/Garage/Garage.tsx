@@ -29,6 +29,7 @@ import {
   Title,
   TitlePage
 } from 'styles/styles';
+import PopupNotify from 'components/PopupNotify/PopupNotify';
 import {
   CarItem,
   CarItemFinish,
@@ -44,9 +45,6 @@ import {
   CarItemWrapperButton,
   GarageContainer,
   GarageError,
-  PopupNotify,
-  PopupNotifyContainer,
-  PopupNotifyContainerTitle,
   StyledGarage
 } from './Garage.style';
 
@@ -224,11 +222,9 @@ function Garage(
         />
       </GarageContainer>
       {!!newWinner && (
-        <PopupNotify>
-          <PopupNotifyContainer>
-            <PopupNotifyContainerTitle>{`${newWinner.name} went first (${newWinner.time}s)!`}</PopupNotifyContainerTitle>
-          </PopupNotifyContainer>
-        </PopupNotify>
+        <PopupNotify
+          title={`${newWinner.name} went first (${newWinner.time}s)!`}
+        />
       )}
     </StyledGarage>
   );
