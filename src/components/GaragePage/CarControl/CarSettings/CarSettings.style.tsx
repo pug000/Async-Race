@@ -15,13 +15,13 @@ const CarSettingsInput = styled.input.attrs<InputType>(({ $type }) => ({
   height: 30px;
   min-width: 50px;
 
-  ${({ $type }) => (
-    $type === 'text' && `
+  ${(props) => (
+    props.$type === 'text' && `
     border: none;
     padding: 4px 0 4px 12px;
     border-radius: 4px;
     width: 100%;
-    font-size: 16px;
+    font-size: ${props.theme.fontSizes.text};
 
     &:focus {
       outline: none;

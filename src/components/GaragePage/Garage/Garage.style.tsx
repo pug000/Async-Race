@@ -33,7 +33,6 @@ const CarItemTop = styled.div`
 
 const CarItemTitle = styled.h4`
   font-size: ${({ theme }) => theme.fontSizes.h4};
-  color: ${({ theme }) => theme.colors.whiteColor};
 `;
 
 const CarItemWrapper = styled.div`
