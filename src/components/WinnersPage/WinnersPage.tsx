@@ -17,10 +17,9 @@ import {
   Title,
   TitlePage
 } from 'styles/styles';
+import Pagination from 'components/Pagination/Pagination';
 import {
   CarIcon,
-  Pagination,
-  PaginationButton,
   Winners,
   WinnersTable,
   WinnersTableBody,
@@ -137,22 +136,12 @@ function WinnersPage(
           ))}
         </WinnersTableBody>
       </WinnersTable>
-      <Pagination>
-        <PaginationButton
-          type="button"
-          disabled={currentPage <= 1}
-          onClick={() => setCurrentPage(currentPage - 1)}
-        >
-          Prev
-        </PaginationButton>
-        <PaginationButton
-          type="button"
-          disabled={currentPage >= totalPages}
-          onClick={() => setCurrentPage(currentPage + 1)}
-        >
-          Next
-        </PaginationButton>
-      </Pagination>
+      <Pagination
+        isPrevButtonDisabled={currentPage <= 1}
+        isNextButtonDisabled={currentPage >= totalPages}
+        prevPageOnClick={() => setCurrentPage(currentPage - 1)}
+        nextPageOnClick={() => setCurrentPage(currentPage + 1)}
+      />
     </Winners>
   );
 }

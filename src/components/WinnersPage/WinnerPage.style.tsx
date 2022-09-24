@@ -23,16 +23,6 @@ const Winners = styled.div<StyledActive>`
   `}
 `;
 
-// const WinnersTitle = styled.h2`
-//   font-size: ${({ theme }) => theme.fontSizes.h2};
-// `;
-
-// const WinnersTitlePage = styled.h3`
-//   font-size: ${({ theme }) => theme.fontSizes.h3};
-//   line-height: 20px;
-//   margin-bottom: 15px;
-// `;
-
 const CarIcon = styled(CarSvg)`
   max-width: 110px;
   width: 100%;
@@ -85,34 +75,6 @@ const WinnersText = styled.span<StyledSortState>`
 
 const WinnersTableBody = styled.tbody``;
 
-const Pagination = styled.div`
-  display: flex;
-  gap: 30px;
-`;
-
-const PaginationButton = styled.button`
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  border: 3px solid ${({ theme }) => theme.colors.whiteColor};
-  cursor: pointer;
-  padding: 5px 40px;
-  border-radius: 7px;
-  transition: ${({ theme }) => theme.effects.transition};
-  background-color: ${({ theme }) => theme.colors.transparentColor};
-  color: ${({ theme }) => theme.colors.whiteColor};
-
-  &:hover {
-    border-color: ${({ theme }) => theme.colors.lightGreenColor};
-    color: ${({ theme }) => theme.colors.lightGreenColor};
-  }
-
-  &:disabled {
-    border-color: ${({ theme }) => theme.colors.brownColor};
-    color: ${({ theme }) => theme.colors.brownColor};
-  }
-`;
-
 export {
   Winners,
   WinnersTable,
@@ -121,7 +83,5 @@ export {
   WinnersTh,
   WinnersTr,
   CarIcon,
-  Pagination,
-  PaginationButton,
   WinnersText,
 };

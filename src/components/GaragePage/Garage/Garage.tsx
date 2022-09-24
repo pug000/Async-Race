@@ -28,6 +28,7 @@ import {
   Title,
   TitlePage
 } from 'styles/styles';
+import Pagination from 'components/Pagination/Pagination';
 import {
   CarItem,
   CarItemFinish,
@@ -43,8 +44,6 @@ import {
   CarItemWrapperButton,
   GarageContainer,
   GarageError,
-  Pagination,
-  PaginationButton,
   PopupNotify,
   PopupNotifyContainer,
   PopupNotifyContainerTitle,
@@ -217,22 +216,12 @@ function Garage(
             </CarItemWrapper>
           </CarItem>
         ))}
-        <Pagination>
-          <PaginationButton
-            type="button"
-            disabled={currentGaragePage <= 1 || isStartedEngine.length > 0}
-            onClick={() => setCurrentGaragePage(currentGaragePage - 1)}
-          >
-            Prev
-          </PaginationButton>
-          <PaginationButton
-            type="button"
-            disabled={currentGaragePage >= totalPages || isStartedEngine.length > 0}
-            onClick={() => setCurrentGaragePage(currentGaragePage + 1)}
-          >
-            Next
-          </PaginationButton>
-        </Pagination>
+        <Pagination
+          isPrevButtonDisabled={currentGaragePage <= 1 || isStartedEngine.length > 0}
+          isNextButtonDisabled={currentGaragePage >= totalPages || isStartedEngine.length > 0}
+          prevPageOnClick={() => setCurrentGaragePage(currentGaragePage - 1)}
+          nextPageOnClick={() => setCurrentGaragePage(currentGaragePage + 1)}
+        />
       </GarageContainer>
       {!!newWinner && (
         <PopupNotify>
