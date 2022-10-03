@@ -19,8 +19,4 @@ const CarControlWrapper = styled.div`
   gap: 10px;
 `;
 
-export {
-  StyledCarControl,
-  CarControlTop,
-  CarControlWrapper,
-};
+export { StyledCarControl, CarControlTop, CarControlWrapper };

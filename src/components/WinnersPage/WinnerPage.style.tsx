@@ -1,16 +1,16 @@
 import styled from 'styled-components';
 
-import { StyledActive } from 'ts/interfaces';
-
 import CarSvg from 'assets/icons/Car.svg';
 
+import { StyledActive } from 'ts/interfaces';
+
 interface StyledClickable {
-  $isClickable?: boolean,
+  $isClickable?: boolean;
 }
 
 interface StyledSortState {
-  $isASC?: boolean,
-  $isDESC?: boolean
+  $isASC?: boolean;
+  $isDESC?: boolean;
 }
 
 const Winners = styled.div<StyledActive>`
@@ -18,7 +18,9 @@ const Winners = styled.div<StyledActive>`
   flex-direction: column;
   gap: 30px;
 
-  ${({ active }) => !active && `
+  ${({ active }) =>
+    !active &&
+    `
     display: flex;
   `}
 `;
@@ -54,7 +56,9 @@ const WinnersTh = styled.th<StyledClickable>`
   vertical-align: middle;
   text-align: left;
 
-  ${({ $isClickable }) => $isClickable && `
+  ${({ $isClickable }) =>
+    $isClickable &&
+    `
     cursor: pointer;
   `}
 `;
@@ -63,7 +67,7 @@ const WinnersText = styled.span<StyledSortState>`
   margin-left: 5px;
 
   &::before {
-    content: "";
+    content: '';
     ${({ $isDESC }) => $isDESC && 'content: "↑"'}
     ${({ $isASC }) => $isASC && 'content: "↓"'}
   }

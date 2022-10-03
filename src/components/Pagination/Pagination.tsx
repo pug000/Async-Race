@@ -5,10 +5,10 @@ import Button from 'components/Button/Button';
 import StyledPagination from './Pagination.style';
 
 interface PaginationProps {
-  isPrevButtonDisabled: boolean,
-  isNextButtonDisabled: boolean,
-  prevPageOnClick: () => void,
-  nextPageOnClick: () => void,
+  isPrevButtonDisabled: boolean;
+  isNextButtonDisabled: boolean;
+  prevPageOnClick: () => void;
+  nextPageOnClick: () => void;
 }
 
 function Pagination({

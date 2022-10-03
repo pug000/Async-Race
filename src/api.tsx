@@ -35,9 +35,12 @@ const getAllCars = async (
   limit = 7
 ) => {
   try {
-    const response = await fetch(`${baseUrl}/${endpoints.garage}?_page=${page}&_limit=${limit}`, {
-      method: methods.get,
-    });
+    const response = await fetch(
+      `${baseUrl}/${endpoints.garage}?_page=${page}&_limit=${limit}`,
+      {
+        method: methods.get,
+      }
+    );
     const responseCar: ResponseCarData = {
       data: await response.json(),
       count: Number(response.headers.get('X-Total-Count')),
@@ -53,7 +56,9 @@ const getAllCars = async (
 
 const getCarOrWinner = async <T,>(resource: string, id: number) => {
   try {
-    const response = await fetch(`${baseUrl}/${resource}/${id}`, { method: methods.get });
+    const response = await fetch(`${baseUrl}/${resource}/${id}`, {
+      method: methods.get,
+    });
     const data: T = await response.json();
     return data;
   } catch (error) {
@@ -65,18 +70,25 @@ const getAllWinners = async (
   page: number,
   type: string,
   order: string,
-  limit = 10,
+  limit = 10
 ) => {
   try {
-    const response = await fetch(`${baseUrl}/${endpoints.winners}?_page=${page}&_limit=${limit}&_sort=${type}&_order=${order}`, {
-      method: methods.get,
-    });
+    const response = await fetch(
+      `${baseUrl}/${endpoints.winners}?_page=${page}&_limit=${limit}&_sort=${type}&_order=${order}`,
+      {
+        method: methods.get,
+      }
+    );
     const winners: Omit<Winner[], 'name' | 'color'> = await response.json();
-    const data: Winner[] = await Promise.all(winners
-      .map(async (winner) => {
-        const { name, color } = (await getCarOrWinner<CarData>(endpoints.garage, winner.id));
+    const data: Winner[] = await Promise.all(
+      winners.map(async (winner) => {
+        const { name, color } = await getCarOrWinner<CarData>(
+          endpoints.garage,
+          winner.id
+        );
         return { ...winner, name, color };
-      }));
+      })
+    );
 
     const responseWinner: ResponseWinner = {
       data,
@@ -90,7 +102,9 @@ const getAllWinners = async (
 
 const removeCarOrWinner = async (endpoint: string, id: number) => {
   try {
-    const response = await fetch(`${baseUrl}/${endpoint}/${id}`, { method: methods.delete });
+    const response = await fetch(`${baseUrl}/${endpoint}/${id}`, {
+      method: methods.delete,
+    });
     const data: CarData = await response.json();
     return data;
   } catch (error) {
@@ -100,7 +114,11 @@ const removeCarOrWinner = async (endpoint: string, id: number) => {
 
 const getWinnerStatus = async (id: number) => {
   try {
-    const responseStatus = (await fetch(`${baseUrl}/${endpoints.winners}/${id}`, { method: methods.get })).status;
+    const responseStatus = (
+      await fetch(`${baseUrl}/${endpoints.winners}/${id}`, {
+        method: methods.get,
+      })
+    ).status;
     return responseStatus;
   } catch (error) {
     throw new Error(`${error}`);
@@ -137,9 +155,12 @@ const updateCarOrWinner = async <T,>(endpoint: string, item: T, id: number) => {
 
 const startOrStopEngine = async (status: string, id: number) => {
   try {
-    const response = await fetch(`${baseUrl}/${endpoints.engine}?id=${id}&status=${status}`, {
-      method: methods.patch,
-    });
+    const response = await fetch(
+      `${baseUrl}/${endpoints.engine}?id=${id}&status=${status}`,
+      {
+        method: methods.patch,
+      }
+    );
     const data: Engine = await response.json();
     return data;
   } catch (error) {
@@ -148,9 +169,12 @@ const startOrStopEngine = async (status: string, id: number) => {
 };
 
 const getStatusDrive = async (id: number) => {
-  const response = await fetch(`${baseUrl}/${endpoints.engine}?id=${id}&status=${statusEngine.drive}`, {
-    method: methods.patch,
-  });
+  const response = await fetch(
+    `${baseUrl}/${endpoints.engine}?id=${id}&status=${statusEngine.drive}`,
+    {
+      method: methods.patch,
+    }
+  );
 
   if (response.status !== 200) {
     return { success: false };
@@ -171,11 +195,15 @@ const saveWinner = async (id: number, time: number) => {
   } else {
     const winner: Winner = await getCarOrWinner(endpoints.winners, id);
     const highScoreTime = time < winner.time ? time : winner.time;
-    await updateCarOrWinner(endpoints.winners, {
-      id,
-      wins: winner.wins + 1,
-      time: highScoreTime,
-    }, id);
+    await updateCarOrWinner(
+      endpoints.winners,
+      {
+        id,
+        wins: winner.wins + 1,
+        time: highScoreTime,
+      },
+      id
+    );
   }
 };
 

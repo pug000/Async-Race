@@ -10,7 +10,4 @@ const TitlePage = styled.h3`
   margin-bottom: 15px;
 `;
 
-export {
-  Title,
-  TitlePage
-};
+export { Title, TitlePage };

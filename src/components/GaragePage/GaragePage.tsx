@@ -1,22 +1,14 @@
-import React, {
-  useEffect,
-  useState
-} from 'react';
+import React, { useEffect, useState } from 'react';
 
-import { generateRandomCars, defaultCar } from 'utils';
-import {
-  endpoints,
-  getCarOrWinner
-} from 'api';
+import { defaultCar, generateRandomCars } from 'utils';
+
+import { endpoints, getCarOrWinner } from 'api';
 
 import { CarData } from 'ts/interfaces';
-import {
-  AsyncFn,
-  OmitCarData,
-} from 'ts/types';
+import { AsyncFn, OmitCarData } from 'ts/types';
 
-import Garage from './Garage/Garage';
 import CarControl from './CarControl/CarControl';
+import Garage from './Garage/Garage';
 import StyledGaragePage from './GaragePage.style';
 
 interface GaragePageProps {
@@ -26,14 +18,12 @@ interface GaragePageProps {
   isGaragePage: boolean;
 }
 
-function GaragePage(
-  {
-    addNewCar,
-    updateSelectedCar,
-    removeCar,
-    isGaragePage,
-  }: GaragePageProps,
-) {
+function GaragePage({
+  addNewCar,
+  updateSelectedCar,
+  removeCar,
+  isGaragePage,
+}: GaragePageProps) {
   const [newCar, setNewCar] = useState<CarData>(defaultCar);
   const [randomCars, setRandomCars] = useState<OmitCarData[]>([]);
   const [selectedCar, setSelectedCar] = useState<CarData | null>(null);
@@ -41,9 +31,8 @@ function GaragePage(
   const [removedCar, setRemovedCar] = useState<CarData | null>(null);
   const [isRaceStarted, setRaceStarted] = useState<boolean>(false);
 
-  const selectOnClick = async (car: CarData) => (
-    setSelectedCar(await getCarOrWinner<CarData>(endpoints.garage, car.id))
-  );
+  const selectOnClick = async (car: CarData) =>
+    setSelectedCar(await getCarOrWinner<CarData>(endpoints.garage, car.id));
 
   const removeOnClick = async (car: CarData) => setRemovedCar(car);
 

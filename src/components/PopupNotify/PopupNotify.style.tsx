@@ -22,8 +22,4 @@ const PopupNotifyContainerTitle = styled.h4`
   border-radius: 5px;
 `;
 
-export {
-  StyledPopupNotify,
-  PopupNotifyContainer,
-  PopupNotifyContainerTitle,
-};
+export { StyledPopupNotify, PopupNotifyContainer, PopupNotifyContainerTitle };

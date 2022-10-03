@@ -2,10 +2,10 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { ThemeProvider } from 'styled-components';
 
-import App from 'App';
-
 import Global from 'styles/Global';
 import defaultTheme from 'styles/theme.style';
+
+import App from 'App';
 
 const root = document.getElementById('root');
 
@@ -17,5 +17,5 @@ ReactDOM.createRoot(root).render(
       <Global />
       <App />
     </ThemeProvider>
-  </React.StrictMode>,
+  </React.StrictMode>
 );

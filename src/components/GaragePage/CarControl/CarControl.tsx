@@ -1,26 +1,19 @@
-import React, {
-  useEffect,
-  useState
-} from 'react';
+import React, { useEffect, useState } from 'react';
 
 import Button from 'components/Button/Button';
 
 import { controlButtons } from 'utils';
 
 import ButtonId from 'ts/enum';
-import {
-  ButtonState,
-  CarData
-} from 'ts/interfaces';
+import { ButtonState, CarData } from 'ts/interfaces';
 import { SetState } from 'ts/types';
-
-import CarSettings from './CarSettings/CarSettings';
 
 import {
   CarControlTop,
   CarControlWrapper,
-  StyledCarControl
+  StyledCarControl,
 } from './CarControl.style';
+import CarSettings from './CarSettings/CarSettings';
 
 interface CarControlProps {
   newCar: CarData;
@@ -32,22 +25,22 @@ interface CarControlProps {
   setUpdatedCar: SetState<CarData | null>;
 }
 
-function CarControl(
-  {
-    newCar,
-    selectedCar,
-    isRaceStarted,
-    setRaceStarted,
-    setNewCar,
-    setUpdatedCar,
-    getRandomCars,
-  }: CarControlProps,
-) {
+function CarControl({
+  newCar,
+  selectedCar,
+  isRaceStarted,
+  setRaceStarted,
+  setNewCar,
+  setUpdatedCar,
+  getRandomCars,
+}: CarControlProps) {
   const [isDisabled, setDisabled] = useState<boolean>(true);
   const [buttons, setButtons] = useState<ButtonState[]>(controlButtons);
 
-  const toggleDisableBtn = () => setButtons((prev) => prev
-    .map((button) => ({ ...button, isDisabled: !button.isDisabled })));
+  const toggleDisableBtn = () =>
+    setButtons((prev) =>
+      prev.map((button) => ({ ...button, isDisabled: !button.isDisabled }))
+    );
 
   const handleEvent = (currentButton: ButtonState) => {
     switch (currentButton.id) {

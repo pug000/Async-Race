@@ -26,9 +26,4 @@ const HeaderWrapper = styled.div`
   gap: 20px;
 `;
 
-export {
-  StyledHeader,
-  HeaderTitle,
-  HeaderContainer,
-  HeaderWrapper,
-};
+export { StyledHeader, HeaderTitle, HeaderContainer, HeaderWrapper };

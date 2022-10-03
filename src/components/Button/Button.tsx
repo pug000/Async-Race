@@ -3,12 +3,12 @@ import React from 'react';
 import StyledButton from './Button.style';
 
 interface ButtonProps {
-  text: string,
-  callback: () => void,
-  disabled?: boolean,
-  isControlButton?: boolean,
-  isStartButton?: boolean,
-  isStopButton?: boolean,
+  text: string;
+  callback: () => void;
+  disabled?: boolean;
+  isControlButton?: boolean;
+  isStartButton?: boolean;
+  isStopButton?: boolean;
 }
 
 function Button({

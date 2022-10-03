@@ -1,17 +1,16 @@
 import React from 'react';
+
 import {
   PopupNotifyContainer,
   PopupNotifyContainerTitle,
-  StyledPopupNotify
+  StyledPopupNotify,
 } from './PopupNotify.style';
 
 interface PopupNotifyPopup {
-  title: string,
+  title: string;
 }
 
-function PopupNotify({
-  title,
-}: PopupNotifyPopup) {
+function PopupNotify({ title }: PopupNotifyPopup) {
   return (
     <StyledPopupNotify>
       <PopupNotifyContainer>

@@ -3,28 +3,28 @@ import { DefaultTheme } from 'styled-components';
 declare module 'styled-components' {
   export interface DefaultTheme {
     colors: {
-      purpleColor: string,
-      whiteColor: string,
-      greenColor: string,
-      lightGreenColor: string,
-      redColor: string,
-      brownColor: string,
-      transparentColor: string,
-    },
+      purpleColor: string;
+      whiteColor: string;
+      greenColor: string;
+      lightGreenColor: string;
+      redColor: string;
+      brownColor: string;
+      transparentColor: string;
+    };
     fonts: {
-      title: string,
-      text: string,
-    },
+      title: string;
+      text: string;
+    };
     fontSizes: {
-      h1: string,
-      h2: string,
-      h3: string,
-      h4: string,
-      text: string,
-    },
+      h1: string;
+      h2: string;
+      h3: string;
+      h4: string;
+      text: string;
+    };
     effects: {
-      transition: string,
-    }
+      transition: string;
+    };
   }
 }
 
@@ -36,7 +36,7 @@ const defaultTheme: DefaultTheme = {
     lightGreenColor: '#81e211',
     redColor: '#af2121',
     brownColor: '#524848',
-    transparentColor: 'transparent'
+    transparentColor: 'transparent',
   },
   fonts: {
     title: 'Permanent Marker, cursive',
@@ -51,7 +51,7 @@ const defaultTheme: DefaultTheme = {
   },
   effects: {
     transition: '0.3s ease-out',
-  }
+  },
 };
 
 export default defaultTheme;

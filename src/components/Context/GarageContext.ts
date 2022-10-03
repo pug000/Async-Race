@@ -1,11 +1,7 @@
 import { createContext } from 'react';
 
 import { CarData } from 'ts/interfaces';
-import {
-  AsyncFn,
-  NewWinner,
-  SetState
-} from 'ts/types';
+import { AsyncFn, NewWinner, SetState } from 'ts/types';
 
 interface GarageContextProps {
   cars: CarData[];
@@ -24,9 +20,9 @@ const defaultValue = {
   errorMessage: null,
   newWinner: undefined,
   currentGaragePage: 1,
-  setCurrentGaragePage: () => { },
-  getNewWinner: () => { },
-  removeCar: async () => { },
+  setCurrentGaragePage: () => {},
+  getNewWinner: () => {},
+  removeCar: async () => {},
 };
 
 const GarageContext = createContext<GarageContextProps>(defaultValue);

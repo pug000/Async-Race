@@ -22,11 +22,9 @@ const config = {
     host: 'localhost',
   },
   plugins: [
-    new MiniCssExtractPlugin(
-      {
-        filename: '[name].css',
-      },
-    ),
+    new MiniCssExtractPlugin({
+      filename: '[name].css',
+    }),
     new HtmlWebpackPlugin({
       template: './src/index.html',
     }),
@@ -75,9 +73,7 @@ const config = {
   },
   resolve: {
     extensions: ['.tsx', '.ts', '.jsx', '.js'],
-    plugins: [
-      new TsconfigPathsPlugin()
-    ],
+    plugins: [new TsconfigPathsPlugin()],
   },
 };
 

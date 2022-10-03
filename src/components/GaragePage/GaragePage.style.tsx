@@ -1,4 +1,5 @@
 import styled from 'styled-components';
+
 import { StyledActive } from 'ts/interfaces';
 
 const StyledGaragePage = styled.div<StyledActive>`
@@ -6,7 +7,9 @@ const StyledGaragePage = styled.div<StyledActive>`
   flex-direction: column;
   gap: 30px;
 
-  ${({ active }) => active && `
+  ${({ active }) =>
+    active &&
+    `
     display: flex;
   `}
 `;

@@ -1,52 +1,39 @@
-import React, {
-  useContext,
-  useEffect,
-  useRef,
-  useState,
-} from 'react';
+import React, { useContext, useEffect, useRef, useState } from 'react';
 
+import Button from 'components/Button/Button';
 import GarageContext from 'components/Context/GarageContext';
 import Pagination from 'components/Pagination/Pagination';
 import PopupNotify from 'components/PopupNotify/PopupNotify';
-import Button from 'components/Button/Button';
 
-import {
-  startOrStopEngine,
-  statusEngine
-} from 'api';
 import {
   getDuration,
   getTotalCount,
-  startAnimation,
   selectionButton,
+  startAnimation,
 } from 'utils';
 
+import { startOrStopEngine, statusEngine } from 'api';
+
 import ButtonId from 'ts/enum';
-import {
-  ButtonState,
-  CarData
-} from 'ts/interfaces';
+import { ButtonState, CarData } from 'ts/interfaces';
 import { SetState } from 'ts/types';
 
-import {
-  Title,
-  TitlePage
-} from 'styles/styles';
+import { Title, TitlePage } from 'styles/styles';
 
 import {
+  CarIcon,
   CarItem,
   CarItemFinish,
   CarItemFinishSvg,
   CarItemImg,
   CarItemRoad,
-  CarIcon,
   CarItemTitle,
   CarItemTop,
   CarItemTrack,
   CarItemWrapper,
   GarageContainer,
   GarageError,
-  StyledGarage
+  StyledGarage,
 } from './Garage.style';
 
 interface GarageProps {
@@ -56,14 +43,12 @@ interface GarageProps {
   setSelectedCar: SetState<CarData | null>;
 }
 
-function Garage(
-  {
-    isRaceStarted,
-    selectOnClick,
-    removeOnClick,
-    setSelectedCar,
-  }: GarageProps,
-) {
+function Garage({
+  isRaceStarted,
+  selectOnClick,
+  removeOnClick,
+  setSelectedCar,
+}: GarageProps) {
   const {
     cars,
     totalCars,
@@ -112,7 +97,10 @@ function Garage(
   const toggleDisable = (id: number) => isStartedEngine.includes(id);
 
   const startEngine = async (car: CarData, index: number) => {
-    const { velocity, distance } = await startOrStopEngine(statusEngine.started, car.id);
+    const { velocity, distance } = await startOrStopEngine(
+      statusEngine.started,
+      car.id
+    );
     duration.current = getDuration(velocity, distance);
     setStartedEngine((prev) => [...prev, car.id]);
     const success = await startAnimation(
@@ -120,7 +108,7 @@ function Garage(
       index,
       duration.current,
       drive,
-      mapRef.current,
+      mapRef.current
     );
 
     const result = {
@@ -141,8 +129,9 @@ function Garage(
 
   useEffect(() => {
     if (isRaceStarted) {
-      Promise.any(cars.map((car, index) => startEngine(car, index)))
-        .then((data) => getNewWinner(data));
+      Promise.any(cars.map((car, index) => startEngine(car, index))).then(
+        (data) => getNewWinner(data)
+      );
       setSelectedCar(null);
     } else {
       Promise.all(cars.map((car, index) => stopEngine(car, index)));
@@ -196,7 +185,11 @@ function Garage(
               />
               <CarItemRoad>
                 <CarItemTrack>
-                  <CarItemImg ref={(el) => { carRef.current[index] = el; }}>
+                  <CarItemImg
+                    ref={(el) => {
+                      carRef.current[index] = el;
+                    }}
+                  >
                     <CarIcon fill={item.color} />
                   </CarItemImg>
                 </CarItemTrack>
@@ -208,8 +201,12 @@ function Garage(
           </CarItem>
         ))}
         <Pagination
-          isPrevButtonDisabled={currentGaragePage <= 1 || isStartedEngine.length > 0}
-          isNextButtonDisabled={currentGaragePage >= totalPages || isStartedEngine.length > 0}
+          isPrevButtonDisabled={
+            currentGaragePage <= 1 || isStartedEngine.length > 0
+          }
+          isNextButtonDisabled={
+            currentGaragePage >= totalPages || isStartedEngine.length > 0
+          }
           prevPageOnClick={() => setCurrentGaragePage(currentGaragePage - 1)}
           nextPageOnClick={() => setCurrentGaragePage(currentGaragePage + 1)}
         />

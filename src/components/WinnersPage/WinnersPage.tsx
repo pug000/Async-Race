@@ -1,33 +1,24 @@
-import React, {
-  useEffect,
-  useState
-} from 'react';
+import React, { useEffect, useState } from 'react';
 
 import Pagination from 'components/Pagination/Pagination';
 
 import { getTotalCount } from 'utils';
 
-import { SetState } from 'ts/types';
-import {
-  SortBy,
-  TableHeadTh,
-  Winner
-} from 'ts/interfaces';
 import ButtonId from 'ts/enum';
+import { SortBy, TableHeadTh, Winner } from 'ts/interfaces';
+import { SetState } from 'ts/types';
 
-import {
-  Title,
-  TitlePage
-} from 'styles/styles';
+import { Title, TitlePage } from 'styles/styles';
+
 import {
   CarIcon,
   Winners,
   WinnersTable,
   WinnersTableBody,
   WinnersTableHead,
+  WinnersText,
   WinnersTh,
   WinnersTr,
-  WinnersText
 } from './WinnerPage.style';
 
 interface WinnersPageProps {
@@ -40,28 +31,34 @@ interface WinnersPageProps {
   toggleSort: (text: string) => void;
 }
 
-function WinnersPage(
-  {
-    isGaragePage,
-    winners,
-    totalWinners,
-    currentPage,
-    setCurrentPage,
-    sortWinners,
-    toggleSort,
-  }: WinnersPageProps,
-) {
+function WinnersPage({
+  isGaragePage,
+  winners,
+  totalWinners,
+  currentPage,
+  setCurrentPage,
+  sortWinners,
+  toggleSort,
+}: WinnersPageProps) {
   const [totalPages, setTotalPages] = useState(0);
   const [tableHeadTh, setTableHeadTh] = useState<TableHeadTh[]>([
     { id: 1, text: 'Number', isClickable: false },
     { id: 2, text: 'Car', isClickable: false },
     { id: 3, text: 'Name', isClickable: false },
     {
-      id: 4, text: 'Wins', isASC: false, isDESC: false, isClickable: true
+      id: 4,
+      text: 'Wins',
+      isASC: false,
+      isDESC: false,
+      isClickable: true,
     },
     {
-      id: 5, text: 'Best time (s)', isASC: false, isDESC: false, isClickable: true
-    }
+      id: 5,
+      text: 'Best time (s)',
+      isASC: false,
+      isDESC: false,
+      isClickable: true,
+    },
   ]);
 
   useEffect(() => {
@@ -70,12 +67,13 @@ function WinnersPage(
 
   const toggleSortBy = (text: string, id: number) => {
     toggleSort(text);
-    setTableHeadTh((prev) => prev.map((el) => (
-      {
+    setTableHeadTh((prev) =>
+      prev.map((el) => ({
         ...el,
         isASC: el.id === id && sortWinners.order === 'ASC',
         isDESC: el.id === id && sortWinners.order === 'DESC',
-      })));
+      }))
+    );
   };
 
   const handleEvent = (id: number) => {
@@ -96,13 +94,7 @@ function WinnersPage(
       <WinnersTable>
         <WinnersTableHead>
           <WinnersTr>
-            {tableHeadTh.map(({
-              id,
-              text,
-              isASC,
-              isDESC,
-              isClickable,
-            }) => (
+            {tableHeadTh.map(({ id, text, isASC, isDESC, isClickable }) => (
               <WinnersTh
                 key={id}
                 onClick={() => handleEvent(id)}
@@ -115,16 +107,7 @@ function WinnersPage(
           </WinnersTr>
         </WinnersTableHead>
         <WinnersTableBody>
-          {winners.map((
-            {
-              id,
-              wins,
-              time,
-              name,
-              color,
-            },
-            index
-          ) => (
+          {winners.map(({ id, wins, time, name, color }, index) => (
             <WinnersTr key={id}>
               <WinnersTh>{index + 1}</WinnersTh>
               <WinnersTh>

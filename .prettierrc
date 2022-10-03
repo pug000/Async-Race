@@ -1,0 +1,26 @@
+{
+  "endOfLine": "auto",
+  "semi": true,
+  "singleQuote": true,
+  "tabWidth": 2,
+  "trailingComma": "es5",
+  "printWidth": 80,
+  "arrowParens": "always",
+  "bracketSameLine": false,
+  "importOrder": [
+    "^(react/(.*)$) | ^react$ | ^(react-dom/(.*)$) | ^(redux/(.*)$) | ^(redux$) | ^(styled-components$)",
+    "^(pages/(.*)$)",
+    "^(components/(.*)$)",
+    "^(utils$)",
+    "^(api$)",
+    "^(layout/(.*)$)",
+    "^(assets/(.*)$)",
+    "^(hooks/(.*)$)",
+    "^(ts/(.*)$)",
+    "^(styles/(.*)$)",
+    "^(App)",
+    "^[./]"
+  ],
+  "importOrderSeparation": true,
+  "importOrderSortSpecifiers": true
+}

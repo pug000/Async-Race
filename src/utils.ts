@@ -1,7 +1,4 @@
-import {
-  ButtonState,
-  CarData
-} from 'ts/interfaces';
+import { ButtonState, CarData } from 'ts/interfaces';
 
 import { getStatusDrive } from './api';
 import carBrandName from './layout/carBrandName';
@@ -24,29 +21,35 @@ const controlButtons: ButtonState[] = [
   { id: 3, text: 'Generate Cars', isDisabled: false },
 ];
 
-const getRandomValue = (item: string[]) => Math.floor(Math.random() * item.length);
+const getRandomValue = (item: string[]) =>
+  Math.floor(Math.random() * item.length);
 
-const generateRandomColor = () => `#${Math.floor(Math.random() * 16777215).toString(16)}`;
+const generateRandomColor = () =>
+  `#${Math.floor(Math.random() * 16777215).toString(16)}`;
 
-const getRandomName = () => `${carBrandName[getRandomValue(carBrandName)]} ${carModelName[getRandomValue(carModelName)]}`;
+const getRandomName = () =>
+  `${carBrandName[getRandomValue(carBrandName)]} ${
+    carModelName[getRandomValue(carModelName)]
+  }`;
 
-const generateRandomCars = () => new Array(100).fill(null).map(() => (
-  {
+const generateRandomCars = () =>
+  new Array(100).fill(null).map(() => ({
     name: getRandomName(),
     color: generateRandomColor(),
-  }
-));
+  }));
 
-const getTotalCount = (totalCount: number, limit: number) => Math.ceil(totalCount / limit);
+const getTotalCount = (totalCount: number, limit: number) =>
+  Math.ceil(totalCount / limit);
 
-const getDuration = (velocity: number, distance: number) => Number((distance / velocity));
+const getDuration = (velocity: number, distance: number) =>
+  Number(distance / velocity);
 
 const startAnimation = async (
   id: number,
   index: number,
   duration: number,
   driving: (progress: number, id: number) => void,
-  ref: Record<number, number>,
+  ref: Record<number, number>
 ) => {
   const start = performance.now();
   const map = ref;
@@ -82,5 +85,5 @@ export {
   generateRandomCars,
   getTotalCount,
   getDuration,
-  startAnimation
+  startAnimation,
 };

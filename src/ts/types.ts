@@ -1,7 +1,4 @@
-import {
-  CarData,
-  Winner
-} from './interfaces';
+import { CarData, Winner } from './interfaces';
 
 type SetState<T> = React.Dispatch<React.SetStateAction<T>>;
 
@@ -13,10 +10,4 @@ type AsyncFn<T, R> = (item: T) => Promise<R>;
 
 type NewWinner = Omit<Winner, 'wins' | 'color'>;
 
-export type {
-  SetState,
-  EventHandler,
-  OmitCarData,
-  AsyncFn,
-  NewWinner
-};
+export type { SetState, EventHandler, OmitCarData, AsyncFn, NewWinner };

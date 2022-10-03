@@ -1,33 +1,22 @@
-import React, {
-  useEffect,
-  useMemo,
-  useState
-} from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 
-import Header from 'components/Header/Header';
 import GarageContext from 'components/Context/GarageContext';
 import GaragePage from 'components/GaragePage/GaragePage';
+import Header from 'components/Header/Header';
 import WinnersPage from 'components/WinnersPage/WinnersPage';
 
 import {
-  getAllCars,
-  getAllWinners,
   createCarOrWinner,
   endpoints,
+  getAllCars,
+  getAllWinners,
+  removeCarOrWinner,
   saveWinner,
   updateCarOrWinner,
-  removeCarOrWinner
 } from 'api';
 
-import {
-  NewWinner,
-  OmitCarData
-} from 'ts/types';
-import {
-  CarData,
-  SortBy,
-  Winner
-} from 'ts/interfaces';
+import { CarData, SortBy, Winner } from 'ts/interfaces';
+import { NewWinner, OmitCarData } from 'ts/types';
 
 function App() {
   const [isGaragePage, setGaragePage] = useState<boolean>(true);
@@ -46,12 +35,11 @@ function App() {
 
   const switchPages = (pageState: boolean) => setGaragePage(pageState);
 
-  const toggleSort = (text: string) => setSortWinners((prev) => (
-    {
+  const toggleSort = (text: string) =>
+    setSortWinners((prev) => ({
       type: text,
-      order: prev.order === 'ASC' ? 'DESC' : 'ASC'
-    }
-  ));
+      order: prev.order === 'ASC' ? 'DESC' : 'ASC',
+    }));
 
   const getCars = async (pages: number) => {
     const res = await getAllCars(pages, setErrorMessage);
@@ -83,7 +71,11 @@ function App() {
       if (newWinner) {
         await saveWinner(newWinner.id, newWinner.time);
         setTimeout(() => setNewWinner(undefined), 2000);
-        await getWinners(currentWinnersPage, sortWinners.type, sortWinners.order);
+        await getWinners(
+          currentWinnersPage,
+          sortWinners.type,
+          sortWinners.order
+        );
       }
     })();
   }, [newWinner]);
@@ -99,27 +91,33 @@ function App() {
   const updateSelectedCar = async (item: CarData) => {
     const car = await updateCarOrWinner(endpoints.garage, item, item.id);
     setCars(cars.map((el) => (el.id === car.id ? car : el)));
-    setWinners(winners.map((el) => (el.id !== car.id ? el : {
-      ...el,
-      name: car.name,
-      color: car.color,
-    })));
+    setWinners(
+      winners.map((el) =>
+        el.id !== car.id
+          ? el
+          : {
+              ...el,
+              name: car.name,
+              color: car.color,
+            }
+      )
+    );
   };
 
   const removeCar = async (item: CarData) => {
-    await Promise.all(Object.values(endpoints)
-      .slice(0, -1)
-      .map((key) => (
-        removeCarOrWinner(key, item.id)
-      )));
+    await Promise.all(
+      Object.values(endpoints)
+        .slice(0, -1)
+        .map((key) => removeCarOrWinner(key, item.id))
+    );
     await getCars(currentGaragePage);
     await getWinners(currentWinnersPage, sortWinners.type, sortWinners.order);
   };
 
   const getNewWinner = (item: NewWinner | void) => setNewWinner(item);
 
-  const garageValues = useMemo(() => (
-    {
+  const garageValues = useMemo(
+    () => ({
       cars,
       totalCars,
       newWinner,
@@ -128,14 +126,9 @@ function App() {
       removeCar,
       getNewWinner,
       currentGaragePage,
-    }
-  ), [
-    cars,
-    errorMessage,
-    totalCars,
-    newWinner,
-    currentGaragePage,
-  ]);
+    }),
+    [cars, errorMessage, totalCars, newWinner, currentGaragePage]
+  );
 
   return (
     <>

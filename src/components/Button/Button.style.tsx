@@ -1,9 +1,9 @@
 import styled from 'styled-components';
 
 interface StyledButtonProps {
-  $isControlButton?: boolean,
-  $isStartButton?: boolean,
-  $isStopButton?: boolean,
+  $isControlButton?: boolean;
+  $isStartButton?: boolean;
+  $isStopButton?: boolean;
 }
 
 const StyledButton = styled.button<StyledButtonProps>`
@@ -22,13 +22,17 @@ const StyledButton = styled.button<StyledButtonProps>`
     color: ${({ theme }) => theme.colors.lightGreenColor};
   }
 
-  ${({ $isControlButton }) => $isControlButton && `
+  ${({ $isControlButton }) =>
+    $isControlButton &&
+    `
     min-width: 115px;
     max-width: 125px;
     width: 100%;
   `}
 
-  ${(props) => props.$isStartButton && `
+  ${(props) =>
+    props.$isStartButton &&
+    `
     padding: 4px 10px;
     border-color: ${props.theme.colors.greenColor};
     color: ${props.theme.colors.greenColor};
@@ -39,7 +43,9 @@ const StyledButton = styled.button<StyledButtonProps>`
     }
   `}
 
-  ${(props) => props.$isStopButton && `
+  ${(props) =>
+    props.$isStopButton &&
+    `
     padding: 4px 10px;
     border-color: ${props.theme.colors.redColor};
     color: ${props.theme.colors.redColor};
