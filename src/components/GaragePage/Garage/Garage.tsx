@@ -17,7 +17,8 @@ import {
 import {
   getDuration,
   getTotalCount,
-  startAnimation
+  startAnimation,
+  selectionButton,
 } from 'utils';
 
 import ButtonId from 'ts/enum';
@@ -77,10 +78,6 @@ function Garage(
   const [isStartedEngine, setStartedEngine] = useState<number[]>([]);
   const duration = useRef(0);
   const mapRef = useRef<Record<number, number>>({});
-  const buttonsSelect: ButtonState[] = [
-    { id: 1, text: 'Select' },
-    { id: 2, text: 'Remove' },
-  ];
 
   useEffect(() => {
     setTotalPages(getTotalCount(totalCars, 7));
@@ -174,7 +171,7 @@ function Garage(
         {cars.map((item, index) => (
           <CarItem key={item.id}>
             <CarItemTop>
-              {buttonsSelect.map((button) => (
+              {selectionButton.map((button) => (
                 <Button
                   key={button.id}
                   text={button.text}

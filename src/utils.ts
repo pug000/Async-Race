@@ -1,6 +1,28 @@
+import {
+  ButtonState,
+  CarData
+} from 'ts/interfaces';
+
 import { getStatusDrive } from './api';
 import carBrandName from './layout/carBrandName';
 import carModelName from './layout/carModelName';
+
+const defaultCar: CarData = {
+  name: '',
+  color: '#ffffff',
+  id: 0,
+};
+
+const selectionButton: ButtonState[] = [
+  { id: 1, text: 'Select' },
+  { id: 2, text: 'Remove' },
+];
+
+const controlButtons: ButtonState[] = [
+  { id: 1, text: 'Race', isDisabled: false },
+  { id: 2, text: 'Reset', isDisabled: true },
+  { id: 3, text: 'Generate Cars', isDisabled: false },
+];
 
 const getRandomValue = (item: string[]) => Math.floor(Math.random() * item.length);
 
@@ -54,6 +76,9 @@ const startAnimation = async (
 };
 
 export {
+  defaultCar,
+  selectionButton,
+  controlButtons,
   generateRandomCars,
   getTotalCount,
   getDuration,

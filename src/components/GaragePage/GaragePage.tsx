@@ -3,7 +3,7 @@ import React, {
   useState
 } from 'react';
 
-import { generateRandomCars } from 'utils';
+import { generateRandomCars, defaultCar } from 'utils';
 import {
   endpoints,
   getCarOrWinner
@@ -34,11 +34,6 @@ function GaragePage(
     isGaragePage,
   }: GaragePageProps,
 ) {
-  const defaultCar: CarData = {
-    name: '',
-    color: '#ffffff',
-    id: 0,
-  };
   const [newCar, setNewCar] = useState<CarData>(defaultCar);
   const [randomCars, setRandomCars] = useState<OmitCarData[]>([]);
   const [selectedCar, setSelectedCar] = useState<CarData | null>(null);

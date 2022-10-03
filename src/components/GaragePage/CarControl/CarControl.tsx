@@ -5,6 +5,8 @@ import React, {
 
 import Button from 'components/Button/Button';
 
+import { controlButtons } from 'utils';
+
 import ButtonId from 'ts/enum';
 import {
   ButtonState,
@@ -42,11 +44,7 @@ function CarControl(
   }: CarControlProps,
 ) {
   const [isDisabled, setDisabled] = useState<boolean>(true);
-  const [buttons, setButtons] = useState<ButtonState[]>([
-    { id: 1, text: 'Race', isDisabled: false },
-    { id: 2, text: 'Reset', isDisabled: true },
-    { id: 3, text: 'Generate Cars', isDisabled: false },
-  ]);
+  const [buttons, setButtons] = useState<ButtonState[]>(controlButtons);
 
   const toggleDisableBtn = () => setButtons((prev) => prev
     .map((button) => ({ ...button, isDisabled: !button.isDisabled })));
