@@ -8,7 +8,8 @@
   "arrowParens": "always",
   "bracketSameLine": false,
   "importOrder": [
-    "^(react/(.*)$) | ^react$ | ^(react-dom/(.*)$) | ^(redux/(.*)$) | ^(redux$) | ^(styled-components$)",
+    "^(react/(.*)$) | ^react$ | ^(react-dom/(.*)$) | ^(redux$) | ^(styled-components$)",
+    "^(redux/(.*)$)",
     "^(pages/(.*)$)",
     "^(components/(.*)$)",
     "^(utils$)",
