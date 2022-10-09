@@ -1,9 +1,21 @@
-enum ButtonId {
-  first = 1,
-  second,
-  third,
-  fourth,
-  fifth,
+enum Endpoints {
+  garage = 'garage/',
+  winners = 'winners/',
+  engine = 'engine/',
 }
 
-export default ButtonId;
+enum Methods {
+  get = 'GET',
+  post = 'POST',
+  put = 'PUT',
+  patch = 'PATCH',
+  delete = 'DELETE',
+}
+
+enum StatusEngine {
+  started = 'started',
+  drive = 'drive',
+  stopped = 'stopped',
+}
+
+export { Endpoints, Methods, StatusEngine };

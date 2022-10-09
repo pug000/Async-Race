@@ -10,15 +10,6 @@ interface ButtonState {
   isDisabled?: boolean;
 }
 
-interface ResponseCarData {
-  data: CarData[];
-  count: number | null;
-}
-
-interface ResponseWinner extends Omit<ResponseCarData, 'data'> {
-  data: Winner[];
-}
-
 interface Engine {
   velocity: number;
   distance: number;
@@ -29,19 +20,16 @@ interface Winner extends CarData {
   time: number;
 }
 
-interface Api {
-  [key: string]: string;
-}
-
 interface TableHeadTh {
   id: number;
   text: string;
+  type?: string;
   isClickable: boolean;
   isASC?: boolean;
   isDESC?: boolean;
 }
 
-interface SortBy {
+interface SortFields {
   type: string;
   order: string;
 }
@@ -54,16 +42,19 @@ interface InputType {
   $type: string;
 }
 
+interface ApiResponse<T> {
+  data: T[];
+  totalCount: number;
+}
+
 export type {
   CarData,
   ButtonState,
-  ResponseCarData,
-  ResponseWinner,
   Engine,
   Winner,
-  Api,
   TableHeadTh,
-  SortBy,
+  SortFields,
   StyledActive,
   InputType,
+  ApiResponse,
 };

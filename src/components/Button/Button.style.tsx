@@ -22,12 +22,17 @@ const StyledButton = styled.button<StyledButtonProps>`
     color: ${({ theme }) => theme.colors.lightGreenColor};
   }
 
-  ${({ $isControlButton }) =>
-    $isControlButton &&
+  ${(props) =>
+    props.$isControlButton &&
     `
     min-width: 115px;
     max-width: 125px;
     width: 100%;
+
+    &:disabled {
+      border-color: ${props.theme.colors.brownColor};
+      color: ${props.theme.colors.brownColor};
+    }
   `}
 
   ${(props) =>

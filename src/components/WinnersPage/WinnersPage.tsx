@@ -1,12 +1,28 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
+
+import { useLazyGetCarQuery } from 'redux/services/garageService';
+import {
+  useCreateWinnerMutation,
+  useEditWinnerMutation,
+  useGetAllWinnersQuery,
+  useLazyGetWinnerQuery,
+} from 'redux/services/winnersService';
+import {
+  setCurrentPage,
+  setNewWinner,
+  setSortFields,
+  setTotalPages,
+  setWinners,
+} from 'redux/slices/winnersSlice';
 
 import Pagination from 'components/Pagination/Pagination';
 
-import { getTotalCount } from 'utils';
+import { getTotalCount, initialTableHeadThs, limitWinnersPerPage } from 'utils';
 
-import ButtonId from 'ts/enum';
-import { SortBy, TableHeadTh, Winner } from 'ts/interfaces';
-import { SetState } from 'ts/types';
+import { useAppDispatch, useAppSelector } from 'hooks/useRedux';
+
+import { TableHeadTh, Winner } from 'ts/interfaces';
+import { CreatedNewWinner } from 'ts/types';
 
 import { Title, TitlePage } from 'styles/styles';
 
@@ -21,89 +37,131 @@ import {
   WinnersTr,
 } from './WinnerPage.style';
 
-interface WinnersPageProps {
-  isGaragePage: boolean;
-  winners: Winner[];
-  totalWinners: number;
-  currentPage: number;
-  setCurrentPage: SetState<number>;
-  sortWinners: SortBy;
-  toggleSort: (text: string) => void;
-}
+type MapEvent = Record<string, (id: number, text: string) => void>;
 
-function WinnersPage({
-  isGaragePage,
-  winners,
-  totalWinners,
-  currentPage,
-  setCurrentPage,
-  sortWinners,
-  toggleSort,
-}: WinnersPageProps) {
-  const [totalPages, setTotalPages] = useState(0);
-  const [tableHeadTh, setTableHeadTh] = useState<TableHeadTh[]>([
-    { id: 1, text: 'Number', isClickable: false },
-    { id: 2, text: 'Car', isClickable: false },
-    { id: 3, text: 'Name', isClickable: false },
-    {
-      id: 4,
-      text: 'Wins',
-      isASC: false,
-      isDESC: false,
-      isClickable: true,
-    },
-    {
-      id: 5,
-      text: 'Best time (s)',
-      isASC: false,
-      isDESC: false,
-      isClickable: true,
-    },
-  ]);
+function WinnersPage() {
+  const { isGaragePage } = useAppSelector((state) => state.garage);
+  const { newWinner, currentPage, sortFields, winners, totalPages } =
+    useAppSelector((state) => state.winners);
+  const { data: winnersData } = useGetAllWinnersQuery({
+    page: currentPage,
+    ...sortFields,
+    limit: limitWinnersPerPage,
+  });
+  const [triggerGetWinner] = useLazyGetWinnerQuery();
+  const [triggerGetCar] = useLazyGetCarQuery();
+  const [createWinner] = useCreateWinnerMutation();
+  const [editWinner] = useEditWinnerMutation();
+  const dispatch = useAppDispatch();
+  const [tableHeadThs, setTableHeadThs] =
+    useState<TableHeadTh[]>(initialTableHeadThs);
+
+  const getAllWinners = useCallback(async () => {
+    if (winnersData) {
+      const data: Winner[] = await Promise.all(
+        winnersData.data.map(async (winner) => {
+          const { data: result } = await triggerGetCar(winner.id);
+          const name = result?.name ?? '';
+          const color = result?.color ?? '';
+          return { ...winner, name, color };
+        })
+      );
+
+      dispatch(setWinners(data));
+    }
+  }, [winnersData?.data]);
+
+  const saveWinner = useCallback(async () => {
+    if (newWinner) {
+      const { isSuccess, data: winner } = await triggerGetWinner(newWinner.id);
+
+      if (!isSuccess) {
+        const createdNewWinner: CreatedNewWinner = {
+          id: newWinner.id,
+          time: newWinner.time,
+          wins: 1,
+        };
+
+        await createWinner(createdNewWinner);
+      } else {
+        const highScoreTime =
+          newWinner.time < winner.time ? newWinner.time : winner.time;
+        const updatedWinner: Winner = {
+          ...winner,
+          time: highScoreTime,
+          wins: winner.wins + 1,
+        };
+
+        await editWinner(updatedWinner);
+      }
+    }
+  }, [newWinner]);
 
   useEffect(() => {
-    setTotalPages(getTotalCount(totalWinners, 10));
-  }, [totalWinners]);
+    saveWinner();
+    setTimeout(() => {
+      dispatch(setNewWinner(undefined));
+    }, 2000);
+  }, [newWinner]);
 
-  const toggleSortBy = (text: string, id: number) => {
-    toggleSort(text);
-    setTableHeadTh((prev) =>
-      prev.map((el) => ({
-        ...el,
-        isASC: el.id === id && sortWinners.order === 'ASC',
-        isDESC: el.id === id && sortWinners.order === 'DESC',
-      }))
-    );
-  };
-
-  const handleEvent = (id: number) => {
-    switch (id) {
-      case ButtonId.fourth:
-        return toggleSortBy('wins', id);
-      case ButtonId.fifth:
-        return toggleSortBy('time', id);
-      default:
-        return id;
+  useEffect(() => {
+    if (winnersData?.totalCount) {
+      dispatch(
+        setTotalPages(
+          getTotalCount(winnersData?.totalCount, limitWinnersPerPage)
+        )
+      );
     }
-  };
+  }, [winnersData?.totalCount]);
+
+  useEffect(() => {
+    getAllWinners();
+  }, [winnersData]);
+
+  const toggleSortBy = useCallback(
+    (id: number, type = '') => {
+      dispatch(setSortFields(type));
+      setTableHeadThs((prev) =>
+        prev.map((el) => ({
+          ...el,
+          isASC: el.id === id && sortFields.order === 'ASC',
+          isDESC: el.id === id && sortFields.order === 'DESC',
+        }))
+      );
+    },
+    [tableHeadThs]
+  );
+
+  const sortWinnersOnClick = useCallback(
+    (id: number, type = '') => {
+      const map: MapEvent = {
+        [id]: toggleSortBy,
+      };
+
+      return map[id](id, type);
+    },
+    [tableHeadThs]
+  );
 
   return (
     <Winners active={isGaragePage}>
-      <Title>{`Winners (${totalWinners})`}</Title>
+      <Title>{`Winners (${winnersData?.totalCount ?? 0})`}</Title>
       <TitlePage>{`Page #${currentPage}`}</TitlePage>
       <WinnersTable>
         <WinnersTableHead>
           <WinnersTr>
-            {tableHeadTh.map(({ id, text, isASC, isDESC, isClickable }) => (
-              <WinnersTh
-                key={id}
-                onClick={() => handleEvent(id)}
-                $isClickable={isClickable}
-              >
-                {text}
-                <WinnersText $isDESC={isDESC} $isASC={isASC} />
-              </WinnersTh>
-            ))}
+            {tableHeadThs.map(
+              ({ id, text, isASC, isDESC, isClickable, type }) => (
+                <WinnersTh
+                  key={id}
+                  onClick={() => sortWinnersOnClick(id, type)}
+                  $isClickable={isClickable}
+                >
+                  {text}
+                  <WinnersText $isDESC={isDESC} $isASC={isASC} />
+                </WinnersTh>
+              )
+            )}
           </WinnersTr>
         </WinnersTableHead>
         <WinnersTableBody>
@@ -123,8 +181,8 @@ function WinnersPage({
       <Pagination
         isPrevButtonDisabled={currentPage <= 1}
         isNextButtonDisabled={currentPage >= totalPages}
-        prevPageOnClick={() => setCurrentPage(currentPage - 1)}
-        nextPageOnClick={() => setCurrentPage(currentPage + 1)}
+        prevPageOnClick={() => dispatch(setCurrentPage(currentPage - 1))}
+        nextPageOnClick={() => dispatch(setCurrentPage(currentPage + 1))}
       />
     </Winners>
   );

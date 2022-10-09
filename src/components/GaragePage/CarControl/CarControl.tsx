@@ -1,12 +1,26 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect } from 'react';
+
+import {
+  useCreateCarMutation,
+  useEditCarMutation,
+} from 'redux/services/garageService';
+import {
+  useEditWinnerMutation,
+  useLazyGetWinnerQuery,
+} from 'redux/services/winnersService';
+import {
+  setDisabledSettings,
+  setRaceStarted,
+  setSelectedCar,
+} from 'redux/slices/garageSlice';
 
 import Button from 'components/Button/Button';
 
-import { controlButtons } from 'utils';
+import { defaultCar, generateRandomCars } from 'utils';
 
-import ButtonId from 'ts/enum';
-import { ButtonState, CarData } from 'ts/interfaces';
-import { SetState } from 'ts/types';
+import { useAppDispatch, useAppSelector } from 'hooks/useRedux';
+
+import { CarData } from 'ts/interfaces';
 
 import {
   CarControlTop,
@@ -15,55 +29,59 @@ import {
 } from './CarControl.style';
 import CarSettings from './CarSettings/CarSettings';
 
-interface CarControlProps {
-  newCar: CarData;
-  selectedCar: CarData | null;
-  isRaceStarted: boolean;
-  setRaceStarted: SetState<boolean>;
-  setNewCar: SetState<CarData>;
-  getRandomCars: () => void;
-  setUpdatedCar: SetState<CarData | null>;
-}
+function CarControl() {
+  const { selectedCar, isRaceStarted, isDisabledSettings } = useAppSelector(
+    (state) => state.garage
+  );
+  const dispatch = useAppDispatch();
+  const [createCar] = useCreateCarMutation();
+  const [updateCar] = useEditCarMutation();
+  const [triggerGetWinner] = useLazyGetWinnerQuery();
+  const [editWinner] = useEditWinnerMutation();
 
-function CarControl({
-  newCar,
-  selectedCar,
-  isRaceStarted,
-  setRaceStarted,
-  setNewCar,
-  setUpdatedCar,
-  getRandomCars,
-}: CarControlProps) {
-  const [isDisabled, setDisabled] = useState<boolean>(true);
-  const [buttons, setButtons] = useState<ButtonState[]>(controlButtons);
+  const createNewCar = useCallback(
+    async (car: CarData) => {
+      await createCar(car);
+    },
+    [createCar]
+  );
 
-  const toggleDisableBtn = () =>
-    setButtons((prev) =>
-      prev.map((button) => ({ ...button, isDisabled: !button.isDisabled }))
-    );
+  const updateSelectedCar = useCallback(
+    async (car: CarData) => {
+      await updateCar(car);
+      const { data: winner } = await triggerGetWinner(car.id);
+      if (winner) {
+        await editWinner({ ...winner, name: car.name, color: car.color });
+      }
+      dispatch(setSelectedCar(null));
+    },
+    [updateCar]
+  );
 
-  const handleEvent = (currentButton: ButtonState) => {
-    switch (currentButton.id) {
-      case ButtonId.first:
-        setRaceStarted(true);
-        toggleDisableBtn();
-        return currentButton;
-      case ButtonId.second:
-        setRaceStarted(false);
-        toggleDisableBtn();
-        return currentButton;
-      case ButtonId.third:
-        return getRandomCars();
-      default:
-        return currentButton;
-    }
-  };
+  const createRandomCars = useCallback(() => {
+    const randomCars = generateRandomCars();
+    Promise.all(randomCars.map((car) => createCar(car)));
+  }, [createCar]);
+
+  const toggleRace = useCallback(
+    (value: boolean) => {
+      dispatch(setRaceStarted(value));
+    },
+    [isRaceStarted]
+  );
+
+  const toggleDisabledSettings = useCallback(
+    (value: boolean) => {
+      dispatch(setDisabledSettings(value));
+    },
+    [isDisabledSettings]
+  );
 
   useEffect(() => {
     if (selectedCar) {
-      setDisabled(false);
+      toggleDisabledSettings(false);
     } else {
-      setDisabled(true);
+      toggleDisabledSettings(true);
     }
   }, [selectedCar]);
 
@@ -72,27 +90,34 @@ function CarControl({
       <CarControlTop>
         <CarSettings
           text="Create"
-          itemCar={newCar}
-          isDisabled={false}
-          setState={setNewCar}
+          itemCar={defaultCar}
+          isDisabledSettings={false}
+          callback={createNewCar}
           isRaceStarted={isRaceStarted}
         />
         <CarSettings
           text="Update"
           itemCar={selectedCar}
-          isDisabled={isDisabled}
-          setState={setUpdatedCar}
+          isDisabledSettings={isDisabledSettings}
+          callback={updateSelectedCar}
           isRaceStarted={isRaceStarted}
         />
         <CarControlWrapper>
-          {buttons.map((button) => (
-            <Button
-              key={button.id}
-              text={button.text}
-              disabled={button.isDisabled}
-              callback={() => handleEvent(button)}
-            />
-          ))}
+          <Button
+            text="Race"
+            disabled={isRaceStarted}
+            callback={() => toggleRace(true)}
+          />
+          <Button
+            text="Reset"
+            disabled={!isRaceStarted}
+            callback={() => toggleRace(false)}
+          />
+          <Button
+            text="Generate Cars"
+            disabled={isRaceStarted}
+            callback={() => createRandomCars()}
+          />
         </CarControlWrapper>
       </CarControlTop>
     </StyledCarControl>

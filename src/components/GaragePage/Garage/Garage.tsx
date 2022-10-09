@@ -1,22 +1,37 @@
-import React, { useContext, useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useRef } from 'react';
+
+import {
+  useGetAllCarsQuery,
+  useLazyGetCarQuery,
+  useRemoveCarMutation,
+} from 'redux/services/garageService';
+import { useRemoveWinnerMutation } from 'redux/services/winnersService';
+import {
+  setCurrentPage,
+  setSelectedCar,
+  setTotalPages,
+  startCarEngine,
+  stopCarEngine,
+} from 'redux/slices/garageSlice';
+import { setNewWinner } from 'redux/slices/winnersSlice';
 
 import Button from 'components/Button/Button';
-import GarageContext from 'components/Context/GarageContext';
 import Pagination from 'components/Pagination/Pagination';
 import PopupNotify from 'components/PopupNotify/PopupNotify';
 
 import {
   getDuration,
   getTotalCount,
-  selectionButton,
+  limitCarsPerPage,
   startAnimation,
 } from 'utils';
 
-import { startOrStopEngine, statusEngine } from 'api';
+import { startOrStopEngine } from 'api';
 
-import ButtonId from 'ts/enum';
-import { ButtonState, CarData } from 'ts/interfaces';
-import { SetState } from 'ts/types';
+import { useAppDispatch, useAppSelector } from 'hooks/useRedux';
+
+import { StatusEngine } from 'ts/enum';
+import { CarData } from 'ts/interfaces';
 
 import { Title, TitlePage } from 'styles/styles';
 
@@ -36,48 +51,32 @@ import {
   StyledGarage,
 } from './Garage.style';
 
-interface GarageProps {
-  isRaceStarted: boolean;
-  selectOnClick: (car: CarData) => void;
-  removeOnClick: (car: CarData) => void;
-  setSelectedCar: SetState<CarData | null>;
-}
-
-function Garage({
-  isRaceStarted,
-  selectOnClick,
-  removeOnClick,
-  setSelectedCar,
-}: GarageProps) {
+function Garage() {
   const {
-    cars,
-    totalCars,
-    newWinner,
-    errorMessage,
-    currentGaragePage,
-    getNewWinner,
-    setCurrentGaragePage,
-  } = useContext(GarageContext);
-  const [totalPages, setTotalPages] = useState(0);
+    totalPages,
+    currentPage,
+    selectedCar,
+    isRaceStarted,
+    isCarEngineStarted,
+  } = useAppSelector((state) => state.garage);
+  const { newWinner } = useAppSelector((state) => state.winners);
+  const dispatch = useAppDispatch();
+  const { data: cars, error } = useGetAllCarsQuery({
+    page: currentPage,
+    limit: limitCarsPerPage,
+  });
+  const [triggerGetCar] = useLazyGetCarQuery();
+  const [removeCar] = useRemoveCarMutation();
+  const [removeWinner] = useRemoveWinnerMutation();
   const carRef = useRef<(HTMLDivElement | null)[]>([]);
-  const [isStartedEngine, setStartedEngine] = useState<number[]>([]);
   const duration = useRef(0);
   const mapRef = useRef<Record<number, number>>({});
 
   useEffect(() => {
-    setTotalPages(getTotalCount(totalCars, 7));
-  }, [totalCars]);
-
-  const handleEvent = (currentButton: ButtonState, currentCar: CarData) => {
-    switch (currentButton.id) {
-      case ButtonId.first:
-        return selectOnClick(currentCar);
-      case ButtonId.second:
-        return removeOnClick(currentCar);
-      default:
-        return currentCar;
+    if (cars?.totalCount) {
+      dispatch(setTotalPages(getTotalCount(cars.totalCount, limitCarsPerPage)));
     }
-  };
+  }, [cars?.totalCount]);
 
   const drive = (progress: number, index: number) => {
     const currentCarElement = carRef.current[index];
@@ -94,121 +93,156 @@ function Garage({
     }
   };
 
-  const toggleDisable = (id: number) => isStartedEngine.includes(id);
+  const toggleDisableOptionButton = useCallback(
+    (id: number) => isCarEngineStarted.includes(id),
+    [isCarEngineStarted]
+  );
 
-  const startEngine = async (car: CarData, index: number) => {
-    const { velocity, distance } = await startOrStopEngine(
-      statusEngine.started,
-      car.id
-    );
-    duration.current = getDuration(velocity, distance);
-    setStartedEngine((prev) => [...prev, car.id]);
-    const success = await startAnimation(
-      car.id,
-      index,
-      duration.current,
-      drive,
-      mapRef.current
-    );
+  const selectCarOnClick = useCallback(
+    async (car: CarData) => {
+      const { data } = await triggerGetCar(car.id);
 
-    const result = {
-      name: car.name,
-      id: car.id,
-      time: Number((duration.current / 1000).toFixed(2)),
-    };
+      if (data) {
+        dispatch(setSelectedCar(data));
+      }
+    },
+    [selectedCar]
+  );
 
-    return success ? result : Promise.reject();
-  };
+  const removeCarOnClick = useCallback(
+    async (car: CarData) => {
+      if (car.id === selectedCar?.id) {
+        dispatch(setSelectedCar(null));
+      }
 
-  const stopEngine = async (car: CarData, index: number) => {
-    await startOrStopEngine(statusEngine.stopped, car.id);
-    cancelAnimationFrame(mapRef.current[car.id]);
-    reset(index);
-    setStartedEngine((prev) => prev.filter((el) => el !== car.id));
-  };
+      await removeCar(car);
+      await removeWinner(car.id);
+    },
+    [selectedCar]
+  );
+
+  const startEngine = useCallback(
+    async (car: CarData, index: number) => {
+      const { velocity, distance } = await startOrStopEngine(
+        StatusEngine.started,
+        car.id
+      );
+      duration.current = getDuration(velocity, distance);
+      dispatch(startCarEngine(car.id));
+      const success = await startAnimation(
+        car.id,
+        index,
+        duration.current,
+        drive,
+        mapRef.current
+      );
+      const result = {
+        name: car.name,
+        id: car.id,
+        time: Number((duration.current / 1000).toFixed(2)),
+      };
+      return success ? result : Promise.reject();
+    },
+    [isCarEngineStarted]
+  );
+
+  const stopEngine = useCallback(
+    async (car: CarData, index: number) => {
+      await startOrStopEngine(StatusEngine.stopped, car.id);
+      cancelAnimationFrame(mapRef.current[car.id]);
+      reset(index);
+      dispatch(stopCarEngine(car.id));
+    },
+    [isCarEngineStarted]
+  );
 
   useEffect(() => {
-    if (isRaceStarted) {
-      Promise.any(cars.map((car, index) => startEngine(car, index))).then(
-        (data) => getNewWinner(data)
-      );
-      setSelectedCar(null);
-    } else {
-      Promise.all(cars.map((car, index) => stopEngine(car, index)));
+    if (cars) {
+      if (isRaceStarted) {
+        Promise.any(
+          cars.data.map((car, index) => startEngine(car, index))
+        ).then((data) => dispatch(setNewWinner(data)));
+        dispatch(setSelectedCar(null));
+      } else {
+        Promise.all(cars.data.map((car, index) => stopEngine(car, index)));
+      }
     }
   }, [isRaceStarted]);
 
   useEffect(() => {
-    if (currentGaragePage !== 1 && !cars.length) {
-      setCurrentGaragePage(currentGaragePage - 1);
+    if (currentPage !== 1 && !cars?.data.length) {
+      dispatch(setCurrentPage(currentPage - 1));
     }
-  }, [cars.length]);
+  }, [cars?.data.length]);
 
-  if (errorMessage) {
+  if (error && 'error' in error) {
     return (
       <GarageError>
-        <Title>{`Error: ${errorMessage}`}</Title>
+        <Title>{`Error: ${error.error}`}</Title>
       </GarageError>
     );
   }
 
   return (
     <StyledGarage>
-      <Title>{`Garage(${totalCars})`}</Title>
+      <Title>{`Garage(${cars?.totalCount ?? 0})`}</Title>
       <GarageContainer>
-        <TitlePage>{`Page #${currentGaragePage}`}</TitlePage>
-        {cars.map((item, index) => (
-          <CarItem key={item.id}>
-            <CarItemTop>
-              {selectionButton.map((button) => (
+        <TitlePage>{`Page #${currentPage}`}</TitlePage>
+        {cars &&
+          cars.data.map((item, index) => (
+            <CarItem key={item.id}>
+              <CarItemTop>
                 <Button
-                  key={button.id}
-                  text={button.text}
-                  disabled={toggleDisable(item.id)}
-                  callback={() => handleEvent(button, item)}
+                  text="Select"
+                  disabled={toggleDisableOptionButton(item.id)}
+                  callback={() => selectCarOnClick(item)}
                 />
-              ))}
-              <CarItemTitle>{item.name}</CarItemTitle>
-            </CarItemTop>
-            <CarItemWrapper>
-              <Button
-                text="S"
-                disabled={toggleDisable(item.id)}
-                isStartButton
-                callback={() => startEngine(item, index)}
-              />
-              <Button
-                text="R"
-                disabled={!toggleDisable(item.id)}
-                isStopButton
-                callback={() => stopEngine(item, index)}
-              />
-              <CarItemRoad>
-                <CarItemTrack>
-                  <CarItemImg
-                    ref={(el) => {
-                      carRef.current[index] = el;
-                    }}
-                  >
-                    <CarIcon fill={item.color} />
-                  </CarItemImg>
-                </CarItemTrack>
-                <CarItemFinish>
-                  <CarItemFinishSvg />
-                </CarItemFinish>
-              </CarItemRoad>
-            </CarItemWrapper>
-          </CarItem>
-        ))}
+                <Button
+                  text="Remove"
+                  disabled={toggleDisableOptionButton(item.id)}
+                  callback={() => removeCarOnClick(item)}
+                />
+                <CarItemTitle>{item.name}</CarItemTitle>
+              </CarItemTop>
+              <CarItemWrapper>
+                <Button
+                  text="S"
+                  disabled={toggleDisableOptionButton(item.id)}
+                  isStartButton
+                  callback={() => startEngine(item, index)}
+                />
+                <Button
+                  text="R"
+                  disabled={!toggleDisableOptionButton(item.id)}
+                  isStopButton
+                  callback={() => stopEngine(item, index)}
+                />
+                <CarItemRoad>
+                  <CarItemTrack>
+                    <CarItemImg
+                      ref={(el) => {
+                        carRef.current[index] = el;
+                      }}
+                    >
+                      <CarIcon fill={item.color} />
+                    </CarItemImg>
+                  </CarItemTrack>
+                  <CarItemFinish>
+                    <CarItemFinishSvg />
+                  </CarItemFinish>
+                </CarItemRoad>
+              </CarItemWrapper>
+            </CarItem>
+          ))}
         <Pagination
           isPrevButtonDisabled={
-            currentGaragePage <= 1 || isStartedEngine.length > 0
+            currentPage <= 1 || isCarEngineStarted.length > 0
           }
           isNextButtonDisabled={
-            currentGaragePage >= totalPages || isStartedEngine.length > 0
+            currentPage >= totalPages || isCarEngineStarted.length > 0
           }
-          prevPageOnClick={() => setCurrentGaragePage(currentGaragePage - 1)}
-          nextPageOnClick={() => setCurrentGaragePage(currentGaragePage + 1)}
+          prevPageOnClick={() => dispatch(setCurrentPage(currentPage - 1))}
+          nextPageOnClick={() => dispatch(setCurrentPage(currentPage + 1))}
         />
       </GarageContainer>
       {!!newWinner && (
