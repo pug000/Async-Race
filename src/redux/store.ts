@@ -1,5 +1,6 @@
 import { combineReducers, configureStore } from '@reduxjs/toolkit';
 
+import engineApi from './services/engineService';
 import garageApi from './services/garageService';
 import winnersApi from './services/winnersService';
 import garageSlice from './slices/garageSlice';
@@ -10,6 +11,7 @@ const rootReducer = combineReducers({
   winners: winnersSlice,
   [garageApi.reducerPath]: garageApi.reducer,
   [winnersApi.reducerPath]: winnersApi.reducer,
+  [engineApi.reducerPath]: engineApi.reducer,
 });
 
 const store = configureStore({
@@ -18,6 +20,7 @@ const store = configureStore({
     getDefaultMiddleware().concat([
       garageApi.middleware,
       winnersApi.middleware,
+      engineApi.middleware,
     ]),
 });
 

@@ -1,6 +1,11 @@
 import React, { useCallback, useEffect, useRef } from 'react';
 
 import {
+  useLazyGetEngineStatusQuery,
+  useLazyStartEngineQuery,
+  useStopEngineMutation,
+} from 'redux/services/engineService';
+import {
   useGetAllCarsQuery,
   useLazyGetCarQuery,
   useRemoveCarMutation,
@@ -19,18 +24,10 @@ import Button from 'components/Button/Button';
 import Pagination from 'components/Pagination/Pagination';
 import PopupNotify from 'components/PopupNotify/PopupNotify';
 
-import {
-  getDuration,
-  getTotalCount,
-  limitCarsPerPage,
-  startAnimation,
-} from 'utils';
-
-import { startOrStopEngine } from 'api';
+import { getDuration, getTotalCount, limitCarsPerPage } from 'utils';
 
 import { useAppDispatch, useAppSelector } from 'hooks/useRedux';
 
-import { StatusEngine } from 'ts/enum';
 import { CarData } from 'ts/interfaces';
 
 import { Title, TitlePage } from 'styles/styles';
@@ -68,9 +65,12 @@ function Garage() {
   const [triggerGetCar] = useLazyGetCarQuery();
   const [removeCar] = useRemoveCarMutation();
   const [removeWinner] = useRemoveWinnerMutation();
+  const [triggerStartEngine] = useLazyStartEngineQuery();
+  const [triggerStopEngine] = useStopEngineMutation();
+  const [triggerGetEngineStatus] = useLazyGetEngineStatusQuery();
   const carRef = useRef<(HTMLDivElement | null)[]>([]);
   const duration = useRef(0);
-  const mapRef = useRef<Record<number, number>>({});
+  const animationId = useRef<Record<number, number>>({});
 
   useEffect(() => {
     if (cars?.totalCount) {
@@ -78,20 +78,26 @@ function Garage() {
     }
   }, [cars?.totalCount]);
 
-  const drive = (progress: number, index: number) => {
-    const currentCarElement = carRef.current[index];
+  const drive = useCallback(
+    (progress: number, index: number) => {
+      const currentCarElement = carRef.current[index];
 
-    if (currentCarElement) {
-      currentCarElement.style.left = `${progress * 100}%`;
-    }
-  };
+      if (currentCarElement) {
+        currentCarElement.style.left = `${progress * 100}%`;
+      }
+    },
+    [isCarEngineStarted]
+  );
 
-  const reset = (index: number) => {
-    const currentCarElement = carRef.current[index];
-    if (currentCarElement) {
-      currentCarElement.style.left = '0%';
-    }
-  };
+  const reset = useCallback(
+    (index: number) => {
+      const currentCarElement = carRef.current[index];
+      if (currentCarElement) {
+        currentCarElement.style.left = '0%';
+      }
+    },
+    [isCarEngineStarted]
+  );
 
   const toggleDisableOptionButton = useCallback(
     (id: number) => isCarEngineStarted.includes(id),
@@ -121,21 +127,44 @@ function Garage() {
     [selectedCar]
   );
 
+  const startAnimation = useCallback(
+    async (id: number, index: number, durationTime: number) => {
+      const start = performance.now();
+
+      const animate = (time: number) => {
+        let timeFraction = (time - start) / durationTime;
+        if (timeFraction > 1) {
+          timeFraction = 1;
+        }
+
+        drive(timeFraction, index);
+
+        if (timeFraction < 1) {
+          animationId.current[id] = requestAnimationFrame(animate);
+        }
+      };
+      animationId.current[id] = requestAnimationFrame(animate);
+      const { isSuccess } = await triggerGetEngineStatus(id);
+
+      if (!isSuccess) {
+        cancelAnimationFrame(animationId.current[id]);
+      }
+
+      return isSuccess;
+    },
+    [isCarEngineStarted]
+  );
+
   const startEngine = useCallback(
     async (car: CarData, index: number) => {
-      const { velocity, distance } = await startOrStopEngine(
-        StatusEngine.started,
-        car.id
-      );
+      const { data } = await triggerStartEngine(car.id);
+      const velocity = data?.velocity ?? 0;
+      const distance = data?.distance ?? 0;
+
       duration.current = getDuration(velocity, distance);
       dispatch(startCarEngine(car.id));
-      const success = await startAnimation(
-        car.id,
-        index,
-        duration.current,
-        drive,
-        mapRef.current
-      );
+
+      const success = await startAnimation(car.id, index, duration.current);
       const result = {
         name: car.name,
         id: car.id,
@@ -148,8 +177,8 @@ function Garage() {
 
   const stopEngine = useCallback(
     async (car: CarData, index: number) => {
-      await startOrStopEngine(StatusEngine.stopped, car.id);
-      cancelAnimationFrame(mapRef.current[car.id]);
+      await triggerStopEngine(car.id);
+      cancelAnimationFrame(animationId.current[car.id]);
       reset(index);
       dispatch(stopCarEngine(car.id));
     },
@@ -164,7 +193,9 @@ function Garage() {
         ).then((data) => dispatch(setNewWinner(data)));
         dispatch(setSelectedCar(null));
       } else {
-        Promise.all(cars.data.map((car, index) => stopEngine(car, index)));
+        Promise.all(
+          cars.data.map(async (car, index) => stopEngine(car, index))
+        );
       }
     }
   }, [isRaceStarted]);
