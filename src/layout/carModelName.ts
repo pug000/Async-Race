@@ -1,0 +1,27 @@
+const carModelName = [
+  'A3',
+  'A4',
+  'A5',
+  'A6',
+  'A7',
+  'A8',
+  'Q3',
+  'Q4',
+  'i4',
+  'i7',
+  'iX',
+  'X1',
+  'X5',
+  'X7',
+  'Camaro',
+  'Corvette',
+  'Armada',
+  '911',
+  'Panamera',
+  'Taycan',
+  'Model S',
+  'Camry',
+  'Corolla',
+];
+
+export default carModelName;
